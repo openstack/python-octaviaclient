@@ -17,7 +17,6 @@ Getting Started
 
    readme
    installation
-   usage/osc_cli_plugins
    contributing
 
 Usage

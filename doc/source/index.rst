@@ -3,28 +3,35 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to python-octaviaclient's documentation!
-========================================================
+Python Octavia Client
+=====================
 
-Contents:
+The Python Octavia Client (python-octaviaclient) is a command-line client for
+the OpenStack Load Balancing service.
+
+Getting Started
+---------------
 
 .. toctree::
    :maxdepth: 2
 
    readme
    installation
-   usage
+   usage/osc_cli_plugins
    contributing
+
+Usage
+-----
 
 .. toctree::
    :maxdepth: 2
 
+   usage/osc_cli_plugins
    decoder
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

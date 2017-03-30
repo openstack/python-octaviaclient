@@ -16,6 +16,11 @@ Contents:
    usage
    contributing
 
+.. toctree::
+   :maxdepth: 2
+
+   decoder
+
 Indices and tables
 ==================
 

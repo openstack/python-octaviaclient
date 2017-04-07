@@ -18,14 +18,14 @@ lbaas-listener-delete,,LBaaS v2 Delete a given listener.
 lbaas-listener-list,,LBaaS v2 List listeners that belong to a given tenant.
 lbaas-listener-show,,LBaaS v2 Show information of a given listener.
 lbaas-listener-update,,LBaaS v2 Update a given listener.
-lbaas-loadbalancer-create,,LBaaS v2 Create a loadbalancer.
-lbaas-loadbalancer-delete,,LBaaS v2 Delete a given loadbalancer.
+lbaas-loadbalancer-create,loadbalancer create,LBaaS v2 Create a loadbalancer.
+lbaas-loadbalancer-delete,loadbalancer delete,LBaaS v2 Delete a given loadbalancer.
 lbaas-loadbalancer-list,loadbalancer list,LBaaS v2 List loadbalancers that belong to a given tenant.
 lbaas-loadbalancer-list-on-agent,,List the loadbalancers on a loadbalancer v2 agent.
-lbaas-loadbalancer-show,,LBaaS v2 Show information of a given loadbalancer.
+lbaas-loadbalancer-show,loadbalancer show,LBaaS v2 Show information of a given loadbalancer.
 lbaas-loadbalancer-stats,,Retrieve stats for a given loadbalancer.
 lbaas-loadbalancer-status,,Retrieve status for a given loadbalancer.
-lbaas-loadbalancer-update,,LBaaS v2 Update a given loadbalancer.
+lbaas-loadbalancer-update,loadbalancer set,LBaaS v2 Update a given loadbalancer.
 lbaas-member-create,,LBaaS v2 Create a member.
 lbaas-member-delete,,LBaaS v2 Delete a given member.
 lbaas-member-list,,LBaaS v2 List members that belong to a given pool.

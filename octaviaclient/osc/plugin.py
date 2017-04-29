@@ -40,7 +40,6 @@ def make_client(instance):
         service_type='load-balancer',
         endpoint=endpoint,
     )
-
     return client
 
 

@@ -38,7 +38,7 @@ class APIv2(api.BaseAPI):
         :param params:
             Parameters to filter on (not implemented)
         :return:
-            List of load balancers and their settings
+            List of load balancers
         """
         url = const.BASE_LOADBALANCER_URL
         load_balancer_list = self.list(url, **params)
@@ -82,9 +82,9 @@ class APIv2(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_LB_URL.format(uuid=lb_id)
-        load_balancer = self.delete(url, params=params)
+        response = self.delete(url, params=params)
 
-        return load_balancer
+        return response
 
     def load_balancer_set(self, lb_id, **params):
         """Update a load balancer's settings
@@ -94,9 +94,74 @@ class APIv2(api.BaseAPI):
         :param params:
             A dict of arguments to update a loadbalancer
         :return:
-            A dict of the updated load balancer's settings
+            Response Code from API
         """
         url = const.BASE_SINGLE_LB_URL.format(uuid=lb_id)
-        load_balancer = self.create(url, method='PUT', **params)
+        response = self.create(url, method='PUT', **params)
 
-        return load_balancer
+        return response
+
+    def listener_list(self, **kwargs):
+        """List all listeners
+
+        :param kwargs:
+            Parameters to filter on (not implemented)
+        :return:
+            List of listeners
+        """
+        url = const.BASE_LISTENER_URL
+        listener_list = self.list(url, **kwargs)
+
+        return listener_list
+
+    def listener_show(self, listener_id):
+        """Show a listener
+
+        :param string listener_id:
+        :return:
+            A dict of the specified listener's settings
+        """
+        listener = self.find(path=const.BASE_LISTENER_URL, value=listener_id)
+
+        return listener
+
+    def listener_create(self, **kwargs):
+        """Create a listener
+
+        :param kwargs:
+            Parameters to create a listener with (expects json=)
+        :return:
+            A dict of the created listener's settings
+        """
+        url = const.BASE_LISTENER_URL
+        listener = self.create(url, **kwargs)
+
+        return listener
+
+    def listener_delete(self, listener_id):
+        """Delete a listener
+
+        :param stirng listener_id:
+            ID of of listener to delete
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_LISTENER_URL.format(uuid=listener_id)
+        response = self.delete(url)
+
+        return response
+
+    def listener_set(self, listener_id, **kwargs):
+        """Update a listener's settings
+
+        :param string listener_id:
+            ID of the listener to update
+        :param kwargs:
+            A dict of arguments to update a listener
+        :return:
+            A dict of the updated listener's settings
+        """
+        url = const.BASE_SINGLE_LISTENER_URL.format(uuid=listener_id)
+        response = self.create(url, method='PUT', **kwargs)
+
+        return response

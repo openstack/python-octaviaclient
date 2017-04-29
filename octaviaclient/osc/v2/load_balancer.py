@@ -95,8 +95,9 @@ class CreateLoadBalancer(command.ShowOne):
             'l7policies': v2_utils.format_list
         }
 
-        return (rows, (utils.get_dict_properties(
-            data['loadbalancer'], rows, formatters=formatters)))
+        return (rows,
+                (utils.get_dict_properties(
+                    data['loadbalancer'], rows, formatters=formatters)))
 
 
 class DeleteLoadBalancer(command.Command):

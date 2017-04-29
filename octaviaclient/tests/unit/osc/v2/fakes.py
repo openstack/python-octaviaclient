@@ -41,7 +41,6 @@ class TestLoadBalancerv2(utils.TestCommand):
 
     def setUp(self):
         super(TestLoadBalancerv2, self).setUp()
-
         self.app.client_manager.load_balancer = FakeLoadBalancerv2Client(
             endpoint=fakes.AUTH_URL,
             token=fakes.AUTH_TOKEN,
@@ -80,3 +79,31 @@ class FakeLoadBalancer(object):
             loaded=True)
 
         return lb
+
+
+class FakeListener(object):
+    """Fake one or more listeners."""
+
+    @staticmethod
+    def create_one_listener(attrs=None):
+        attrs = attrs or {}
+
+        li_info = {
+            'id': str(uuid.uuid4()),
+            'name': 'li-name-' + uuid.uuid4().hex,
+            'project_id': uuid.uuid4().hex,
+            'protocol': 'HTTP',
+            'protocol_port': 80,
+            'provisioning_status': 'ACTIVE',
+            'default_pool_id': None,
+            'connection_limit': 10,
+            'admin_state_up': True,
+        }
+
+        li_info.update(attrs)
+
+        li = fakes.FakeResource(
+            info=copy.deepcopy(li_info),
+            loaded=True)
+
+        return li

@@ -348,3 +348,168 @@ Delete a listener
 .. describe:: <listener>
 
     Listener to delete (name or ID).
+
+====
+pool
+====
+
+loadbalancer pool list
+----------------------
+
+List pools
+
+.. program:: loadbalancer pool list
+.. code:: bash
+
+    openstack loadbalancer pool list
+
+loadbalancer pool show
+----------------------
+
+Show the details of a single pool
+
+.. program:: loadbalancer pool show
+.. code:: bash
+
+    openstack loadbalancer pool show
+        <pool>
+
+.. _loadbalancer_pool_list-pool:
+.. describe:: <pool>
+
+    Name or UUID of the pool.
+
+loadbalancer pool create
+------------------------
+
+Create a pool
+
+.. program:: loadbalancer pool show
+.. code:: bash
+
+    openstack loadbalancer pool create
+        [--name <name>]
+        [--description <description>]
+        --protocol {'TERMINATED_HTTPS','HTTP','HTTPS','TCP','PROXY'}
+        [--listener <listener>]
+        [--loadbalancer <load_balancer>]
+        [--session-persistence <session persistence>]
+        --lb-algorithm {'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}
+        [--project <project>]
+        [--enable | --disable]
+
+.. option:: --name <name>
+
+    Set pool name.
+
+.. option:: --description <description>
+
+    Set pool description.
+
+.. option:: --protocol {'TERMINATED_HTTPS','HTTP','HTTPS','TCP','PROXY'}
+
+    Set the pool protocol.
+
+.. option:: --listener <listener>
+
+    Listener to add the pool to (name or ID).
+
+.. option:: --loadbalancer <load_balancer>
+
+    Load balancer to add the pool to (name or ID).
+
+.. option:: --session-persistence <session persistence>
+
+    Set the session persistence for the listener (key=value).
+
+.. option:: --lb-algorithm {'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}
+
+    Load balancing algorithm to use.
+
+.. option:: --project <project>
+
+    Set the project owning this pool (name or ID).
+
+.. option:: --enable
+
+    Enable pool (default).
+
+.. option:: --disable
+
+    Disable pool.
+
+loadbalancer pool set
+---------------------
+
+Update a pool
+
+.. program:: loadbalancer pool set
+.. code:: bash
+
+    openstack loadbalancer pool set
+        [--name <name>]
+        [--description <description>]
+        [--protocol {'TERMINATED_HTTPS','HTTP','HTTPS','TCP','PROXY'}]
+        [--loadbalancer <load_balancer>]
+        [--listener <listener>]
+        [--session-persistence <session_persistence>]
+        [--lb-algorithm {'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}]
+        [--enable | --disable]
+        <pool>
+
+.. option:: --name <name>
+
+    Set the name of the pool.
+
+.. option:: --description <description>
+
+    Set the description of the pool.
+
+.. option:: --protocol {'TERMINATED_HTTPS','HTTP','HTTPS','TCP','PROXY'}
+
+    Set protocol for the pool.
+
+.. option:: --loadbalancer <load_balancer>
+
+    Load balncer to add the pool to (name or ID).
+
+.. option:: --listener <listener>
+
+    Listener to add the pool to (name or ID).
+
+.. option:: --session-persistence <session_persistence>
+
+    Set the session persistence for the listener (key=value).
+
+.. option:: --lb-algorithm {'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}
+
+    Set the load balancing algorithm to use.
+
+.. option:: --enable
+
+    Enable pool.
+
+.. option:: --disable
+
+    Disable pool.
+
+.. _loadbalancer_pool_set-pool:
+.. describe:: <pool>
+
+    Pool to update (name or ID).
+
+loadbalancer pool delete
+------------------------
+
+Delete a pool
+
+.. program:: loadbalancer pool delete
+.. code:: bash
+
+    openstack loadbalancer pool delete
+        <pool>
+
+.. _loadbalancer_pool_delete-pool:
+.. describe:: <pool>
+
+    Pool to delete (name or ID).

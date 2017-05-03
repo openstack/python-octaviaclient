@@ -31,7 +31,7 @@ lbaas-member-delete,,LBaaS v2 Delete a given member.
 lbaas-member-list,,LBaaS v2 List members that belong to a given pool.
 lbaas-member-show,,LBaaS v2 Show information of a given member.
 lbaas-member-update,,LBaaS v2 Update a given member.
-lbaas-pool-create,,LBaaS v2 Create a pool.
-lbaas-pool-delete,,LBaaS v2 Delete a given pool.
-lbaas-pool-list,,LBaaS v2 List pools that belong to a given tenant.
-lbaas-pool-show,,LBaaS v2 Show information of a given pool.
+lbaas-pool-create,loadbalancer pool create,LBaaS v2 Create a pool.
+lbaas-pool-delete,loadbalancer pool delete,LBaaS v2 Delete a given pool.
+lbaas-pool-list,loadbalancer pool list,LBaaS v2 List pools that belong to a given tenant.
+lbaas-pool-show,loadbalancer pool show,LBaaS v2 Show information of a given pool.

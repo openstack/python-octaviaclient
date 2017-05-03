@@ -15,7 +15,6 @@
 
 
 from cliff import lister
-import json
 from osc_lib.command import command
 from osc_lib import utils
 
@@ -60,9 +59,9 @@ class CreateListener(command.ShowOne):
         )
         parser.add_argument(
             '--default-pool',
-            metavar='<pool-id>',
-            help="The ID of the pool used by the listener if no L7 policies "
-                 "match."
+            metavar='<pool>',
+            help="The name or ID of the pool used by the listener if no "
+                 "L7 policies match."
         )
         parser.add_argument(
             '--default-tls-container-ref',
@@ -81,9 +80,7 @@ class CreateListener(command.ShowOne):
         )
         parser.add_argument(
             '--insert-headers',
-            metavar='<header=value>',
-            nargs='*',
-            type=json.loads,
+            metavar='<header=value,...>',
             help="A dictionary of optional headers to insert into the request "
                  "before it is sent to the backend member."
         )
@@ -118,7 +115,8 @@ class CreateListener(command.ShowOne):
             json=body)
         formatters = {'loadbalancers': v2_utils.format_list,
                       'pools': v2_utils.format_list,
-                      'l7policies': v2_utils.format_list}
+                      'l7policies': v2_utils.format_list,
+                      'insert_headers': v2_utils.format_hash}
 
         return (rows,
                 (utils.get_dict_properties(data['listener'],
@@ -202,7 +200,7 @@ class ShowListener(command.ShowOne):
         parser.add_argument(
             'listener',
             metavar='<listener>',
-            help='UUID of the listener'
+            help='Name or UUID of the listener'
         )
 
         return parser
@@ -219,7 +217,8 @@ class ShowListener(command.ShowOne):
         )
         formatters = {'loadbalancers': v2_utils.format_list,
                       'pools': v2_utils.format_list,
-                      'l7policies': v2_utils.format_list}
+                      'l7policies': v2_utils.format_list,
+                      'insert_headers': v2_utils.format_hash}
 
         return (rows,
                 (utils.get_dict_properties(data, rows, formatters=formatters)))

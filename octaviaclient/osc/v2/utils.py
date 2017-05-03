@@ -65,7 +65,6 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
         ),
         'connection_limit': ('connection_limit', str),
         'protocol_port': ('protocol_port', int),
-        'default_pool': ('default_pool_id', str),
         'project': (
             'project_id',
             'project',
@@ -128,7 +127,11 @@ def get_listener_attrs(client_manager, parsed_args):
         ),
         'connection_limit': ('connection_limit', str),
         'protocol_port': ('protocol_port', int),
-        'default_pool': ('default_pool_id', str),
+        'default_pool': (
+            'default_pool_id',
+            'pools',
+            client_manager.load_balancer.pool_list
+        ),
         'project': (
             'project_id',
             'project',
@@ -136,7 +139,7 @@ def get_listener_attrs(client_manager, parsed_args):
         ),
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False),
-        'insert_headers': ('insert_headers', _format_headers)
+        'insert_headers': ('insert_headers', _format_kv)
     }
 
     _attrs = vars(parsed_args)
@@ -145,18 +148,62 @@ def get_listener_attrs(client_manager, parsed_args):
     return attrs
 
 
-def _format_headers(headers):
-    formatted_headers = {}
-    headers = headers.split(',')
-    for header in headers:
-        k, v = header.split('=')
-        formatted_headers[k] = v
+def get_pool_attrs(client_manager, parsed_args):
+    attr_map = {
+        'name': ('name', str),
+        'description': ('description', str),
+        'protocol': ('protocol', str),
+        'pool': (
+            'pool_id',
+            'pools',
+            client_manager.load_balancer.pool_list
+        ),
+        'loadbalancer': (
+            'loadbalancer_id',
+            'loadbalancers',
+            client_manager.load_balancer.load_balancer_list
+        ),
+        'lb_algorithm': ('lb_algorithm', str),
+        'listener': (
+            'listener_id',
+            'listeners',
+            client_manager.load_balancer.listener_list
+        ),
+        'project': (
+            'project_id',
+            'project',
+            client_manager.identity
+        ),
+        'session_persistence': ('session_persistence', _format_kv),
+        'enable': ('admin_state_up', lambda x: True),
+        'disable': ('admin_state_up', lambda x: False)
+    }
 
-    return formatted_headers
+    _attrs = vars(parsed_args)
+    attrs = _map_attrs(_attrs, attr_map)
+
+    return attrs
 
 
 def format_list(data):
     return '\n'.join(i['id'] for i in data)
+
+
+def format_hash(data):
+    if data:
+        return '\n'.join('{}={}'.format(k, v) for k, v in data.items())
+    else:
+        return None
+
+
+def _format_kv(data):
+    formatted_kv = {}
+    values = data.split(',')
+    for value in values:
+        k, v = value.split('=')
+        formatted_kv[k] = v
+
+    return formatted_kv
 
 
 def _map_attrs(attrs, attr_map):

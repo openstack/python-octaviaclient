@@ -107,3 +107,33 @@ class FakeListener(object):
             loaded=True)
 
         return li
+
+
+class FakePool(object):
+    """Fake one or more listeners."""
+
+    @staticmethod
+    def create_one_pool(attrs=None):
+        attrs = attrs or {}
+
+        po_info = {
+            'admin_state_up': True,
+            'description': 'fake desc',
+            'id': str(uuid.uuid4()),
+            'lb_algorithm': 'ROUND_ROBIN',
+            'listeners': [{'id': str(uuid.uuid4())}],
+            'loadbalancers': [{'id': str(uuid.uuid4())}],
+            'members': [{'id': str(uuid.uuid4())}],
+            'name': 'po-name-' + uuid.uuid4().hex,
+            'project_id': uuid.uuid4().hex,
+            'protocol': 'HTTP',
+            'provisioning_status': 'ACTIVE',
+        }
+
+        po_info.update(attrs)
+
+        po = fakes.FakeResource(
+            info=copy.deepcopy(po_info),
+            loaded=True)
+
+        return po

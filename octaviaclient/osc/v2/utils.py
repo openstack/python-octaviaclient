@@ -29,6 +29,7 @@ def get_resource_id(resource, resource_name, name):
         The UUID of the found resource
     """
     try:
+        # Projects can be non-uuid so we need to account for this
         if resource_name == 'project':
             if name != 'non-uuid':
                 project_id = identity_common.find_project(
@@ -50,6 +51,11 @@ def get_resource_id(resource, resource_name, name):
                 raise exceptions.CommandError(msg)
             else:
                 return names[0].get('id')
+        elif resource_name == 'l7rules':
+            names = [re for re in resource(name['l7policy_id'])['rules']
+                     if re.get('id') == name['l7rule_id']]
+            name = name['l7rule_id']
+            return names[0].get('id')
         else:
             names = [re for re in resource()[resource_name]
                      if re.get('name') == name or re.get('id') == name]
@@ -281,6 +287,52 @@ def check_l7policy_attrs(attrs):
     elif attrs['action'] == 'REDIRECT_TO_URL':
         if 'redirect_url' not in attrs:
             msg = 'Missing argument: --redirect-url'
+    if msg is not None:
+        raise exceptions.CommandError(msg)
+
+
+def get_l7rule_attrs(client_manager, parsed_args):
+    attr_map = {
+        'action': ('action', str.upper),
+        'project': (
+            'project_id',
+            'project',
+            client_manager.identity
+        ),
+        'invert': ('invert', lambda x: True),
+        'l7rule': (
+            'l7rule_id',
+            'l7rules',
+            'l7policy',  # parent attr
+            client_manager.load_balancer.l7rule_list
+        ),
+        'l7policy': (
+            'l7policy_id',
+            'l7policies',
+            client_manager.load_balancer.l7policy_list
+        ),
+        'value': ('value', str),
+        'key': ('key', str),
+        'type': ('type', str),
+        'compare_type': ('compare_type', str.upper),
+        'enable': ('admin_state_up', lambda x: True),
+        'disable': ('admin_state_up', lambda x: False)
+    }
+
+    _attrs = vars(parsed_args)
+    attrs = _map_attrs(_attrs, attr_map)
+
+    return attrs
+
+
+def check_l7rule_attrs(attrs):
+    msg = None
+    if 'type' in attrs.keys() and attrs['type'] == 'COOKIE':
+        if 'key' not in attrs:
+            msg = 'Missing argument: --type COOKIE requires --key <key>'
+    elif 'type' in attrs.keys() and attrs['type'] == 'HEADER':
+        if 'key' not in attrs:
+            msg = 'Missing argument: --type HEADER requires --key <key>'
     if msg is not None:
         raise exceptions.CommandError(msg)
 

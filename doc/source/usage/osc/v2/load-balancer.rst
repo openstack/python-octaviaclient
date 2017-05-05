@@ -850,3 +850,177 @@ Delete a l7policy
 .. describe:: <policy>
 
     L7policy to delete (name or ID).
+
+======
+l7rule
+======
+
+loadbalancer l7rule list
+------------------------
+
+List l7rules for l7policy
+
+.. program:: loadbalancer l7rule list
+.. code:: bash
+
+    openstack loadbalancer l7rule list
+        --l7policy <l7policy>
+
+.. _loadbalancer_l7rule_list-l7policy:
+.. describe:: <l7policy>
+
+    l7policy to list rules for (name or ID).
+
+loadbalancer l7rule show
+------------------------
+
+Show the details of a single l7rule
+
+.. program:: loadbalancer l7rule show
+.. code:: bash
+
+    openstack loadbalancer l7rule show
+        <l7policy>
+        <rule-id>
+
+.. _loadbalancer_l7rule_show-l7policy:
+.. describe:: <l7policy>
+
+    l7policy to show rule from (name or ID)
+
+.. _loadbalancer_l7rule_show-rule-id:
+.. describe:: <l7rule_id>
+
+    l7rule to show
+
+loadbalancer l7rule create
+--------------------------
+
+Create a l7rule
+
+.. program:: loadbalancer l7rule create
+.. code:: bash
+
+    openstack loadbalancer l7rule create
+        --compare-type {'REGEX','EQUAL_TO','CONTAINS','ENDS_WITH','STARTS_WITH'}
+        [--invert]
+        --value <value>
+        [--key <key>]
+        [--project <project>]
+        --type {'FILE_TYPE','PATH','COOKIE','HOST_NAME','HEADER'}
+        [--enable | --disable]
+        <l7policy>
+
+.. option:: --compare-type {'REGEX','EQUAL_TO','CONTAINS','ENDS_WITH','STARTS_WITH'}
+
+    Set the compare type for the l7rule.
+
+.. option:: --invert
+
+    Invert l7rule.
+
+.. option:: --value <value>
+
+    Set the rule value to match on.
+
+.. option:: --key <key>
+
+    Set the key for the l7rule's value to match on.
+
+.. option:: --project <project>
+
+    Project for the l7rule (name or ID).
+
+.. option:: --type {'FILE_TYPE','PATH','COOKIE','HOST_NAME','HEADER'}
+
+    Set the type for the l7rule.
+
+.. option:: --enable
+
+    Enable l7rule (default)
+
+.. option:: --disable
+
+    Disable l7rule
+
+.. _loadbalancer_l7rule_create-l7policy:
+.. describe:: <l7policy>
+
+    l7policy to add l7rule to (name or ID).
+
+
+loadbalancer l7rule set
+-----------------------
+
+Update a l7rule
+
+.. program:: loadbalancer l7rule set
+.. code:: bash
+
+    openstack loadbalancer l7rule set
+        [--compare-type {'REGEX','EQUAL_TO','CONTAINS','ENDS_WITH','STARTS_WITH'}]
+        [--invert]
+        [--value <value>]
+        [--key <key>]
+        [--type {'FILE_TYPE','PATH','COOKIE','HOST_NAME','HEADER'}]
+        [--enable | --disable]
+        --l7policy <policy>
+        <l7rule_id>
+
+.. option:: --compare-type {'REGEX','EQUAL_TO','CONTAINS','ENDS_WITH','STARTS_WITH'}
+
+    Set the compare type for the l7rule.
+
+.. option:: --invert
+
+    Invert l7rule.
+
+.. option:: --value <value>
+
+    Set the rule value to match on.
+
+.. option:: --key <key>
+
+    Set the key for the l7rule's value to match on.
+
+.. option:: --type {'FILE_TYPE','PATH','COOKIE','HOST_NAME','HEADER'}
+
+    Set the type for the l7rule.
+
+.. option:: --enable
+
+    Enable l7rule.
+
+.. option:: --disable
+
+    Disable l7rule.
+
+.. _loadbalancer_l7rule_set-l7policy:
+.. describe:: <l7policy>
+
+    L7policy to update l7rule on (name or ID)
+
+.. _loadbalancer_l7rule_set-l7rule_id:
+.. describe:: <l7rule_id>
+
+    l7rule to update
+
+loadbalancer l7rule delete
+--------------------------
+
+.. program:: loadbalancer l7rule delete
+.. code:: bash
+
+    openstack loadbalancer l7rule delete
+        <l7policy>
+        <rule_id>
+
+.. _loadbalancer_l7rule_delete-l7policy:
+.. describe:: <l7policy>
+
+    l7policy to delete rule from (name or ID).
+
+.. _loadbalancer_l7rule_delete-l7rule_id:
+.. describe:: <l7rule_id>
+
+    l7rule to delete.

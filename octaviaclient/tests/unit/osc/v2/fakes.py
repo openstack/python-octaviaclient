@@ -137,3 +137,31 @@ class FakePool(object):
             loaded=True)
 
         return po
+
+
+class FakeMember(object):
+
+    @staticmethod
+    def create_member(attrs=None):
+        attrs = attrs or {}
+
+        member = {
+            "project_id": uuid.uuid4().hex,
+            "name": "test-member",
+            "weight": 1,
+            "admin_state_up": True,
+            "subnet_id": uuid.uuid4().hex,
+            "tenant_id": uuid.uuid4().hex,
+            "provisioning_status": "ACTIVE",
+            "address": "192.0.2.122",
+            "protocol_port": 80,
+            "id": uuid.uuid4().hex,
+            "operating_status": "NO_MONITOR",
+            "pool_id": uuid.uuid4().hex
+        }
+
+        member.update(attrs)
+
+        mem = fakes.FakeResource(info=copy.deepcopy(member), loaded=True)
+
+        return mem

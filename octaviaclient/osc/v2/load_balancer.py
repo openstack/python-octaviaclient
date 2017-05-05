@@ -193,7 +193,6 @@ class ShowLoadBalancer(command.ShowOne):
 
     def take_action(self, parsed_args):
         rows = const.LOAD_BALANCER_ROWS
-
         attrs = v2_utils.get_loadbalancer_attrs(self.app.client_manager,
                                                 parsed_args)
         lb_id = attrs.pop('loadbalancer_id')

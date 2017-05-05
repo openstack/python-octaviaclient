@@ -18,4 +18,10 @@ BASE_LISTENER_URL = '/listeners'
 BASE_SINGLE_LISTENER_URL = BASE_LISTENER_URL + '/{uuid}'
 
 BASE_POOL_URL = '/pools'
-BASE_SINGLE_POOL_URL = BASE_POOL_URL + '/{uuid}'
+BASE_SINGLE_POOL_URL = BASE_POOL_URL + '/{pool_id}'
+
+BASE_MEMBER_URL = BASE_SINGLE_POOL_URL + '/members'
+BASE_SINGLE_MEMBER_URL = BASE_MEMBER_URL + '/{member_id}'
+
+BASE_MONITOR_URL = '/healthmonitors'
+BASE_SINGLE_MONITOR_URL = '/healthmonitors/{uuid}'

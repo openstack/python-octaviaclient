@@ -30,6 +30,7 @@ FAKE_PO = uuidutils.generate_uuid()
 FAKE_ME = uuidutils.generate_uuid()
 FAKE_L7PO = uuidutils.generate_uuid()
 FAKE_L7RU = uuidutils.generate_uuid()
+FAKE_HM = uuidutils.generate_uuid()
 
 
 LIST_LB_RESP = {
@@ -67,6 +68,12 @@ LIST_L7RU_RESP = {
          {'id': uuidutils.generate_uuid()}]
 }
 
+LIST_HM_RESP = {
+    'healthmonitors':
+        [{'id': uuidutils.generate_uuid()},
+         {'id': uuidutils.generate_uuid()}]
+}
+
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 
@@ -84,6 +91,9 @@ SINGLE_ME_UPDATE = {"member": {"admin_state_up": False}}
 
 SINGLE_L7RU_RESP = {'rule': {'id': FAKE_L7RU}}
 SINGLE_L7RU_UPDATE = {'rule': {'admin_state_up': False}}
+
+SINGLE_HM_RESP = {'healthmonitor': {'id': FAKE_ME}}
+SINGLE_HM_UPDATE = {'healthmonitor': {'admin_state_up': False}}
 
 
 class TestLoadBalancerv2(utils.TestCase):
@@ -397,4 +407,53 @@ class TestLoadBalancer(TestLoadBalancerv2):
             l7rule_id=FAKE_L7RU,
             l7policy_id=FAKE_L7PO
         )
+        self.assertEqual(200, ret.status_code)
+
+    def test_list_health_monitor_no_options(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'healthmonitors',
+            json=LIST_HM_RESP,
+            status_code=200,
+        )
+        ret = self.api.health_monitor_list()
+        self.assertEqual(LIST_HM_RESP, ret)
+
+    def test_show_health_monitor(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'healthmonitors/' + FAKE_HM,
+            json=SINGLE_HM_RESP,
+            status_code=200
+        )
+        ret = self.api.health_monitor_show(FAKE_HM)
+        self.assertEqual(SINGLE_HM_RESP['healthmonitor'], ret)
+
+    def test_create_health_monitor(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_URL + 'healthmonitors',
+            json=SINGLE_HM_RESP,
+            status_code=200
+        )
+        ret = self.api.health_monitor_create(json=SINGLE_HM_RESP)
+        self.assertEqual(SINGLE_HM_RESP, ret)
+
+    def test_set_health_monitor(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_URL + 'healthmonitors/' + FAKE_HM,
+            json=SINGLE_HM_UPDATE,
+            status_code=200
+        )
+        ret = self.api.health_monitor_set(FAKE_HM, json=SINGLE_HM_UPDATE)
+        self.assertEqual(SINGLE_HM_UPDATE, ret)
+
+    def test_delete_health_monitor(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_URL + 'healthmonitors/' + FAKE_HM,
+            status_code=200
+        )
+        ret = self.api.health_monitor_delete(FAKE_HM)
         self.assertEqual(200, ret.status_code)

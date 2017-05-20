@@ -1,3 +1,4 @@
+#   Copyright 2017 GoDaddy
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -30,25 +31,25 @@ class CreatePool(command.ShowOne):
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="Set pool name"
+            help="Set pool name."
         )
         parser.add_argument(
             '--description',
             metavar='<description>',
-            help="Set pool description"
+            help="Set pool description."
         )
         parser.add_argument(
             '--protocol',
-            metavar='<protocol>',
+            metavar="{'TERMINATED_HTTPS','HTTP','HTTPS','TCP','PROXY'}",
             required=True,
             choices=['TERMINATED_HTTPS', 'HTTP', 'HTTPS', 'TCP', 'PROXY'],
-            help="Set the pool protocol"
+            help="Set the pool protocol."
         )
         parent_group = parser.add_mutually_exclusive_group(required=True)
         parent_group.add_argument(
             '--listener',
             metavar='<listener>',
-            help="Listener to add to pool (name or ID)"
+            help="Listener to add the pool to (name or ID)."
         )
         parent_group.add_argument(
             '--loadbalancer',
@@ -58,27 +59,27 @@ class CreatePool(command.ShowOne):
         parser.add_argument(
             '--session-persistence',
             metavar='<session persistence>',
-            help="Set the session persistence for the listener (key=value)"
+            help="Set the session persistence for the listener (key=value)."
         )
         parser.add_argument(
             '--lb-algorithm',
-            metavar='<lb_algorithm>',
+            metavar="{'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}",
             required=True,
             choices=['SOURCE_IP', 'ROUND_ROBIN', 'LEAST_CONNECTIONS'],
-            help="Load balancing algorithm to use"
+            help="Load balancing algorithm to use."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
             action='store_true',
             default=True,
-            help="Enable pool (default)"
+            help="Enable pool (default)."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable pool"
+            help="Disable pool."
         )
 
         return parser
@@ -108,7 +109,7 @@ class DeletePool(command.Command):
         parser.add_argument(
             'pool',
             metavar="<pool>",
-            help="Pool to delete (name or ID)"
+            help="Pool to delete (name or ID)."
         )
 
         return parser
@@ -182,41 +183,41 @@ class SetPool(command.Command):
         parser.add_argument(
             'pool',
             metavar="<pool>",
-            help="Pool to update (name or ID)"
+            help="Pool to update (name or ID)."
         )
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="New pool name"
+            help="Set the name of the pool."
         )
         parser.add_argument(
             '--description',
             metavar='<description>',
-            help="Set pool description"
+            help="Set the description of the pool."
         )
         parser.add_argument(
             '--session-persistence',
             metavar='<session_persistence>',
-            help="Set the session persistence for the listener (key=value)"
+            help="Set the session persistence for the listener (key=value)."
         )
         parser.add_argument(
             '--lb-algorithm',
-            metavar='<lb_algorithm>',
+            metavar="{'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}",
             choices=['SOURCE_IP', 'ROUND_ROBIN', 'LEAST_CONNECTIONS'],
-            help="Load balancing algorithm to use"
+            help="Set the load balancing algorithm to use."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
             action='store_true',
             default=None,
-            help="Enable pool (default)"
+            help="Enable pool."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable pool"
+            help="Disable pool."
         )
 
         return parser

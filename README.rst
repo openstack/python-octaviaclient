@@ -26,3 +26,19 @@ https://docs.openstack.org/developer/python-openstackclient
 * Documentation: http://docs.openstack.org/developer/python-octaviaclient
 * Source: http://git.openstack.org/cgit/openstack/python-octaviaclient
 * Bugs: http://bugs.launchpad.net/octavia
+
+Getting Started
+===============
+
+Octavia client can be installed from PyPI using pip::
+
+    pip install python-octaviaclient
+
+If you want to make changes to the Octavia client for testing and contribution,
+make any changes and then run::
+
+    python setup.py develop
+
+or::
+
+    pip install -e .

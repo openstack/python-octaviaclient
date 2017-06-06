@@ -140,6 +140,7 @@ class FakeClientManager(object):
         self.auth_ref = None
         self.auth_plugin_name = None
         self.network_endpoint_enabled = True
+        self.neutronclient = mock.MagicMock()
 
     def get_configuration(self):
         return {

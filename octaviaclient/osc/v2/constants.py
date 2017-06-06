@@ -37,3 +37,32 @@ LOAD_BALANCER_COLUMNS = (
     'vip_address',
     'provisioning_status',
     'provider')
+
+LISTENER_ROWS = (
+    'admin_state_up',
+    'connection_limit',
+    'created_at',
+    'default_pool_id',
+    'default_tls_container_ref',
+    'description',
+    'id',
+    'insert_headers',
+    'l7policies',
+    'loadbalancers',
+    'name',
+    'operating_status',
+    'project_id',
+    'protocol',
+    'protocol_port',
+    'provisioning_status',
+    'sni_container_refs',
+    'updated_at')
+
+LISTENER_COLUMNS = (
+    'id',
+    'default_pool_id',
+    'name',
+    'project_id',
+    'protocol',
+    'protocol_port',
+    'admin_state_up')

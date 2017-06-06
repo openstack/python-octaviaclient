@@ -185,6 +185,7 @@ class TestLoadBalancerShow(TestLoadBalancer):
 
 
 class TestLoadBalancerSet(TestLoadBalancer):
+
     def setUp(self):
         super(TestLoadBalancerSet, self).setUp()
         self.cmd = load_balancer.SetLoadBalancer(self.app, None)

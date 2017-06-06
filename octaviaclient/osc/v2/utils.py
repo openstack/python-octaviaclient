@@ -111,7 +111,41 @@ def check_loadbalancer_attrs(attrs):
             raise exceptions.CommandError(msg)
 
 
-def format_headers(headers):
+def get_listener_attrs(client_manager, parsed_args):
+    attr_map = {
+        'name': ('name', str),
+        'description': ('description', str),
+        'protocol': ('protocol', str),
+        'listener': (
+            'listener_id',
+            'listeners',
+            client_manager.load_balancer.listener_list
+        ),
+        'loadbalancer': (
+            'loadbalancer_id',
+            'loadbalancers',
+            client_manager.load_balancer.load_balancer_list
+        ),
+        'connection_limit': ('connection_limit', str),
+        'protocol_port': ('protocol_port', int),
+        'default_pool': ('default_pool_id', str),
+        'project': (
+            'project_id',
+            'project',
+            client_manager.identity
+        ),
+        'enable': ('admin_state_up', lambda x: True),
+        'disable': ('admin_state_up', lambda x: False),
+        'insert_headers': ('insert_headers', _format_headers)
+    }
+
+    _attrs = vars(parsed_args)
+    attrs = _map_attrs(_attrs, attr_map)
+
+    return attrs
+
+
+def _format_headers(headers):
     formatted_headers = {}
     headers = headers.split(',')
     for header in headers:

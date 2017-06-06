@@ -66,3 +66,30 @@ LISTENER_COLUMNS = (
     'protocol',
     'protocol_port',
     'admin_state_up')
+
+POOL_ROWS = (
+    'admin_state_up',
+    'created_at',
+    'description',
+    'healthmonitor_id',
+    'id',
+    'lb_algorithm',
+    'listeners',
+    'loadbalancers',
+    'members',
+    'name',
+    'operating_status',
+    'project_id',
+    'protocol',
+    'provisioning_status',
+    'session_persistence',
+    'updated_at')
+
+POOL_COLUMNS = (
+    'id',
+    'name',
+    'project_id',
+    'provisioning status',
+    'protocol',
+    'lb_algorithm',
+    'admin_state_up')

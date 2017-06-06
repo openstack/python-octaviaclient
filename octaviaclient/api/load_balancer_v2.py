@@ -159,9 +159,75 @@ class APIv2(api.BaseAPI):
         :param kwargs:
             A dict of arguments to update a listener
         :return:
-            A dict of the updated listener's settings
+            Response Code from the API
         """
         url = const.BASE_SINGLE_LISTENER_URL.format(uuid=listener_id)
         response = self.create(url, method='PUT', **kwargs)
 
         return response
+
+    def pool_list(self, **kwargs):
+        """List all pools
+
+        :param kwargs:
+            Parameters to filter on (not implemented)
+        :return:
+            List of pools
+        """
+        url = const.BASE_POOL_URL
+        pool_list = self.list(url, **kwargs)
+
+        return pool_list
+
+    def pool_create(self, **kwargs):
+        """Create a pool
+
+        :param kwargs:
+            Parameters to create a listener with (expects json=)
+        :return:
+            A dict of the created pool's settings
+        """
+        url = const.BASE_POOL_URL
+        pool = self.create(url, **kwargs)
+
+        return pool
+
+    def pool_delete(self, pool_id):
+        """Delete a pool
+
+        :param string pool_id:
+            ID of of listener to delete
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_POOL_URL.format(uuid=pool_id)
+        deleted_pool = self.delete(url)
+
+        return deleted_pool
+
+    def pool_show(self, pool_id):
+        """Show a pool's settings
+
+        :param string pool_id:
+            ID of the pool to show
+        :return:
+            Dict of the specified pool's settings
+        """
+        pool = self.find(path=const.BASE_POOL_URL, value=pool_id)
+
+        return pool
+
+    def pool_set(self, pool_id, **kwargs):
+        """Update a pool's settings
+
+        :param pool_id:
+            ID of the pool to update
+        :param kwargs:
+            A dict of arguments to update a pool
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_POOL_URL.format(uuid=pool_id)
+        pool = self.create(url, method='PUT', **kwargs)
+
+        return pool

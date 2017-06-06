@@ -63,7 +63,6 @@ class TestListener(li_fakes.TestLoadBalancerv2):
                 'admin_state_up': _li.admin_state_up
             }]
     }
-
     li_info = copy.deepcopy(info)
 
     def setUp(self):
@@ -140,7 +139,7 @@ class TestListenerCreate(TestListener):
         super(TestListenerCreate, self).setUp()
         self.api_mock = mock.Mock()
         self.api_mock.listener_create.return_value = {
-            'listener': self.li_info}
+            'listener': self.li_info['listeners'][0]}
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -148,7 +147,7 @@ class TestListenerCreate(TestListener):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_listener_attrs')
     def test_listener_create(self, mock_client):
-        mock_client.return_value = self.li_info
+        mock_client.return_value = self.li_info['listeners'][0]
         arglist = ['mock_lb_id',
                    '--name', self._li.name,
                    '--protocol', 'HTTP',
@@ -163,7 +162,7 @@ class TestListenerCreate(TestListener):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_create.assert_called_with(
-            json={'listener': self.li_info})
+            json={'listener': self.li_info['listeners'][0]})
 
 
 class TestListenerShow(TestListener):

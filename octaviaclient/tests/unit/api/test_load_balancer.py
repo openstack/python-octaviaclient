@@ -26,6 +26,7 @@ FAKE_URL = 'http://example.com/v2.0/lbaas/'
 
 FAKE_LB = uuidutils.generate_uuid()
 FAKE_LI = uuidutils.generate_uuid()
+FAKE_PO = uuidutils.generate_uuid()
 
 LIST_LB_RESP = {
     'loadbalancers':
@@ -39,12 +40,20 @@ LIST_LI_RESP = {
          {'name': 'lb2'}]
 }
 
+LIST_PO_RESP = {
+    'pools':
+        [{'name': 'po1'},
+         {'name': 'po2'}]
+}
 
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 
 SINGLE_LI_RESP = {'listener': {'id': FAKE_LI, 'name': 'li1'}}
 SINGLE_LI_UPDATE = {"listener": {"admin_state_up": False}}
+
+SINGLE_PO_RESP = {'pool': {'id': FAKE_PO, 'name': 'li1'}}
+SINGLE_PO_UPDATE = {"pool": {"admin_state_up": False}}
 
 
 class TestLoadBalancerv2(utils.TestCase):
@@ -154,4 +163,53 @@ class TestLoadBalancer(TestLoadBalancerv2):
             status_code=200
         )
         ret = self.api.listener_delete(FAKE_LI)
+        self.assertEqual(200, ret.status_code)
+
+    def test_list_pool_no_options(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'pools',
+            json=LIST_PO_RESP,
+            status_code=200,
+        )
+        ret = self.api.pool_list()
+        self.assertEqual(LIST_PO_RESP, ret)
+
+    def test_show_pool(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'pools/' + FAKE_PO,
+            json=SINGLE_PO_RESP,
+            status_code=200
+        )
+        ret = self.api.pool_show(FAKE_PO)
+        self.assertEqual(SINGLE_PO_RESP['pool'], ret)
+
+    def test_create_pool(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_URL + 'pools',
+            json=SINGLE_PO_RESP,
+            status_code=200
+        )
+        ret = self.api.pool_create(json=SINGLE_PO_RESP)
+        self.assertEqual(SINGLE_PO_RESP, ret)
+
+    def test_set_pool(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_URL + 'pools/' + FAKE_PO,
+            json=SINGLE_PO_UPDATE,
+            status_code=200
+        )
+        ret = self.api.pool_set(FAKE_PO, json=SINGLE_PO_UPDATE)
+        self.assertEqual(SINGLE_PO_UPDATE, ret)
+
+    def test_delete_pool(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_URL + 'pools/' + FAKE_PO,
+            status_code=200
+        )
+        ret = self.api.pool_delete(FAKE_PO)
         self.assertEqual(200, ret.status_code)

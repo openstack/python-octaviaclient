@@ -14,6 +14,7 @@
 """Load Balancer v2 API Library Tests"""
 
 from keystoneauth1 import session
+from oslo_utils import uuidutils
 from requests_mock.contrib import fixture
 
 from octaviaclient.api import load_balancer_v2 as lb
@@ -23,12 +24,18 @@ FAKE_ACCOUNT = 'q12we34r'
 FAKE_AUTH = '11223344556677889900'
 FAKE_URL = 'http://example.com/v2.0/lbaas/'
 
-FAKE_LB = 'rainbarrel'
+FAKE_LB = uuidutils.generate_uuid()
 
-LIST_LB_RESP = [
-    {'name': 'lb1'},
-    {'name': 'lb2'},
-]
+LIST_LB_RESP = {
+    'loadbalancers':
+        [{'name': 'lb1'},
+         {'name': 'lb2'}]
+}
+
+
+SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
+SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
+SINGLE_LB_UPDATE_INVALID = {"loadbalancer": {"id": 'invalid_param'}}
 
 
 class TestLoadBalancerv2(utils.TestCase):
@@ -46,8 +53,47 @@ class TestLoadBalancer(TestLoadBalancerv2):
         self.requests_mock.register_uri(
             'GET',
             FAKE_URL + 'loadbalancers',
-            json={'loadbalancers': LIST_LB_RESP},
+            json=LIST_LB_RESP,
             status_code=200,
         )
         ret = self.api.load_balancer_list()
         self.assertEqual(LIST_LB_RESP, ret)
+
+    def test_show_load_balancer(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'loadbalancers/' + FAKE_LB,
+            json=SINGLE_LB_RESP,
+            status_code=200
+        )
+        ret = self.api.load_balancer_show(FAKE_LB)
+        self.assertEqual(SINGLE_LB_RESP['loadbalancer'], ret)
+
+    def test_create_load_balancer(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_URL + 'loadbalancers',
+            json=SINGLE_LB_RESP,
+            status_code=200
+        )
+        ret = self.api.load_balancer_create(json=SINGLE_LB_RESP)
+        self.assertEqual(SINGLE_LB_RESP, ret)
+
+    def test_set_load_balancer(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_URL + 'loadbalancers/' + FAKE_LB,
+            json=SINGLE_LB_UPDATE,
+            status_code=200
+        )
+        ret = self.api.load_balancer_set(FAKE_LB, json=SINGLE_LB_UPDATE)
+        self.assertEqual(SINGLE_LB_UPDATE, ret)
+
+    def test_delete_load_balancer(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_URL + 'loadbalancers/' + FAKE_LB,
+            status_code=200
+        )
+        ret = self.api.load_balancer_delete(FAKE_LB)
+        self.assertEqual(200, ret.status_code)

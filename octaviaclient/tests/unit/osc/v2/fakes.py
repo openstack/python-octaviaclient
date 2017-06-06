@@ -25,6 +25,7 @@ LOADBALANCER = {
     'project_id': 'dummyproject',
     'vip_address': '192.0.2.2',
     'provisioning_status': 'ONLINE',
+    'provider': 'octavia'
 }
 
 
@@ -66,8 +67,10 @@ class FakeLoadBalancer(object):
             'id': str(uuid.uuid4()),
             'name': 'lb-name-' + uuid.uuid4().hex,
             'project_id': uuid.uuid4().hex,
-            'vip_address': '192.0.2.2',
+            'vip_address': '192.0.2.124',
+            'vip_network_id': uuid.uuid4().hex,
             'provisioning_status': 'ONLINE',
+            'provider': 'octavia'
         }
 
         lb_info.update(attrs)

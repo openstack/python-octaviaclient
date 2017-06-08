@@ -56,7 +56,7 @@ class CreateHealthMonitor(command.ShowOne):
         )
         parser.add_argument(
             '--http_method',
-            metavar='<method>',
+            metavar="{GET,POST,DELETE,PUT,HEAD,OPTIONS,PATCH,CONNECT,TRACE}",
             choices=HTTP_METHODS,
             help="Set the HTTP method that the health monitor uses for "
                  "requests."
@@ -86,7 +86,7 @@ class CreateHealthMonitor(command.ShowOne):
         )
         parser.add_argument(
             '--type',
-            metavar="{'PING','HTTP','TCP','HTTPS'}",
+            metavar="{PING,HTTP,TCP,HTTPS}",
             required=True,
             choices=['PING', 'HTTP', 'TCP', 'HTTPS'],
             help="Set the type of health monitor."
@@ -235,7 +235,7 @@ class SetHealthMonitor(command.Command):
         )
         parser.add_argument(
             '--http_method',
-            metavar='<method>',
+            metavar="{GET,POST,DELETE,PUT,HEAD,OPTIONS,PATCH,CONNECT,TRACE}",
             choices=HTTP_METHODS,
             help="Set the HTTP method that the health monitor uses for "
                  "requests."

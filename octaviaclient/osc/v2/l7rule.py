@@ -37,8 +37,7 @@ class CreateL7Rule(command.ShowOne):
         )
         parser.add_argument(
             '--compare-type',
-            metavar="{'REGEX','EQUAL_TO','CONTAINS','ENDS_WITH',"
-                    "'STARTS_WITH'}",
+            metavar="{REGEX,EQUAL_TO,CONTAINS,ENDS_WITH,STARTS_WITH}",
             required=True,
             choices=COMPARE_TYPES,
             help="Set the compare type for the l7rule."
@@ -62,7 +61,7 @@ class CreateL7Rule(command.ShowOne):
         )
         parser.add_argument(
             '--type',
-            metavar="{'FILE_TYPE','PATH','COOKIE','HOST_NAME','HEADER'}",
+            metavar="{FILE_TYPE,PATH,COOKIE,HOST_NAME,HEADER}",
             required=True,
             choices=TYPES,
             help="Set the type for the l7rule."
@@ -205,7 +204,7 @@ class SetL7Rule(command.Command):
         )
         parser.add_argument(
             '--compare-type',
-            metavar='<type>',
+            metavar="{REGEX,EQUAL_TO,CONTAINS,ENDS_WITH,STARTS_WITH}",
             choices=COMPARE_TYPES,
             help="Set the compare type for the l7rule."
         )
@@ -227,7 +226,7 @@ class SetL7Rule(command.Command):
         )
         parser.add_argument(
             '--type',
-            metavar='<type>',
+            metavar="{FILE_TYPE,PATH,COOKIE,HOST_NAME,HEADER}",
             choices=TYPES,
             help="Set the type for the l7rule."
         )

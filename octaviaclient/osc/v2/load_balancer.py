@@ -126,8 +126,8 @@ class DeleteLoadBalancer(command.Command):
                                                 parsed_args)
         lb_id = attrs.pop('loadbalancer_id')
 
-        self.app.client_manager.load_balancer.\
-            load_balancer_delete(lb_id=lb_id, **attrs)
+        self.app.client_manager.load_balancer.load_balancer_delete(
+            lb_id=lb_id, **attrs)
 
 
 class ListLoadBalancer(lister.Lister):

@@ -217,7 +217,7 @@ Create a listener
 
     openstack loadbalancer listener create
         [--description <description>]
-        --protocol <protocol>
+        --protocol {TCP,HTTP,HTTPS,TERMINATED_HTTPS}
         [--connection-limit <limit>]
         [--default-pool <pool>]
         [--default-tls-container-ref <container-ref>]
@@ -235,9 +235,9 @@ Create a listener
 
     Set the description of this listener.
 
-.. option:: --protocol <protocol>
+.. option:: --protocol {TCP,HTTP,HTTPS,TERMINATED_HTTPS}
 
-    The protocol for the listener
+    The protocol for the listener.
 
 .. option:: --connection-limit <limit>
 
@@ -287,9 +287,8 @@ Update a listener
     openstack loadbalancer listener set
         [--name <name>]
         [--description <description>]
-        [--protocol <protocol>]
         [--connection-limit <limit>]
-        [--default-pool <pool-id>]
+        [--default-pool <pool>]
         [--default-tls-container-ref <container-ref>]
         [---sni-container-refs [<container-ref> [<container-ref> ...]]]
         [--insert-headers <header=value>]
@@ -395,11 +394,11 @@ Create a pool
     openstack loadbalancer pool create
         [--name <name>]
         [--description <description>]
-        --protocol {'TERMINATED_HTTPS','HTTP','HTTPS','TCP','PROXY'}
+        --protocol {TCP,HTTP,HTTPS,TERMINATED_HTTPS,PROXY}
         [--listener <listener>]
         [--loadbalancer <load_balancer>]
         [--session-persistence <session persistence>]
-        --lb-algorithm {'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}
+        --lb-algorithm {SOURCE_IP,ROUND_ROBIN,LEAST_CONNECTIONS}
         [--project <project>]
         [--enable | --disable]
 
@@ -411,7 +410,7 @@ Create a pool
 
     Set pool description.
 
-.. option:: --protocol {'TERMINATED_HTTPS','HTTP','HTTPS','TCP','PROXY'}
+.. option:: --protocol {TCP,HTTP,HTTPS,TERMINATED_HTTPS,PROXY}
 
     Set the pool protocol.
 
@@ -427,7 +426,7 @@ Create a pool
 
     Set the session persistence for the listener (key=value).
 
-.. option:: --lb-algorithm {'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}
+.. option:: --lb-algorithm {SOURCE_IP,ROUND_ROBIN,LEAST_CONNECTIONS}
 
     Load balancing algorithm to use.
 
@@ -454,11 +453,11 @@ Update a pool
     openstack loadbalancer pool set
         [--name <name>]
         [--description <description>]
-        [--protocol {'TERMINATED_HTTPS','HTTP','HTTPS','TCP','PROXY'}]
+        [--protocol {TCP,HTTP,HTTPS,TERMINATED_HTTPS,PROXY}]
         [--loadbalancer <load_balancer>]
         [--listener <listener>]
         [--session-persistence <session_persistence>]
-        [--lb-algorithm {'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}]
+        [--lb-algorithm {SOURCE_IP,ROUND_ROBIN,LEAST_CONNECTIONS}]
         [--enable | --disable]
         <pool>
 
@@ -470,7 +469,7 @@ Update a pool
 
     Set the description of the pool.
 
-.. option:: --protocol {'TERMINATED_HTTPS','HTTP','HTTPS','TCP','PROXY'}
+.. option:: --protocol {TCP,HTTP,HTTPS,TERMINATED_HTTPS,PROXY}
 
     Set protocol for the pool.
 
@@ -486,7 +485,7 @@ Update a pool
 
     Set the session persistence for the listener (key=value).
 
-.. option:: --lb-algorithm {'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}
+.. option:: --lb-algorithm {SOURCE_IP,ROUND_ROBIN,LEAST_CONNECTIONS}
 
     Set the load balancing algorithm to use.
 
@@ -740,7 +739,7 @@ Create a l7policy
         [--name <name>]
         [--description <description>]
         [--redirect-pool <pool>]
-        --action {'REDIRECT_TO_URL','REDIRECT_TO_POOL','REJECT'}
+        --action {REDIRECT_TO_URL,REDIRECT_TO_POOL,REJECT}
         [--redirect-url <url>]
         [--project <project>]
         [--position <position>]
@@ -759,7 +758,7 @@ Create a l7policy
 
     Set the pool to redirect requests to (name or ID).
 
-.. option:: --action {'REDIRECT_TO_URL','REDIRECT_TO_POOL','REJECT'}
+.. option:: --action {REDIRECT_TO_URL,REDIRECT_TO_POOL,REJECT}
 
     Set the action of the policy.
 
@@ -797,7 +796,7 @@ Update a l7policy
         [--name <name>]
         [--description <description>]
         [--redirect-pool <pool>]
-        [--action {'REDIRECT_TO_URL','REDIRECT_TO_POOL','REJECT'}]
+        [--action {REDIRECT_TO_URL,REDIRECT_TO_POOL,REJECT}]
         [--redirect-url <url>]
         [--position <position>]
         [--enable | --disable]
@@ -815,7 +814,7 @@ Update a l7policy
 
     Set the pool to redirect requests to (name or ID).
 
-.. option:: --action {'REDIRECT_TO_URL','REDIRECT_TO_POOL','REJECT'}
+.. option:: --action {REDIRECT_TO_URL,REDIRECT_TO_POOL,REJECT}
 
     Set the action of the policy.
 
@@ -907,16 +906,16 @@ Create a l7rule
 .. code:: bash
 
     openstack loadbalancer l7rule create
-        --compare-type {'REGEX','EQUAL_TO','CONTAINS','ENDS_WITH','STARTS_WITH'}
+        --compare-type {REGEX,EQUAL_TO,CONTAINS,ENDS_WITH,STARTS_WITH}
         [--invert]
         --value <value>
         [--key <key>]
         [--project <project>]
-        --type {'FILE_TYPE','PATH','COOKIE','HOST_NAME','HEADER'}
+        --type {FILE_TYPE,PATH,COOKIE,HOST_NAME,HEADER}
         [--enable | --disable]
         <l7policy>
 
-.. option:: --compare-type {'REGEX','EQUAL_TO','CONTAINS','ENDS_WITH','STARTS_WITH'}
+.. option:: --compare-type {REGEX,EQUAL_TO,CONTAINS,ENDS_WITH,STARTS_WITH}
 
     Set the compare type for the l7rule.
 
@@ -936,7 +935,7 @@ Create a l7rule
 
     Project for the l7rule (name or ID).
 
-.. option:: --type {'FILE_TYPE','PATH','COOKIE','HOST_NAME','HEADER'}
+.. option:: --type {FILE_TYPE,PATH,COOKIE,HOST_NAME,HEADER}
 
     Set the type for the l7rule.
 
@@ -963,16 +962,16 @@ Update a l7rule
 .. code:: bash
 
     openstack loadbalancer l7rule set
-        [--compare-type {'REGEX','EQUAL_TO','CONTAINS','ENDS_WITH','STARTS_WITH'}]
+        [--compare-type {REGEX,EQUAL_TO,CONTAINS,ENDS_WITH,STARTS_WITH}]
         [--invert]
         [--value <value>]
         [--key <key>]
-        [--type {'FILE_TYPE','PATH','COOKIE','HOST_NAME','HEADER'}]
+        [--type {FILE_TYPE,PATH,COOKIE,HOST_NAME,HEADER}]
         [--enable | --disable]
         --l7policy <policy>
         <l7rule_id>
 
-.. option:: --compare-type {'REGEX','EQUAL_TO','CONTAINS','ENDS_WITH','STARTS_WITH'}
+.. option:: --compare-type {REGEX,EQUAL_TO,CONTAINS,ENDS_WITH,STARTS_WITH}
 
     Set the compare type for the l7rule.
 
@@ -988,7 +987,7 @@ Update a l7rule
 
     Set the key for the l7rule's value to match on.
 
-.. option:: --type {'FILE_TYPE','PATH','COOKIE','HOST_NAME','HEADER'}
+.. option:: --type {FILE_TYPE,PATH,COOKIE,HOST_NAME,HEADER}
 
     Set the type for the l7rule.
 
@@ -1072,11 +1071,11 @@ Create a health monitor
         [--name <name>]
         --delay <delay>
         [--expected-codes <codes>]
-        [--http_method {'GET','POST','DELETE','PUT'}]
+        [--http_method {GET,POST,DELETE,PUT,HEAD,OPTIONS,PATCH,CONNECT,TRACE}]
         --timeout <timeout>
         --max-retries <max_retries>
         [--url-path <url_path>]
-        --type {'PING','HTTP','TCP','HTTPS'}
+        --type {PING,HTTP,TCP,HTTPS}
         [--max-retries-down <max_retries_down>]
         [--project <project>]
         [--enable | --disable]
@@ -1094,7 +1093,7 @@ Create a health monitor
 
     Set the list of HTTP status codes expected in response from the member to declare it healthy.
 
-.. option:: --http_method {'GET','POST','DELETE','PUT'}
+.. option:: --http_method {GET,POST,DELETE,PUT,HEAD,OPTIONS,PATCH,CONNECT,TRACE}
 
     Set the HTTP method that the health monitor uses for requests.
 
@@ -1111,7 +1110,7 @@ Create a health monitor
 
     Set the HTTP URL path of the request sent by the monitor to test the health of a backend member.
 
-.. option:: --type {'PING','HTTP','TCP','HTTPS'}
+.. option:: --type {PING,HTTP,TCP,HTTPS}
 
     Set the type of health monitor.
 
@@ -1148,12 +1147,12 @@ Update a health monitor
         [--name <name>]
         [--delay <delay>]
         [--expected-codes <codes>]
-        [--http_method {'GET','POST','DELETE','PUT'}]
+        [--http_method {GET,POST,DELETE,PUT,HEAD,OPTIONS,PATCH,CONNECT,TRACE}]
         [--timeout <timeout>]
         [--max-retries <max_retries>]
         [--max-retries-down <max_retries_down>]
         [--url-path <url_path>]
-        [--type {'PING','HTTP','TCP','HTTPS'}]
+        [--type {PING,HTTP,TCP,HTTPS}]
         [--enable | --disable]
         <health_monitor>
 
@@ -1169,7 +1168,7 @@ Update a health monitor
 
     Set the list of HTTP status codes expected in response from the member to declare it healthy.
 
-.. option:: --http_method {'GET','POST','DELETE','PUT'}
+.. option:: --http_method {GET,POST,DELETE,PUT,HEAD,OPTIONS,PATCH,CONNECT,TRACE}
 
     Set the HTTP method that the health monitor uses for requests.
 
@@ -1190,7 +1189,7 @@ Update a health monitor
 
     Set the HTTP URL path of the request sent by the monitor to test the health of a backend member.
 
-.. option:: --type {'PING','HTTP','TCP','HTTPS'}
+.. option:: --type {PING,HTTP,TCP,HTTPS}
 
     Set the type of health monitor.
 

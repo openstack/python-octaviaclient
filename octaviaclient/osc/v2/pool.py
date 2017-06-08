@@ -40,9 +40,9 @@ class CreatePool(command.ShowOne):
         )
         parser.add_argument(
             '--protocol',
-            metavar="{'TERMINATED_HTTPS','HTTP','HTTPS','TCP','PROXY'}",
+            metavar="{TCP,HTTP,HTTPS,TERMINATED_HTTPS,PROXY}",
             required=True,
-            choices=['TERMINATED_HTTPS', 'HTTP', 'HTTPS', 'TCP', 'PROXY'],
+            choices=['TCP', 'HTTP', 'HTTPS', 'TERMINATED_HTTPS', 'PROXY'],
             help="Set the pool protocol."
         )
         parent_group = parser.add_mutually_exclusive_group(required=True)
@@ -63,7 +63,7 @@ class CreatePool(command.ShowOne):
         )
         parser.add_argument(
             '--lb-algorithm',
-            metavar="{'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}",
+            metavar="{SOURCE_IP,ROUND_ROBIN,LEAST_CONNECTIONS}",
             required=True,
             choices=['SOURCE_IP', 'ROUND_ROBIN', 'LEAST_CONNECTIONS'],
             help="Load balancing algorithm to use."
@@ -202,7 +202,7 @@ class SetPool(command.Command):
         )
         parser.add_argument(
             '--lb-algorithm',
-            metavar="{'SOURCE_IP','ROUND_ROBIN','LEAST_CONNECTIONS'}",
+            metavar="{SOURCE_IP,ROUND_ROBIN,LEAST_CONNECTIONS}",
             choices=['SOURCE_IP', 'ROUND_ROBIN', 'LEAST_CONNECTIONS'],
             help="Set the load balancing algorithm to use."
         )

@@ -1,3 +1,4 @@
+#   Copyright 2017 GoDaddy
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -33,36 +34,40 @@ class CreateHealthMonitor(command.ShowOne):
 
         parser.add_argument(
             'pool',
-            metavar='<pool_id>',
-            help="Pool for the health monitor (name or ID)"
+            metavar='<pool>',
+            help="Set the pool for the health monitor (name or ID)."
         )
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="Set health monitor name"
+            help="Set the health monitor name."
         )
         parser.add_argument(
             '--delay',
             metavar='<delay>',
             required=True,
-            help="Delay for the health monitor"
+            help="Set the time in seconds, between sending probes to members."
         )
         parser.add_argument(
             '--expected-codes',
             metavar='<codes>',
-            help="Expected response code to monitor for."
+            help="Set the list of HTTP status codes expected in response from "
+                 "the member to declare it healthy."
         )
         parser.add_argument(
             '--http_method',
             metavar='<method>',
             choices=HTTP_METHODS,
-            help="HTTP method to use."
+            help="Set the HTTP method that the health monitor uses for "
+                 "requests."
         )
         parser.add_argument(
             '--timeout',
             metavar='<timeout>',
             required=True,
-            help="Timeout for the health monitor"
+            help="Set the maximum time, in seconds, that a monitor waits to "
+                 "connect before it times out. This value must be less than "
+                 "the delay value."
         )
         parser.add_argument(
             '--max-retries',
@@ -76,35 +81,36 @@ class CreateHealthMonitor(command.ShowOne):
         parser.add_argument(
             '--url-path',
             metavar='<url_path>',
-            help="URL path to endpoint"
+            help="Set the HTTP URL path of the request sent by the monitor to "
+                 "test the health of a backend member."
         )
         parser.add_argument(
             '--type',
-            metavar='<type>',
+            metavar="{'PING','HTTP','TCP','HTTPS'}",
             required=True,
             choices=['PING', 'HTTP', 'TCP', 'HTTPS'],
-            help="Protocol to use for the health monitor"
+            help="Set the type of health monitor."
         )
         parser.add_argument(
             '--max-retries-down',
             metavar='<max_retries_down>',
             type=int,
             choices=range(1, 10),
-            help="Maximum number of retires until the health monitor reports "
-                 "down."
+            help="Set the number of allowed check failures before changing "
+                 "the operating status of the member to ERROR."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
             action='store_true',
             default=True,
-            help="Enable health monitor (default)"
+            help="Enable health monitor (default)."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable health monitor"
+            help="Disable health monitor."
         )
 
         return parser
@@ -134,7 +140,7 @@ class DeleteHealthMonitor(command.Command):
         parser.add_argument(
             'health_monitor',
             metavar='<health_monitor>',
-            help="Health monitor to delete (name or ID)"
+            help="Health monitor to delete (name or ID)."
         )
 
         return parser
@@ -179,7 +185,7 @@ class ShowHealthMonitor(command.ShowOne):
         parser.add_argument(
             'health_monitor',
             metavar='<health_monitor>',
-            help='Name or UUID of the health monitor'
+            help='Name or UUID of the health monitor.'
         )
 
         return parser
@@ -209,33 +215,37 @@ class SetHealthMonitor(command.Command):
         parser.add_argument(
             'health_monitor',
             metavar='<health_monitor>',
-            help="Health monitor to update (name or ID)"
+            help="Health monitor to update (name or ID)."
         )
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="Set health monitor name"
+            help="Set health monitor name."
         )
         parser.add_argument(
             '--delay',
             metavar='<delay>',
-            help="Set delay for the health monitor"
+            help="Set the time in seconds, between sending probes to members."
         )
         parser.add_argument(
             '--expected-codes',
             metavar='<codes>',
-            help="Set expected response code to monitor for."
+            help="Set the list of HTTP status codes expected in response from "
+                 "the member to declare it healthy."
         )
         parser.add_argument(
             '--http_method',
             metavar='<method>',
             choices=HTTP_METHODS,
-            help="Set HTTP method to use."
+            help="Set the HTTP method that the health monitor uses for "
+                 "requests."
         )
         parser.add_argument(
             '--timeout',
             metavar='<timeout>',
-            help="Set the timeout for the health monitor"
+            help="Set the maximum time, in seconds, that a monitor waits to "
+                 "connect before it times out. This value must be less than "
+                 "the delay value."
         )
         parser.add_argument(
             '--max-retries',
@@ -250,26 +260,27 @@ class SetHealthMonitor(command.Command):
             metavar='<max_retries_down>',
             type=int,
             choices=range(1, 10),
-            help="Set the Maximum number of retires until the health monitor "
-                 "reports down."
+            help="Set the number of allowed check failures before changing "
+                 "the operating status of the member to ERROR."
         )
         parser.add_argument(
             '--url-path',
             metavar='<url_path>',
-            help="Set the URL path to endpoint"
+            help="Set the HTTP URL path of the request sent by the monitor to "
+                 "test the health of a backend member."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
             action='store_true',
             default=None,
-            help="Enable health monitor (default)"
+            help="Enable health monitor."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable health monitor"
+            help="Disable health monitor."
         )
 
         return parser

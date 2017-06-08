@@ -1,3 +1,4 @@
+#   Copyright 2017 GoDaddy
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -32,34 +33,34 @@ class CreateL7Policy(command.ShowOne):
         parser.add_argument(
             'listener',
             metavar='<listener>',
-            help="Listener to add to l7policy (name or ID)"
+            help="Listener to add l7policy to (name or ID)."
         )
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="New l7policy name"
+            help="Set the l7policy name."
         )
         parser.add_argument(
             '--description',
             metavar='<description>',
-            help="Set l7policy description"
+            help="Set l7policy description."
         )
         parser.add_argument(
             '--redirect-pool',
             metavar='<pool>',
-            help="Redirect pool (name or ID)"
+            help="Set the pool to redirect requests to (name or ID)."
         )
         parser.add_argument(
             '--action',
-            metavar='<action>',
+            metavar="{'REDIRECT_TO_URL','REDIRECT_TO_POOL','REJECT'}",
             required=True,
             choices=ACTION_CHOICES,
-            help="Policy action"
+            help="Set the action of the policy."
         )
         parser.add_argument(
             '--redirect-url',
             metavar='<url>',
-            help="Redirect URL"
+            help="Set the URL to redirect requests to."
         )
         parser.add_argument(
             '--position',
@@ -72,13 +73,13 @@ class CreateL7Policy(command.ShowOne):
             '--enable',
             action='store_true',
             default=True,
-            help="Enable l7policy (default)"
+            help="Enable l7policy (default)."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable l7policy"
+            help="Disable l7policy."
         )
 
         return parser
@@ -108,7 +109,7 @@ class DeleteL7Policy(command.Command):
         parser.add_argument(
             'l7policy',
             metavar="<policy>",
-            help="l7policy to delete (name or ID)"
+            help="l7policy to delete (name or ID)."
         )
 
         return parser
@@ -152,7 +153,7 @@ class ShowL7Policy(command.ShowOne):
         parser.add_argument(
             'l7policy',
             metavar='<policy>',
-            help='Name or UUID of the l7policy'
+            help='Name or UUID of the l7policy.'
         )
 
         return parser
@@ -182,33 +183,33 @@ class SetL7Policy(command.Command):
         parser.add_argument(
             'l7policy',
             metavar='<policy>',
-            help="L7policy to update (name or ID)"
+            help="L7policy to update (name or ID)."
         )
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="Set l7policy name"
+            help="Set l7policy name."
         )
         parser.add_argument(
             '--description',
             metavar='<description>',
-            help="Set l7policy description"
+            help="Set l7policy description."
         )
         parser.add_argument(
             '--redirect-pool',
             metavar='<pool>',
-            help="Set redirect pool (name or ID)"
+            help="Set the pool to redirect requests to (name or ID)."
         )
         parser.add_argument(
             '--action',
             metavar='<action>',
             choices=ACTION_CHOICES,
-            help="Set policy action"
+            help="Set the action of the policy."
         )
         parser.add_argument(
             '--redirect-url',
             metavar='<url>',
-            help="Set redirect URL"
+            help="Set the URL to redirect requests to."
         )
         parser.add_argument(
             '--position',
@@ -221,13 +222,13 @@ class SetL7Policy(command.Command):
             '--enable',
             action='store_true',
             default=None,
-            help="Enable l7policy (default)"
+            help="Enable l7policy."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable l7policy"
+            help="Disable l7policy."
         )
 
         return parser

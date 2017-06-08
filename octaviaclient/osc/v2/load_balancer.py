@@ -31,50 +31,50 @@ class CreateLoadBalancer(command.ShowOne):
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="New load balancer name"
+            help="New load balancer name."
         )
         parser.add_argument(
             '--description',
             metavar='<description>',
-            help="Set load balancer description"
+            help="Set load balancer description."
         )
         parser.add_argument(
             '--vip-address',
             metavar='<vip_address>',
-            help="Set IP Address"
+            help="Set the VIP IP Address."
         )
         parser.add_argument(
             '--vip-port-id',
             metavar='<vip_port_id>',
-            help="Set Port for the load balancer (name or ID)"
+            help="Set Port for the load balancer (name or ID)."
         )
         parser.add_argument(
             '--vip-subnet-id',
             metavar='<vip_subnet_id>',
-            help="Set subnet for the load balancer (name or ID)"
+            help="Set subnet for the load balancer (name or ID)."
         )
         parser.add_argument(
             '--vip-network-id',
             metavar='<vip_network_id>',
-            help="Set network for the load balancer (name or ID)"
+            help="Set network for the load balancer (name or ID)."
         )
         parser.add_argument(
             '--project',
             metavar='<project>',
-            help="Project for the load balancer (name or ID)"
+            help="Project for the load balancer (name or ID)."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
             action='store_true',
             default=True,
-            help="Enable load balancer (default)"
+            help="Enable load balancer (default)."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable load balancer"
+            help="Disable load balancer."
         )
 
         return parser
@@ -139,25 +139,25 @@ class ListLoadBalancer(lister.Lister):
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="List load balancers according to their name"
+            help="List load balancers according to their name."
         )
         admin_state_group = parser.add_mutually_exclusive_group()
         admin_state_group.add_argument(
             '--enable',
             action='store_true',
             default=None,
-            help="List load balancers according to their name"
+            help="List enabled load balancers."
         )
         admin_state_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="List disabled load balancers"
+            help="List disabled load balancers."
         )
         parser.add_argument(
             '--project',
             metavar='<project-id>',
-            help="List load balancers according to their project (name or ID)"
+            help="List load balancers according to their project (name or ID)."
         )
 
         return parser
@@ -186,7 +186,7 @@ class ShowLoadBalancer(command.ShowOne):
         parser.add_argument(
             'loadbalancer',
             metavar='<load_balancer>',
-            help="Name or UUID of the load balancer"
+            help="Name or UUID of the load balancer."
         )
 
         return parser
@@ -219,31 +219,31 @@ class SetLoadBalancer(command.Command):
 
         parser.add_argument(
             'loadbalancer',
-            metavar='<load_balancer>',
-            help='Name or UUID of the load balancer'
+            metavar='<load balancer>',
+            help='Name or UUID of the load balancer to update.'
+        )
+        parser.add_argument(
+            '--name',
+            metavar='<name>',
+            help="Set load balancer name."
+        )
+        parser.add_argument(
+            '--description',
+            metavar='<description>',
+            help="Set load balancer description."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
             action='store_true',
             default=None,
-            help="Enable load balancer (default)"
+            help="Enable load balancer."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable load balancer"
-        )
-        parser.add_argument(
-            '--name',
-            metavar='<name>',
-            help="Set load balancer name"
-        )
-        parser.add_argument(
-            '--description',
-            metavar='<description>',
-            help="Set load balancer description"
+            help="Disable load balancer."
         )
 
         return parser

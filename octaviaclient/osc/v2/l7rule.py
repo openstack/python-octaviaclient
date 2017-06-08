@@ -1,3 +1,4 @@
+#   Copyright 2017 GoDaddy
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -32,51 +33,52 @@ class CreateL7Rule(command.ShowOne):
         parser.add_argument(
             'l7policy',
             metavar='<l7policy>',
-            help="l7policy to add l7rule to (name or ID)"
+            help="l7policy to add l7rule to (name or ID)."
         )
         parser.add_argument(
             '--compare-type',
-            metavar='<type>',
+            metavar="{'REGEX','EQUAL_TO','CONTAINS','ENDS_WITH',"
+                    "'STARTS_WITH'}",
             required=True,
             choices=COMPARE_TYPES,
-            help="Compare type for the l7rule"
+            help="Set the compare type for the l7rule."
         )
         parser.add_argument(
             '--invert',
             action='store_true',
             default=None,
-            help="Invert l7rule"
+            help="Invert l7rule."
         )
         parser.add_argument(
             '--value',
             metavar='<value>',
             required=True,
-            help="Rule value"
+            help="Set the rule value to match on."
         )
         parser.add_argument(
             '--key',
             metavar='<key>',
-            help="Key for the l7rule"
+            help="Set the key for the l7rule's value to match on."
         )
         parser.add_argument(
             '--type',
-            metavar='<type>',
+            metavar="{'FILE_TYPE','PATH','COOKIE','HOST_NAME','HEADER'}",
             required=True,
             choices=TYPES,
-            help="Type for the l7rule"
+            help="Set the type for the l7rule."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
             action='store_true',
             default=True,
-            help="Enable l7policy (default)"
+            help="Enable l7rule (default)."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable l7policy"
+            help="Disable l7rule."
         )
 
         return parser
@@ -107,12 +109,12 @@ class DeleteL7Rule(command.Command):
         parser.add_argument(
             'l7policy',
             metavar="<l7policy>",
-            help="l7policy to delete rule from (name or ID)"
+            help="l7policy to delete rule from (name or ID)."
         )
         parser.add_argument(
             'l7rule',
             metavar="<rule_id>",
-            help="l7rule to delete"
+            help="l7rule to delete."
         )
 
         return parser
@@ -135,7 +137,7 @@ class ListL7Rule(lister.Lister):
         parser.add_argument(
             'l7policy',
             metavar='<l7policy>',
-            help='l7policy to list rules for (name or ID)'
+            help='l7policy to list rules for (name or ID).'
         )
 
         return parser
@@ -162,12 +164,12 @@ class ShowL7Rule(command.ShowOne):
         parser.add_argument(
             'l7policy',
             metavar="<l7policy>",
-            help="l7policy to show rule from (name or ID)"
+            help="l7policy to show rule from (name or ID)."
         )
         parser.add_argument(
             'l7rule',
             metavar="<l7rule_id>",
-            help="l7rule to show"
+            help="l7rule to show."
         )
 
         return parser
@@ -194,53 +196,53 @@ class SetL7Rule(command.Command):
         parser.add_argument(
             'l7policy',
             metavar='<l7policy>',
-            help="L7policy to update rule on (name or ID)"
+            help="L7policy to update l7rule on (name or ID)."
         )
         parser.add_argument(
             'l7rule',
             metavar='<l7rule_id>',
-            help="l7rule to update"
+            help="l7rule to update."
         )
         parser.add_argument(
             '--compare-type',
             metavar='<type>',
             choices=COMPARE_TYPES,
-            help="Compare type for the l7rule {}"
+            help="Set the compare type for the l7rule."
         )
         parser.add_argument(
             '--invert',
             action='store_true',
             default=None,
-            help="Invert l7rule"
+            help="Invert l7rule."
         )
         parser.add_argument(
             '--value',
             metavar='<value>',
-            help="Rule value"
+            help="Set the rule value to match on."
         )
         parser.add_argument(
             '--key',
             metavar='<key>',
-            help="Key for the l7rule"
+            help="Set the key for the l7rule's value to match on."
         )
         parser.add_argument(
             '--type',
             metavar='<type>',
             choices=TYPES,
-            help="Type for the l7rule {}"
+            help="Set the type for the l7rule."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
             action='store_true',
             default=None,
-            help="Enable l7policy (default)"
+            help="Enable l7rule."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable l7policy"
+            help="Disable l7rule."
         )
 
         return parser

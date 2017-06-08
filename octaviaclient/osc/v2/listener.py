@@ -1,3 +1,4 @@
+#   Copyright 2017 GoDaddy
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -30,49 +31,49 @@ class CreateListener(command.ShowOne):
 
         parser.add_argument(
             'loadbalancer',
-            metavar='<loadbalancer_id>',
-            help="Load balancer for the listener (name or ID)"
+            metavar='<load_balancer>',
+            help="Load balancer for the listener (name or ID)."
         )
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="Set listener name"
+            help="Set the listener name."
         )
         parser.add_argument(
             '--description',
             metavar='<description>',
-            help="Description of this listener"
+            help="Set the description of this listener."
         )
         parser.add_argument(
             '--protocol',
-            metavar='<protocol>',
+            metavar='{TCP,HTTP,HTTPS,TERMINATED_HTTPS}',
             choices=['TCP', 'HTTP', 'HTTPS', 'TERMINATED_HTTPS'],
             required=True,
-            help="The protocol for the listener"
+            help="The protocol for the listener."
         )
         parser.add_argument(
             '--connection-limit',
             type=int,
             metavar='<limit>',
-            help="The maximum number of connections permitted for this "
+            help="Set the maximum number of connections permitted for this "
                  "listener."
         )
         parser.add_argument(
             '--default-pool',
             metavar='<pool>',
-            help="The name or ID of the pool used by the listener if no "
+            help="Set the name or ID of the pool used by the listener if no "
                  "L7 policies match."
         )
         parser.add_argument(
             '--default-tls-container-ref',
-            metavar='<container-ref>',
+            metavar='<container_ref>',
             help="The URI to the key manager service secrets container "
                  "containing the certificate and key for TERMINATED_TLS "
                  "listeners."
         )
         parser.add_argument(
             '--sni-container-refs',
-            metavar='<container-ref>',
+            metavar='<container_ref>',
             nargs='*',
             help="A list of URIs to the key manager service secrets "
                  "containers containing the certificates and keys for "
@@ -88,20 +89,20 @@ class CreateListener(command.ShowOne):
             '--protocol-port',
             metavar='<port>',
             required=True,
-            help="The protocol port number for the listener"
+            help="Set the protocol port number for the listener."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
             action='store_true',
             default=True,
-            help="Enable listener (default)"
+            help="Enable listener (default)."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable listener"
+            help="Disable listener."
         )
 
         return parser
@@ -158,25 +159,25 @@ class ListListener(lister.Lister):
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="List listeners by listener name"
+            help="List listeners by listener name."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
             action='store_true',
             default=None,
-            help="List enabled listeners"
+            help="List enabled listeners."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="List disabled listeners"
+            help="List disabled listeners."
         )
         parser.add_argument(
             '--project',
             metavar='<project>',
-            help="List listeners by project ID"
+            help="List listeners by project ID."
         )
         return parser
 
@@ -232,18 +233,18 @@ class SetListener(command.Command):
 
         parser.add_argument(
             'listener',
-            metavar="<listener-id>",
-            help="Listener to modify (name or ID)"
+            metavar="<listener>",
+            help="Listener to modify (name or ID)."
         )
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="Set listener name"
+            help="Set the listener name."
         )
         parser.add_argument(
             '--description',
             metavar='<description>',
-            help="Description of this listener"
+            help="Set the description of this listener."
         )
         parser.add_argument(
             '--connection-limit',
@@ -254,7 +255,7 @@ class SetListener(command.Command):
         )
         parser.add_argument(
             '--default-pool',
-            metavar='<pool-id>',
+            metavar='<pool>',
             help="The ID of the pool used by the listener if no L7 policies "
                  "match."
         )
@@ -284,13 +285,13 @@ class SetListener(command.Command):
             '--enable',
             action='store_true',
             default=None,
-            help="Enable listener"
+            help="Enable listener."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable listener"
+            help="Disable listener."
         )
 
         return parser

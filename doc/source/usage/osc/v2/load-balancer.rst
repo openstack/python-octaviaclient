@@ -225,7 +225,7 @@ Create a listener
         [--insert-headers <header=value,...>]
         --protocol-port <port>
         [--enable | --disable]
-        <loadbalancer_id>
+        <load_balancer>
 
 .. option:: --name <name>
 
@@ -271,6 +271,11 @@ Create a listener
 
     Disable listener.
 
+.. _loadbalancer_listener_create-loadbalancer:
+.. describe:: <load_balancer>
+
+    Load balancer for the listener (name or ID).
+
 loadbalancer listener set
 -------------------------
 
@@ -289,10 +294,10 @@ Update a listener
         [---sni-container-refs [<container-ref> [<container-ref> ...]]]
         [--insert-headers <header=value>]
         [--enable | --disable]
-        <listener-id>
+        <listener>
 
 .. _loadbalancer_listener_set-listener:
-.. describe:: <listener-id>
+.. describe:: <listener>
 
     Listener to modify (name or ID).
 
@@ -937,11 +942,11 @@ Create a l7rule
 
 .. option:: --enable
 
-    Enable l7rule (default)
+    Enable l7rule (default).
 
 .. option:: --disable
 
-    Disable l7rule
+    Disable l7rule.
 
 .. _loadbalancer_l7rule_create-l7policy:
 .. describe:: <l7policy>
@@ -1075,7 +1080,7 @@ Create a health monitor
         [--max-retries-down <max_retries_down>]
         [--project <project>]
         [--enable | --disable]
-        <pool_id>
+        <pool>
 
 .. option:: --name <name>
 
@@ -1127,7 +1132,7 @@ Create a health monitor
     Disable health monitor.
 
 .. _loadbalancer_healthmonitor_create-pool_id:
-.. describe:: <pool_id>
+.. describe:: <pool>
 
     Set the pool for the health monitor (name or ID).
 

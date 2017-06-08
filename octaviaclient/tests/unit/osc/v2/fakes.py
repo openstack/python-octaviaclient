@@ -194,3 +194,33 @@ class FakeL7Policy(object):
             loaded=True)
 
         return l7po
+
+
+class FakeL7Rule(object):
+    """Fake one or more L7policy."""
+
+    @staticmethod
+    def create_one_l7rule(attrs=None):
+        attrs = attrs or {}
+
+        l7ru_info = {
+            "created_at": "2017-05-04T18:46:35",
+            "compare_type": "ENDS_WITH",
+            "provisioning_status": "ACTIVE",
+            "invert": False,
+            "admin_state_up": True,
+            "value": ".example.com",
+            "key": None,
+            "project_id": str(uuid.uuid4()),
+            "type": "HOST_NAME",
+            "id": str(uuid.uuid4()),
+            "operating_status": "ONLINE"
+        }
+
+        l7ru_info.update(attrs)
+
+        l7ru = fakes.FakeResource(
+            info=copy.deepcopy(l7ru_info),
+            loaded=True)
+
+        return l7ru

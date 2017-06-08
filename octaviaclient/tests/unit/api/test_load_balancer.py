@@ -29,6 +29,7 @@ FAKE_LI = uuidutils.generate_uuid()
 FAKE_PO = uuidutils.generate_uuid()
 FAKE_ME = uuidutils.generate_uuid()
 FAKE_L7PO = uuidutils.generate_uuid()
+FAKE_L7RU = uuidutils.generate_uuid()
 
 
 LIST_LB_RESP = {
@@ -60,6 +61,12 @@ LIST_L7PO_RESP = [
     {'name': 'l72'},
 ]
 
+LIST_L7RU_RESP = {
+    'rules':
+        [{'id': uuidutils.generate_uuid()},
+         {'id': uuidutils.generate_uuid()}]
+}
+
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 
@@ -74,6 +81,9 @@ SINGLE_L7PO_UPDATE = {'l7policy': {'admin_state_up': False}}
 
 SINGLE_ME_RESP = {'member': {'id': FAKE_ME, 'name': 'mem1'}}
 SINGLE_ME_UPDATE = {"member": {"admin_state_up": False}}
+
+SINGLE_L7RU_RESP = {'rule': {'id': FAKE_L7RU}}
+SINGLE_L7RU_UPDATE = {'rule': {'admin_state_up': False}}
 
 
 class TestLoadBalancerv2(utils.TestCase):
@@ -331,4 +341,60 @@ class TestLoadBalancer(TestLoadBalancerv2):
             status_code=200
         )
         ret = self.api.l7policy_delete(FAKE_L7PO)
+        self.assertEqual(200, ret.status_code)
+
+    def test_list_l7rule_no_options(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules',
+            json=LIST_L7RU_RESP,
+            status_code=200,
+        )
+        ret = self.api.l7rule_list(FAKE_L7PO)
+        self.assertEqual(LIST_L7RU_RESP, ret)
+
+    def test_show_l7rule(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
+            json=SINGLE_L7RU_RESP,
+            status_code=200
+        )
+        ret = self.api.l7rule_show(FAKE_L7RU, FAKE_L7PO)
+        self.assertEqual(SINGLE_L7RU_RESP['rule'], ret)
+
+    def test_create_l7rule(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules',
+            json=SINGLE_L7RU_RESP,
+            status_code=200
+        )
+        ret = self.api.l7rule_create(FAKE_L7PO, json=SINGLE_L7RU_RESP)
+        self.assertEqual(SINGLE_L7RU_RESP, ret)
+
+    def test_set_l7rule(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
+            json=SINGLE_L7RU_UPDATE,
+            status_code=200
+        )
+        ret = self.api.l7rule_set(
+            l7rule_id=FAKE_L7RU,
+            l7policy_id=FAKE_L7PO,
+            json=SINGLE_L7RU_UPDATE
+        )
+        self.assertEqual(SINGLE_L7RU_UPDATE, ret)
+
+    def test_delete_l7rule(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
+            status_code=200
+        )
+        ret = self.api.l7rule_delete(
+            l7rule_id=FAKE_L7RU,
+            l7policy_id=FAKE_L7PO
+        )
         self.assertEqual(200, ret.status_code)

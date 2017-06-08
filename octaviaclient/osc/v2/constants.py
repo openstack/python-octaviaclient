@@ -145,3 +145,28 @@ L7POLICY_COLUMNS = (
     'action',
     'position',
     'admin_state_up')
+
+L7RULE_ROWS = (
+    'created_at',
+    'compare_type',
+    'provisioning_status',
+    'invert',
+    'admin_state_up',
+    'updated_at',
+    'value',
+    'key',
+    'project_id',
+    'type',
+    'id',
+    'operating_status')
+
+L7RULE_COLUMNS = (
+    'id',
+    'project_id',
+    'provisioning_status',
+    'compare_type',
+    'type',
+    'key',
+    'value',
+    'invert',
+    'admin_state_up')

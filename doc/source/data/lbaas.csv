@@ -8,11 +8,11 @@ lbaas-l7policy-delete,loadbalancer l7policy delete,LBaaS v2 Delete a given L7 po
 lbaas-l7policy-list,loadbalancer l7policy list,LBaaS v2 List L7 policies that belong to a given listener.
 lbaas-l7policy-show,loadbalancer l7policy show,LBaaS v2 Show information of a given L7 policy.
 lbaas-l7policy-update,loadbalancer l7policy set,LBaaS v2 Update a given L7 policy.
-lbaas-l7rule-create,,LBaaS v2 Create L7 rule.
-lbaas-l7rule-delete,,LBaaS v2 Delete a given L7 rule.
-lbaas-l7rule-list,,LBaaS v2 List L7 rules that belong to a given L7 policy.
-lbaas-l7rule-show,,LBaaS v2 Show information of a given rule.
-lbaas-l7rule-update,,LBaaS v2 Update a given L7 rule.
+lbaas-l7rule-create,loadbalancer l7rule create,LBaaS v2 Create L7 rule.
+lbaas-l7rule-delete,loadbalancer l7rule delete,LBaaS v2 Delete a given L7 rule.
+lbaas-l7rule-list,loadbalancer l7rule list,LBaaS v2 List L7 rules that belong to a given L7 policy.
+lbaas-l7rule-show,loadbalancer l7rule show,LBaaS v2 Show information of a given rule.
+lbaas-l7rule-update,loadbalancer l7rule set,LBaaS v2 Update a given L7 rule.
 lbaas-listener-create,loadbalancer listener create,LBaaS v2 Create a listener.
 lbaas-listener-delete,loadbalancer listener delete,LBaaS v2 Delete a given listener.
 lbaas-listener-list,loadbalancer listener list,LBaaS v2 List listeners that belong to a given tenant.

@@ -196,7 +196,7 @@ class APIv2(api.BaseAPI):
         """Delete a pool
 
         :param string pool_id:
-            ID of of listener to delete
+            ID of of pool to delete
         :return:
             Response Code from the API
         """
@@ -344,7 +344,7 @@ class APIv2(api.BaseAPI):
         """Delete a l7policy
 
         :param string l7policy_id:
-            ID of of listener to delete
+            ID of of l7policy to delete
         :return:
             Response Code from the API
         """
@@ -377,6 +377,84 @@ class APIv2(api.BaseAPI):
         """
         url = const.BASE_SINGLE_L7POLICY_URL.format(policy_uuid=l7policy_id)
 
+        response = self.create(url, method='PUT', **kwargs)
+
+        return response
+
+    def l7rule_list(self, l7policy_id, **kwargs):
+        """List all l7rules for a l7policy
+
+        :param kwargs:
+            Parameters to filter on (not implemented)
+        :return:
+            List of l7policies
+        """
+        url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
+        rule_list = self.list(url, **kwargs)
+
+        return rule_list
+
+    def l7rule_create(self, l7policy_id, **kwargs):
+        """Create a l7rule
+
+        :param string l7policy_id:
+            The l7policy to create the l7rule for
+        :param kwargs:
+            Parameters to create a l7rule with (expects json=)
+        :return:
+            A dict of the created l7rule's settings
+        """
+        url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
+        rule = self.create(url, **kwargs)
+
+        return rule
+
+    def l7rule_delete(self, l7rule_id, l7policy_id):
+        """Delete a l7rule
+
+        :param string l7rule_id:
+            ID of of listener to delete
+        :param string l7policy_id:
+            ID of the l7policy for this l7rule
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_L7RULE_URL.format(rule_uuid=l7rule_id,
+                                                  policy_uuid=l7policy_id)
+        response = self.delete(url)
+
+        return response
+
+    def l7rule_show(self, l7rule_id, l7policy_id):
+        """Show a l7rule's settings
+
+        :param string l7rule_id:
+            ID of the l7rule to show
+        :param string l7policy_id:
+            ID of the l7policy for this l7rule
+        :return:
+            Dict of the specified l7rule's settings
+        """
+        url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
+
+        rule = self.find(path=url, value=l7rule_id)
+
+        return rule
+
+    def l7rule_set(self, l7rule_id, l7policy_id, **kwargs):
+        """Update a l7rule's settings
+
+        :param l7rule_id:
+            ID of the l7rule to update
+        :param string l7policy_id:
+            ID of the l7policy for this l7rule
+        :param kwargs:
+            A dict of arguments to update a l7rule
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_L7RULE_URL.format(rule_uuid=l7rule_id,
+                                                  policy_uuid=l7policy_id)
         response = self.create(url, method='PUT', **kwargs)
 
         return response

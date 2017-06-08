@@ -38,6 +38,12 @@ def get_resource_id(resource, resource_name, name):
                 return project_id
             else:
                 return 'non-uuid'
+        elif resource_name == 'members':
+            names = [re for re in resource(name['pool_id'])['members']
+                     if re.get('id') == name['member_id']
+                     or re.get('name') == name['member_id']]
+            name = name['member_id']
+            return names[0].get('id')
         else:
             names = [re for re in resource()[resource_name]
                      if re.get('name') == name or re.get('id') == name]
@@ -185,6 +191,47 @@ def get_pool_attrs(client_manager, parsed_args):
     return attrs
 
 
+def get_member_attrs(client_manager, parsed_args):
+    attr_map = {
+        'name': ('name', str),
+        'address': ('address', str),
+        'protocol_port': ('protocol_port', int),
+        'project_id': (
+            'project_id',
+            'project',
+            client_manager.identity
+        ),
+        'pool': (
+            'pool_id',
+            'pools',
+            client_manager.load_balancer.pool_list
+        ),
+        'member': (
+            'member_id',
+            'members',
+            'pool',
+            client_manager.load_balancer.member_list
+        ),
+        'weight': ('weight', int),
+        'subnet_id': (
+            'vip_subnet_id',
+            'subnets',
+            client_manager.neutronclient.list_subnets
+        ),
+        'monitor_port': ('monitor_port', int),
+        'monitor_address': ('monitor_address', str),
+        'enable': ('admin_state_up', lambda x: True),
+        'disable': ('admin_state_up', lambda x: False),
+    }
+
+    _attrs = vars(parsed_args)
+    attrs = _map_attrs(_attrs, attr_map)
+    # Need to convert vip_subnet_id name
+    if 'vip_subnet_id' in attrs:
+        attrs['subnet_id'] = attrs.pop('vip_subnet_id')
+    return attrs
+
+
 def format_list(data):
     return '\n'.join(i['id'] for i in data)
 
@@ -210,10 +257,28 @@ def _map_attrs(attrs, attr_map):
     mapped_attrs = {}
     for k, v in attrs.items():
         if v is not None and k in attr_map.keys():
-            if len(attr_map[k]) < 3:
+            # Attributes with 2 values map directly to a callable
+            if len(attr_map[k]) is 2:
                 mapped_attrs[attr_map[k][0]] = attr_map[k][1](v)
-            else:
+            # Attributes with 3 values map directly to a resource
+            elif len(attr_map[k]) is 3:
                 mapped_attrs[attr_map[k][0]] = get_resource_id(
-                    attr_map[k][2], attr_map[k][1], v)
-
+                    attr_map[k][2],
+                    attr_map[k][1],
+                    v
+                )
+            # Attributes with 4 values map to a resource with a parent
+            else:
+                parent = attr_map[attr_map[k][2]]
+                parent_id = get_resource_id(
+                    parent[2],
+                    parent[1],
+                    attrs[attr_map[k][2]]
+                )
+                child = attr_map[k]
+                mapped_attrs[child[0]] = get_resource_id(
+                    child[3],
+                    child[1],
+                    {child[0]: str(v), parent[0]: str(parent_id)}
+                )
     return mapped_attrs

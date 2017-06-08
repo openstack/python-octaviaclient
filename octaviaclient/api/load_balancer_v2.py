@@ -200,7 +200,7 @@ class APIv2(api.BaseAPI):
         :return:
             Response Code from the API
         """
-        url = const.BASE_SINGLE_POOL_URL.format(uuid=pool_id)
+        url = const.BASE_SINGLE_POOL_URL.format(pool_id=pool_id)
         deleted_pool = self.delete(url)
 
         return deleted_pool
@@ -227,7 +227,88 @@ class APIv2(api.BaseAPI):
         :return:
             Response Code from the API
         """
-        url = const.BASE_SINGLE_POOL_URL.format(uuid=pool_id)
+        url = const.BASE_SINGLE_POOL_URL.format(pool_id=pool_id)
         pool = self.create(url, method='PUT', **kwargs)
 
         return pool
+
+    def member_list(self, pool_id, **kwargs):
+        """Lists the member from a given pool id
+
+        :param pool_id:
+            ID of the pool
+        :param kwargs:
+            A dict of filter arguments
+        :return:
+            Response list members
+        """
+        url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
+        members_list = self.list(url, **kwargs)
+
+        return members_list
+
+    def member_show(self, pool_id, member_id):
+        """Showing a member details of a pool
+
+        :param pool_id:
+            ID of pool the member is added
+        :param member_id:
+            ID of the member
+        :param kwargs:
+            A dict of arguments
+        :return:
+            Response of member
+        """
+        url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
+        member = self.find(path=url, value=member_id)
+
+        return member
+
+    def member_create(self, pool_id, **kwargs):
+        """Creating a member for the given pool id
+
+        :param pool_id:
+            ID of pool to which member is added
+        :param kwargs:
+            A Dict of arguments
+        :return:
+            A member details on successful creation
+        """
+        url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
+        member = self.create(url, **kwargs)
+
+        return member
+
+    def member_delete(self, pool_id, member_id):
+        """Removing a member from a pool and mark that member as deleted
+
+        :param pool_id:
+            ID of the pool
+        :param member_id:
+            ID of the member to be deleted
+        :return:
+            Response code from the API
+        """
+        url = const.BASE_SINGLE_MEMBER_URL.format(pool_id=pool_id,
+                                                  member_id=member_id)
+        response = self.delete(url)
+
+        return response
+
+    def member_set(self, pool_id, member_id, **kwargs):
+        """Updating a member settings
+
+        :param pool_id:
+            ID of the pool
+        :param member_id:
+            ID of the member to be updated
+        :param kwargs:
+            A dict of the values of member to be updated
+        :return:
+            Response code from the API
+        """
+        url = const.BASE_SINGLE_MEMBER_URL.format(pool_id=pool_id,
+                                                  member_id=member_id)
+        response = self.create(url, method='PUT', **kwargs)
+
+        return response

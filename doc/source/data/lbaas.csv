@@ -26,11 +26,11 @@ lbaas-loadbalancer-show,loadbalancer show,LBaaS v2 Show information of a given l
 lbaas-loadbalancer-stats,,Retrieve stats for a given loadbalancer.
 lbaas-loadbalancer-status,,Retrieve status for a given loadbalancer.
 lbaas-loadbalancer-update,loadbalancer set,LBaaS v2 Update a given loadbalancer.
-lbaas-member-create,,LBaaS v2 Create a member.
-lbaas-member-delete,,LBaaS v2 Delete a given member.
-lbaas-member-list,,LBaaS v2 List members that belong to a given pool.
-lbaas-member-show,,LBaaS v2 Show information of a given member.
-lbaas-member-update,,LBaaS v2 Update a given member.
+lbaas-member-create,loadbalancer member create,LBaaS v2 Create a member.
+lbaas-member-delete,loadbalancer member delete,LBaaS v2 Delete a given member.
+lbaas-member-list,loadbalancer member list,LBaaS v2 List members that belong to a given pool.
+lbaas-member-show,loadbalancer member show,LBaaS v2 Show information of a given member.
+lbaas-member-update,loadbalancer member set,LBaaS v2 Update a given member.
 lbaas-pool-create,loadbalancer pool create,LBaaS v2 Create a pool.
 lbaas-pool-delete,loadbalancer pool delete,LBaaS v2 Delete a given pool.
 lbaas-pool-list,loadbalancer pool list,LBaaS v2 List pools that belong to a given tenant.

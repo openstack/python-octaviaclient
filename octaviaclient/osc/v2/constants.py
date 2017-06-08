@@ -93,3 +93,29 @@ POOL_COLUMNS = (
     'protocol',
     'lb_algorithm',
     'admin_state_up')
+
+MEMBER_ROWS = (
+    'address',
+    'admin_state_up',
+    'created_at',
+    'id',
+    'name',
+    'operating_status',
+    'project_id',
+    'protocol_port',
+    'provisioning_status',
+    'subnet_id',
+    'updated_at',
+    'weight',
+    'monitor_port',
+    'monitor_address')
+
+MEMBER_COLUMNS = (
+    'id',
+    'name',
+    'project_id',
+    'provisioning_status',
+    'address',
+    'protocol_port',
+    'operating_status',
+    'weight')

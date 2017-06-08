@@ -513,3 +513,181 @@ Delete a pool
 .. describe:: <pool>
 
     Pool to delete (name or ID).
+
+======
+member
+======
+
+loadbalancer member list
+------------------------
+
+List members in a pool
+
+.. program:: loadbalancer member list
+.. code:: bash
+
+    openstack loadbalancer member list
+        <pool>
+
+.. _loadbalancer_member_list-pool:
+.. describe:: <pool>
+
+   Pool name or ID to list the members of.
+
+loadbalancer member show
+------------------------
+
+Shows details of a single Member
+
+.. program:: loadbalancer member show
+.. code:: bash
+
+    openstack loadbalancer member show
+        <pool>
+        <member>
+
+.. _loadbalancer_member_show-pool:
+.. describe:: <pool>
+
+   Pool name or ID to show the members of.
+
+.. _loadbalancer_member_show-member:
+.. describe:: <member>
+
+   Name or ID of the member to show.
+
+loadbalancer member create
+--------------------------
+
+Creating a member in a pool
+
+.. program:: loadbalancer member create
+.. code:: bash
+
+    openstack loadbalancer member create
+        [--name <name>]
+        [--weight <weight>]
+        --address <ip_address>
+        [--subnet-id <subnet_id>]
+        --protocol-port <protocol_port>
+        [--monitor-port <monitor_port>]
+        [--monitor-address <monitor_address>]
+        [--enable | --disable]
+        <pool>
+
+.. option:: --name <name>
+
+    Set the name of the member.
+
+.. option:: --weight <weight>
+
+    The weight of a member determines the portion of requests or connections it services compared to the other members of the pool.
+
+.. option:: --address <ip_address>
+
+    The IP address of the backend member server.
+
+.. option:: --subnet-id <subnet_id>
+
+    The subnet ID the member service is accessible from.
+
+.. option:: --protocol-port <protocol_port>
+
+    The protocol port number the backend member server is listening on.
+
+.. option:: --monitor-port <monitor_port>
+
+    An alternate protocol port used for health monitoring a backend member.
+
+.. option:: --monitor-address <monitor_address>
+
+    An alternate IP address used for health monitoring a backend member.
+
+.. option:: --enable
+
+    Enable member (default).
+
+.. option:: --disable
+
+    Disable member.
+
+.. _loadbalancer_member_create-pool:
+.. describe:: <pool>
+
+    ID or name of the pool to create the member for.
+
+loadbalancer member set
+-----------------------
+
+Update a member
+
+.. program:: loadbalancer member set
+.. code:: bash
+
+    openstack loadbalancer member set
+        [--name <name>]
+        [--weight <weight>]
+        [--address <ip_address>]
+        [--subnet-id <subnet_id>]
+        [--protocol-port <protocol_port>]
+        [--monitor-port <monitor_port>]
+        [--monitor-address <monitor_address>]
+        [--enable | --disable]
+        <pool>
+        <member>
+
+.. option:: --name <name>
+
+    Set the name of the member.
+
+.. option:: --weight <weight>
+
+    Set the weight of member in the pool.
+
+.. option:: --monitor-port <monitor_port>
+
+    An alternate protocol port used for health monitoring a backend member.
+
+.. option:: --monitor-address <monitor_address>
+
+    An alternate IP address used for health monitoring a backend member.
+
+.. option:: --enable
+
+    Enable the member.
+
+.. option:: --disable
+
+    Disbale the member.
+
+.. _loadbalancer_member_set-pool:
+.. describe:: <pool>
+
+    Pool that the member to update belongs to (name or ID).
+
+.. _loadbalancer_member_set-member:
+.. describe:: <member>
+
+    Name or ID of the member to update.
+
+loadbalancer member delete
+--------------------------
+
+Delete a member from a pool
+
+.. program:: loadbalancer member delete
+.. code:: bash
+
+    openstack loadbalancer member delete
+        <pool>
+        <member>
+
+.. _loadbalancer_member_delete-pool:
+.. describe:: <pool>
+
+    Pool name or ID to delete the member from.
+
+.. _loadbalancer_member_delete-member:
+.. describe:: <member>
+
+    ID or name of the member to update.

@@ -207,7 +207,7 @@ latex_elements = {
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
+#  documentclass [howto, manual, or own class]).
 latex_documents = [
     ('index', 'GlanceReleaseNotes.tex', u'Glance Release Notes Documentation',
      u'Glance Developers', 'manual'),

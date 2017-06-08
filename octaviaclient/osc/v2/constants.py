@@ -170,3 +170,31 @@ L7RULE_COLUMNS = (
     'value',
     'invert',
     'admin_state_up')
+
+MONITOR_ROWS = (
+    'project_id',
+    'name',
+    'admin_state_up',
+    'pools',
+    'created_at',
+    'provisioning_status',
+    'updated_at',
+    'delay',
+    'expected_codes',
+    'max_retries',
+    'http_method',
+    'timeout',
+    'max_retries_down',
+    'url_path',
+    'type',
+    'id',
+    'operating_status'
+)
+
+MONITOR_COLUMNS = (
+    'id',
+    'name',
+    'project_id',
+    'type',
+    'admin_state_up',
+)

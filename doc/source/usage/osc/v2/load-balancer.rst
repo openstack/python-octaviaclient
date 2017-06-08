@@ -1024,3 +1024,196 @@ loadbalancer l7rule delete
 .. describe:: <l7rule_id>
 
     l7rule to delete.
+
+=============
+healthmonitor
+=============
+
+loadbalancer healthmonitor list
+-------------------------------
+
+List health monitors
+
+.. program:: loadbalancer healthmonitor list
+.. code:: bash
+
+    openstack loadbalancer healthmonitor list
+
+loadbalancer healthmonitor show
+-------------------------------
+
+Show the details of a single health monitor
+
+.. program:: loadbalancer healthmonitor show
+.. code:: bash
+
+    openstack loadbalancer healthmonitor show
+        <health_monitor>
+
+.. _loadbalancer_healthmonitor_show-health_monitor:
+.. describe:: <health_monitor>
+
+    Name or UUID of the health monitor.
+
+loadbalancer healthmonitor create
+---------------------------------
+
+Create a health monitor
+
+.. program:: loadbalancer healthmonitor create
+.. code:: bash
+
+    openstack loadbalancer healthmonitor create
+        [--name <name>]
+        --delay <delay>
+        [--expected-codes <codes>]
+        [--http_method {'GET','POST','DELETE','PUT'}]
+        --timeout <timeout>
+        --max-retries <max_retries>
+        [--url-path <url_path>]
+        --type {'PING','HTTP','TCP','HTTPS'}
+        [--max-retries-down <max_retries_down>]
+        [--project <project>]
+        [--enable | --disable]
+        <pool_id>
+
+.. option:: --name <name>
+
+    Set the health monitor name.
+
+.. option:: --delay <delay>
+
+    Set the time in seconds, between sending probes to members.
+
+.. option:: --expected-codes <codes>
+
+    Set the list of HTTP status codes expected in response from the member to declare it healthy.
+
+.. option:: --http_method {'GET','POST','DELETE','PUT'}
+
+    Set the HTTP method that the health monitor uses for requests.
+
+.. option:: --timeout <timeout>
+
+    Set the maximum time, in seconds, that a monitor waits to connect before it times out.
+    This value must be less than the delay value.
+
+.. option:: --max-retries <max_retries>
+
+    The number of successful checks before changing the operating status of the member to ONLINE.
+
+.. option:: --url-path <url_path>
+
+    Set the HTTP URL path of the request sent by the monitor to test the health of a backend member.
+
+.. option:: --type {'PING','HTTP','TCP','HTTPS'}
+
+    Set the type of health monitor.
+
+.. option:: --max-retries-down <max_retries_down>
+
+    Set the number of allowed check failures before changing the operating status of the member to ERROR.
+
+.. option:: --project <project>
+
+    Project to use for the health monitor (name or ID).
+
+.. option:: --enable
+
+    Enable health monitor (default).
+
+.. option:: --disable
+
+    Disable health monitor.
+
+.. _loadbalancer_healthmonitor_create-pool_id:
+.. describe:: <pool_id>
+
+    Set the pool for the health monitor (name or ID).
+
+loadbalancer healthmonitor set
+------------------------------
+
+Update a health monitor
+
+.. program:: loadbalancer healthmonitor set
+.. code:: bash
+
+    openstack loadbalancer healthmonitor set
+        [--name <name>]
+        [--delay <delay>]
+        [--expected-codes <codes>]
+        [--http_method {'GET','POST','DELETE','PUT'}]
+        [--timeout <timeout>]
+        [--max-retries <max_retries>]
+        [--max-retries-down <max_retries_down>]
+        [--url-path <url_path>]
+        [--type {'PING','HTTP','TCP','HTTPS'}]
+        [--enable | --disable]
+        <health_monitor>
+
+.. option:: --name <name>
+
+    Set health monitor name.
+
+.. option:: --delay <delay>
+
+    Set the time in seconds, between sending probes to members.
+
+.. option:: --expected-codes <codes>
+
+    Set the list of HTTP status codes expected in response from the member to declare it healthy.
+
+.. option:: --http_method {'GET','POST','DELETE','PUT'}
+
+    Set the HTTP method that the health monitor uses for requests.
+
+.. option:: --timeout <timeout>
+
+    Set the maximum time, in seconds, that a monitor waits to connect before it times out.
+    This value must be less than the delay value.
+
+.. option:: --max-retries <max_retries>
+
+    The number of successful checks before changing the operating status of the member to ONLINE.
+
+.. option:: --max-retries-down <max_retries_down>
+
+    Set the number of allowed check failures before changing the operating status of the member to ERROR.
+
+.. option:: --url-path <url_path>
+
+    Set the HTTP URL path of the request sent by the monitor to test the health of a backend member.
+
+.. option:: --type {'PING','HTTP','TCP','HTTPS'}
+
+    Set the type of health monitor.
+
+.. option:: --enable
+
+    Enable health monitor.
+
+.. option:: --disable
+
+    Disable health monitor.
+
+.. _loadbalancer_healthmonitor_set-health_monitor:
+.. describe:: <health_monitor>
+
+    Health monitor to update (name or ID).
+
+loadbalancer healthmonitor delete
+---------------------------------
+
+Delete a health monitor
+
+.. program:: loadbalancer healthmonitor delete
+.. code:: bash
+
+    openstack loadbalancer healthmonitor delete
+        <health_monitor>
+
+.. _loadbalancer_healthmonitor_delete-health_monitor:
+.. describe:: <health_monitor>
+
+   Health monitor to delete (name or ID).

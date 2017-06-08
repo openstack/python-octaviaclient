@@ -458,3 +458,73 @@ class APIv2(api.BaseAPI):
         response = self.create(url, method='PUT', **kwargs)
 
         return response
+
+    def health_monitor_list(self, **kwargs):
+        """List all health monitors
+
+        :param kwargs:
+            Parameters to filter on (not implemented)
+        :return:
+            A dict containing a list of health monitors
+        """
+        url = const.BASE_HEALTH_MONITOR_URL
+        policy_list = self.list(url, **kwargs)
+
+        return policy_list
+
+    def health_monitor_create(self, **kwargs):
+        """Create a health monitor
+
+        :param kwargs:
+            Parameters to create a health monitor with (expects json=)
+        :return:
+            A dict of the created health monitor's settings
+        """
+        url = const.BASE_HEALTH_MONITOR_URL
+        health_monitor = self.create(url, **kwargs)
+
+        return health_monitor
+
+    def health_monitor_delete(self, health_monitor_id):
+        """Delete a health_monitor
+
+        :param string health_monitor_id:
+            ID of of health monitor to delete
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_HEALTH_MONITOR_URL.format(
+            uuid=health_monitor_id)
+        response = self.delete(url)
+
+        return response
+
+    def health_monitor_show(self, health_monitor_id):
+        """Show a health monitor's settings
+
+        :param string health_monitor_id:
+            ID of the health monitor to show
+        :return:
+            Dict of the specified health monitor's settings
+        """
+        url = const.BASE_HEALTH_MONITOR_URL
+        health_monitor = self.find(path=url, value=health_monitor_id)
+
+        return health_monitor
+
+    def health_monitor_set(self, health_monitor_id, **kwargs):
+        """Update a health monitor's settings
+
+        :param health_monitor_id:
+            ID of the health monitor to update
+        :param kwargs:
+            A dict of arguments to update a l7policy
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_HEALTH_MONITOR_URL.format(
+            uuid=health_monitor_id)
+
+        response = self.create(url, method='PUT', **kwargs)
+
+        return response

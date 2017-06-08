@@ -224,3 +224,41 @@ class FakeL7Rule(object):
             loaded=True)
 
         return l7ru
+
+
+class FakeHM(object):
+    """Fake one or more L7policy."""
+
+    @staticmethod
+    def create_one_health_monitor(attrs=None):
+        attrs = attrs or {}
+
+        hm_info = {
+            "project_id": uuid.uuid4().hex,
+            "name": 'hm-name-' + uuid.uuid4().hex,
+            "admin_state_up": True,
+            "pools": [
+                {
+                    "id": uuid.uuid4().hex
+                }
+            ],
+            "created_at": "2017-05-10T06:11:10",
+            "provisioning_status": "PENDING_CREATE",
+            "delay": 10,
+            "expected_codes": "200",
+            "max_retries": 2,
+            "http_method": "GET",
+            "timeout": 10,
+            "max_retries_down": 3,
+            "url_path": "/some/custom/path",
+            "type": "HTTP",
+            "id": uuid.uuid4().hex
+        }
+
+        hm_info.update(attrs)
+
+        hm = fakes.FakeResource(
+            info=copy.deepcopy(hm_info),
+            loaded=True)
+
+        return hm

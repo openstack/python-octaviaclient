@@ -28,6 +28,8 @@ FAKE_LB = uuidutils.generate_uuid()
 FAKE_LI = uuidutils.generate_uuid()
 FAKE_PO = uuidutils.generate_uuid()
 FAKE_ME = uuidutils.generate_uuid()
+FAKE_L7PO = uuidutils.generate_uuid()
+
 
 LIST_LB_RESP = {
     'loadbalancers':
@@ -53,6 +55,11 @@ LIST_ME_RESP = {
          {'name': 'mem2'}]
 }
 
+LIST_L7PO_RESP = [
+    {'name': 'l71'},
+    {'name': 'l72'},
+]
+
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 
@@ -60,7 +67,10 @@ SINGLE_LI_RESP = {'listener': {'id': FAKE_LI, 'name': 'li1'}}
 SINGLE_LI_UPDATE = {"listener": {"admin_state_up": False}}
 
 SINGLE_PO_RESP = {'pool': {'id': FAKE_PO, 'name': 'li1'}}
-SINGLE_PO_UPDATE = {"pool": {"admin_state_up": False}}
+SINGLE_PO_UPDATE = {'pool': {'admin_state_up': False}}
+
+SINGLE_L7PO_RESP = {'l7policy': {'id': FAKE_L7PO, 'name': 'l71'}}
+SINGLE_L7PO_UPDATE = {'l7policy': {'admin_state_up': False}}
 
 SINGLE_ME_RESP = {'member': {'id': FAKE_ME, 'name': 'mem1'}}
 SINGLE_ME_UPDATE = {"member": {"admin_state_up": False}}
@@ -272,4 +282,53 @@ class TestLoadBalancer(TestLoadBalancerv2):
             status_code=200
         )
         ret = self.api.member_delete(pool_id=FAKE_PO, member_id=FAKE_ME)
+        self.assertEqual(200, ret.status_code)
+
+    def test_list_l7policy_no_options(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'l7policies',
+            json=LIST_L7PO_RESP,
+            status_code=200,
+        )
+        ret = self.api.l7policy_list()
+        self.assertEqual(LIST_L7PO_RESP, ret)
+
+    def test_show_l7policy(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'l7policies/' + FAKE_L7PO,
+            json=SINGLE_L7PO_RESP,
+            status_code=200
+        )
+        ret = self.api.l7policy_show(FAKE_L7PO)
+        self.assertEqual(SINGLE_L7PO_RESP['l7policy'], ret)
+
+    def test_create_l7policy(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_URL + 'l7policies',
+            json=SINGLE_L7PO_RESP,
+            status_code=200
+        )
+        ret = self.api.l7policy_create(json=SINGLE_L7PO_RESP)
+        self.assertEqual(SINGLE_L7PO_RESP, ret)
+
+    def test_set_l7policy(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_URL + 'l7policies/' + FAKE_L7PO,
+            json=SINGLE_L7PO_UPDATE,
+            status_code=200
+        )
+        ret = self.api.l7policy_set(FAKE_L7PO, json=SINGLE_L7PO_UPDATE)
+        self.assertEqual(SINGLE_L7PO_UPDATE, ret)
+
+    def test_delete_l7policy(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_URL + 'l7policies/' + FAKE_L7PO,
+            status_code=200
+        )
+        ret = self.api.l7policy_delete(FAKE_L7PO)
         self.assertEqual(200, ret.status_code)

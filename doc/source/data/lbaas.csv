@@ -3,11 +3,11 @@ lbaas-healthmonitor-delete,,LBaaS v2 Delete a given healthmonitor.
 lbaas-healthmonitor-list,,LBaaS v2 List healthmonitors that belong to a given tenant.
 lbaas-healthmonitor-show,,LBaaS v2 Show information of a given healthmonitor.
 lbaas-healthmonitor-update,,LBaaS v2 Update a given healthmonitor.
-lbaas-l7policy-create,,LBaaS v2 Create L7 policy.
-lbaas-l7policy-delete,,LBaaS v2 Delete a given L7 policy.
-lbaas-l7policy-list,,LBaaS v2 List L7 policies that belong to a given listener.
-lbaas-l7policy-show,,LBaaS v2 Show information of a given L7 policy.
-lbaas-l7policy-update,,LBaaS v2 Update a given L7 policy.
+lbaas-l7policy-create,loadbalancer l7policy create,LBaaS v2 Create L7 policy.
+lbaas-l7policy-delete,loadbalancer l7policy delete,LBaaS v2 Delete a given L7 policy.
+lbaas-l7policy-list,loadbalancer l7policy list,LBaaS v2 List L7 policies that belong to a given listener.
+lbaas-l7policy-show,loadbalancer l7policy show,LBaaS v2 Show information of a given L7 policy.
+lbaas-l7policy-update,loadbalancer l7policy set,LBaaS v2 Update a given L7 policy.
 lbaas-l7rule-create,,LBaaS v2 Create L7 rule.
 lbaas-l7rule-delete,,LBaaS v2 Delete a given L7 rule.
 lbaas-l7rule-list,,LBaaS v2 List L7 rules that belong to a given L7 policy.

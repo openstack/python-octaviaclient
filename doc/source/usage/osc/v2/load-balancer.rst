@@ -691,3 +691,162 @@ Delete a member from a pool
 .. describe:: <member>
 
     ID or name of the member to update.
+
+========
+l7policy
+========
+
+loadbalancer l7policy list
+--------------------------
+
+List l7policies
+
+.. program:: loadbalancer l7policy delete
+.. code:: bash
+
+    openstack loadbalancer l7policy list
+
+loadbalancer l7policy show
+--------------------------
+
+Show the details of a single l7policy
+
+.. program:: loadbalancer l7policy delete
+.. code:: bash
+
+    openstack loadbalancer l7policy show
+        <policy>
+
+.. _loadbalancer_l7policy_show-policy:
+.. describe:: <policy>
+
+    Name or UUID of the l7policy.
+
+
+loadbalancer l7policy create
+----------------------------
+
+Create a l7policy
+
+.. program:: loadbalancer l7policy delete
+.. code:: bash
+
+    openstack loadbalancer l7policy create
+        [--name <name>]
+        [--description <description>]
+        [--redirect-pool <pool>]
+        --action {'REDIRECT_TO_URL','REDIRECT_TO_POOL','REJECT'}
+        [--redirect-url <url>]
+        [--project <project>]
+        [--position <position>]
+        [--enable | --disable]
+        <listener>
+
+.. option:: --name <name>
+
+    Set the l7policy name.
+
+.. option:: --description <description>
+
+    Set l7policy description.
+
+.. option:: --redirect-pool <pool>
+
+    Set the pool to redirect requests to (name or ID).
+
+.. option:: --action {'REDIRECT_TO_URL','REDIRECT_TO_POOL','REJECT'}
+
+    Set the action of the policy.
+
+.. option:: --redirect-url <url>
+
+    Set the URL to redirect requests to.
+
+.. option:: --position <position>
+
+    Sequence number of this L7 Policy.
+
+.. option:: --enable
+
+    Enable l7policy (default).
+
+.. option:: --disable
+
+    Disable l7policy.
+
+.. _loadbalancer_l7policy_create-listener:
+.. describe:: <listener>
+
+    Listener to add l7policy to (name or ID).
+
+loadbalancer l7policy set
+-------------------------
+
+Update a l7policy
+
+.. program:: loadbalancer l7policy set
+.. code:: bash
+
+    openstack loadbalancer l7policy set
+        [--listener <listener>]
+        [--name <name>]
+        [--description <description>]
+        [--redirect-pool <pool>]
+        [--action {'REDIRECT_TO_URL','REDIRECT_TO_POOL','REJECT'}]
+        [--redirect-url <url>]
+        [--position <position>]
+        [--enable | --disable]
+        <policy>
+
+.. option:: --name <name>
+
+    Set l7policy name.
+
+.. option:: --description <description>
+
+    Set l7policy description.
+
+.. option:: --redirect-pool <pool>
+
+    Set the pool to redirect requests to (name or ID).
+
+.. option:: --action {'REDIRECT_TO_URL','REDIRECT_TO_POOL','REJECT'}
+
+    Set the action of the policy.
+
+.. option:: --redirect-url <url>
+
+    Set the URL to redirect requests to.
+
+.. option:: --position <position>
+
+    Set sequence number of this L7 Policy.
+
+.. option:: --enable
+
+    Enable l7policy.
+
+.. option:: --disable
+
+    Disable l7policy.
+
+.. _loadbalancer_l7policy_set-policy:
+.. describe:: <policy>
+
+    L7policy to update (name or ID).
+
+loadbalancer l7policy delete
+----------------------------
+
+Delete a l7policy
+
+.. program:: loadbalancer l7policy delete
+.. code:: bash
+
+    openstack loadbalancer l7policy delete
+        <policy>
+
+.. _loadbalancer_l7policy_delete-policy:
+.. describe:: <policy>
+
+    L7policy to delete (name or ID).

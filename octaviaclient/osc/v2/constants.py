@@ -119,3 +119,29 @@ MEMBER_COLUMNS = (
     'protocol_port',
     'operating_status',
     'weight')
+
+L7POLICY_ROWS = (
+    'listener_id',
+    'description',
+    'admin_state_up',
+    'rules',
+    'project_id',
+    'created_at',
+    'provisioning_status',
+    'updated_at',
+    'redirect_pool_id',
+    'redirect_url',
+    'action',
+    'position',
+    'id',
+    'operating_status',
+    'name')
+
+L7POLICY_COLUMNS = (
+    'id',
+    'name',
+    'project_id',
+    'provisioning_status',
+    'action',
+    'position',
+    'admin_state_up')

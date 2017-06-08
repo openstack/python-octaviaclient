@@ -309,6 +309,74 @@ class APIv2(api.BaseAPI):
         """
         url = const.BASE_SINGLE_MEMBER_URL.format(pool_id=pool_id,
                                                   member_id=member_id)
+
+        response = self.create(url, method='PUT', **kwargs)
+
+        return response
+
+    def l7policy_list(self, **kwargs):
+        """List all l7policies
+
+        :param kwargs:
+            Parameters to filter on (not implemented)
+        :return:
+            List of l7policies
+        """
+        url = const.BASE_L7POLICY_URL
+        policy_list = self.list(url, **kwargs)
+
+        return policy_list
+
+    def l7policy_create(self, **kwargs):
+        """Create a l7policy
+
+        :param kwargs:
+            Parameters to create a l7policy with (expects json=)
+        :return:
+            A dict of the created l7policy's settings
+        """
+        url = const.BASE_L7POLICY_URL
+        policy = self.create(url, **kwargs)
+
+        return policy
+
+    def l7policy_delete(self, l7policy_id):
+        """Delete a l7policy
+
+        :param string l7policy_id:
+            ID of of listener to delete
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_L7POLICY_URL.format(policy_uuid=l7policy_id)
+        response = self.delete(url)
+
+        return response
+
+    def l7policy_show(self, l7policy_id):
+        """Show a l7policy's settings
+
+        :param string l7policy_id:
+            ID of the l7policy to show
+        :return:
+            Dict of the specified l7policy's settings
+        """
+        l7policy = self.find(path=const.BASE_L7POLICY_URL, value=l7policy_id)
+
+        return l7policy
+
+    def l7policy_set(self, l7policy_id, **kwargs):
+        """Update a l7policy's settings
+
+        :param l7policy_id:
+            ID of the l7policy to update
+        :param kwargs:
+            A dict of arguments to update a l7policy
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_L7POLICY_URL.format(policy_uuid=l7policy_id)
+
         response = self.create(url, method='PUT', **kwargs)
 
         return response

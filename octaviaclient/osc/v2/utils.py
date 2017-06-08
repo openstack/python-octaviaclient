@@ -43,7 +43,13 @@ def get_resource_id(resource, resource_name, name):
                      if re.get('id') == name['member_id']
                      or re.get('name') == name['member_id']]
             name = name['member_id']
-            return names[0].get('id')
+            if len(names) > 1:
+                msg = ("{0} {1} found with name or ID of {2}. Please try "
+                       "again with UUID".format(len(names), resource_name,
+                                                name))
+                raise exceptions.CommandError(msg)
+            else:
+                return names[0].get('id')
         else:
             names = [re for re in resource()[resource_name]
                      if re.get('name') == name or re.get('id') == name]
@@ -214,7 +220,7 @@ def get_member_attrs(client_manager, parsed_args):
         ),
         'weight': ('weight', int),
         'subnet_id': (
-            'vip_subnet_id',
+            'subnet_id',
             'subnets',
             client_manager.neutronclient.list_subnets
         ),
@@ -226,10 +232,57 @@ def get_member_attrs(client_manager, parsed_args):
 
     _attrs = vars(parsed_args)
     attrs = _map_attrs(_attrs, attr_map)
-    # Need to convert vip_subnet_id name
-    if 'vip_subnet_id' in attrs:
-        attrs['subnet_id'] = attrs.pop('vip_subnet_id')
+
     return attrs
+
+
+def get_l7policy_attrs(client_manager, parsed_args):
+    attr_map = {
+        'name': ('name', str),
+        'description': ('description', str),
+        'redirect_url': ('redirect_url', str),
+        'l7policy': (
+            'l7policy_id',
+            'l7policies',
+            client_manager.load_balancer.l7policy_list
+        ),
+        'redirect_pool': (
+            'redirect_pool_id',
+            'pools',
+            client_manager.load_balancer.pool_list
+        ),
+        'listener': (
+            'listener_id',
+            'listeners',
+            client_manager.load_balancer.listener_list
+        ),
+        'action': ('action', str),
+        'project': (
+            'project_id',
+            'projects',
+            client_manager.identity
+        ),
+        'position': ('position', int),
+        'enable': ('admin_state_up', lambda x: True),
+        'disable': ('admin_state_up', lambda x: False)
+    }
+
+    _attrs = vars(parsed_args)
+    attrs = _map_attrs(_attrs, attr_map)
+
+    return attrs
+
+
+def check_l7policy_attrs(attrs):
+    msg = None
+    if attrs['action'] == 'REDIRECT_TO_POOL':
+        if 'redirect_pool_id' not in attrs:
+            msg = 'Missing argument: --redirect-pool'
+    elif attrs['action'] == 'REDIRECT_TO_URL':
+        if 'redirect_url' not in attrs:
+            msg = 'Missing argument: --redirect-url'
+    if msg is not None:
+        raise exceptions.CommandError(msg)
 
 
 def format_list(data):
@@ -281,4 +334,5 @@ def _map_attrs(attrs, attr_map):
                     child[1],
                     {child[0]: str(v), parent[0]: str(parent_id)}
                 )
+
     return mapped_attrs

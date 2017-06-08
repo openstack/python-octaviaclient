@@ -110,7 +110,7 @@ class FakeListener(object):
 
 
 class FakePool(object):
-    """Fake one or more listeners."""
+    """Fake one or more pool."""
 
     @staticmethod
     def create_one_pool(attrs=None):
@@ -165,3 +165,32 @@ class FakeMember(object):
         mem = fakes.FakeResource(info=copy.deepcopy(member), loaded=True)
 
         return mem
+
+
+class FakeL7Policy(object):
+    """Fake one or more L7policy."""
+
+    @staticmethod
+    def create_one_l7policy(attrs=None):
+        attrs = attrs or {}
+
+        l7po_info = {
+            "listener_id": str(uuid.uuid4()),
+            "description": 'fake desc',
+            "admin_state_up": True,
+            "rules": [{'id': str(uuid.uuid4())}],
+            "provisioning_status": 'active',
+            "redirect_pool_id": str(uuid.uuid4()),
+            "action": 'POOL_REDIRECT',
+            "position": 1,
+            "project_id": str(uuid.uuid4()),
+            "id": str(uuid.uuid4()),
+            "name": 'l7po-name-' + uuid.uuid4().hex
+        }
+        l7po_info.update(attrs)
+
+        l7po = fakes.FakeResource(
+            info=copy.deepcopy(l7po_info),
+            loaded=True)
+
+        return l7po

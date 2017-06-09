@@ -119,13 +119,13 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
 def check_loadbalancer_attrs(attrs):
     verify_args = ['vip_subnet_id', 'vip_network_id', 'vip_port_id']
     if not any(i in attrs.keys() for i in verify_args):
-        msg = "Missing required argument: Requires one of " \
-              "--vip-subnet-id, --vip-network-id or --vip-port-id"
+        msg = ("Missing required argument: Requires one of --vip-subnet-id, "
+               "--vip-network-id or --vip-port-id")
         raise exceptions.CommandError(msg)
     elif 'vip_port_id' in attrs:
         if any(i in attrs.keys() for i in ['vip_subnet_id', 'vip_address']):
-            msg = "Argument error: --port-id can not be used with " \
-                  "--vip-network-id or --vip-subnet-id"
+            msg = ("Argument error: --port-id can not be used with "
+                   "--vip-network-id or --vip-subnet-id")
             raise exceptions.CommandError(msg)
 
 

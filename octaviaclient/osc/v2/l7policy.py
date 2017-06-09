@@ -52,7 +52,7 @@ class CreateL7Policy(command.ShowOne):
         )
         parser.add_argument(
             '--action',
-            metavar="{'REDIRECT_TO_URL','REDIRECT_TO_POOL','REJECT'}",
+            metavar="{REDIRECT_TO_URL,REDIRECT_TO_POOL,REJECT}",
             required=True,
             choices=ACTION_CHOICES,
             help="Set the action of the policy."
@@ -202,7 +202,7 @@ class SetL7Policy(command.Command):
         )
         parser.add_argument(
             '--action',
-            metavar='<action>',
+            metavar="{REDIRECT_TO_URL,REDIRECT_TO_POOL,REJECT}",
             choices=ACTION_CHOICES,
             help="Set the action of the policy."
         )

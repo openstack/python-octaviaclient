@@ -1075,7 +1075,7 @@ Create a health monitor
         --timeout <timeout>
         --max-retries <max_retries>
         [--url-path <url_path>]
-        --type {PING,HTTP,TCP,HTTPS}
+        --type {PING,HTTP,TCP,HTTPS,TLS-HELLO}
         [--max-retries-down <max_retries_down>]
         [--project <project>]
         [--enable | --disable]
@@ -1110,7 +1110,7 @@ Create a health monitor
 
     Set the HTTP URL path of the request sent by the monitor to test the health of a backend member.
 
-.. option:: --type {PING,HTTP,TCP,HTTPS}
+.. option:: --type {PING,HTTP,TCP,HTTPS,TLS-HELLO}
 
     Set the type of health monitor.
 
@@ -1152,7 +1152,7 @@ Update a health monitor
         [--max-retries <max_retries>]
         [--max-retries-down <max_retries_down>]
         [--url-path <url_path>]
-        [--type {PING,HTTP,TCP,HTTPS}]
+        [--type {PING,HTTP,TCP,HTTPS,TLS-HELLO}]
         [--enable | --disable]
         <health_monitor>
 
@@ -1189,7 +1189,7 @@ Update a health monitor
 
     Set the HTTP URL path of the request sent by the monitor to test the health of a backend member.
 
-.. option:: --type {PING,HTTP,TCP,HTTPS}
+.. option:: --type {PING,HTTP,TCP,HTTPS,TLS-HELLO}
 
     Set the type of health monitor.
 

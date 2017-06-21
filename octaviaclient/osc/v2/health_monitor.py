@@ -86,9 +86,9 @@ class CreateHealthMonitor(command.ShowOne):
         )
         parser.add_argument(
             '--type',
-            metavar="{PING,HTTP,TCP,HTTPS}",
+            metavar="{PING,HTTP,TCP,HTTPS,TLS-HELLO}",
             required=True,
-            choices=['PING', 'HTTP', 'TCP', 'HTTPS'],
+            choices=['PING', 'HTTP', 'TCP', 'HTTPS', 'TLS-HELLO'],
             help="Set the type of health monitor."
         )
         parser.add_argument(

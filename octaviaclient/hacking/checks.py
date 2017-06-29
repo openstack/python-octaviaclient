@@ -230,7 +230,7 @@ def check_python3_no_iteritems(logical_line):
                "compatible with both Python 2 and Python 3. In Python 2, "
                "dict.items() may be inefficient for very large dictionaries. "
                "If you can prove that you need the optimization of an "
-               "iterator for Python 2, then you can use six.iteritems(dict).")
+               "iterator for Python 2, then you can use dict.items().")
         yield(0, msg)
 
 

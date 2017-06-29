@@ -294,7 +294,7 @@ def check_l7policy_attrs(attrs):
 
 def get_l7rule_attrs(client_manager, parsed_args):
     attr_map = {
-        'action': ('action', str.upper),
+        'action': ('action', str),
         'project': (
             'project_id',
             'project',
@@ -315,7 +315,7 @@ def get_l7rule_attrs(client_manager, parsed_args):
         'value': ('value', str),
         'key': ('key', str),
         'type': ('type', str),
-        'compare_type': ('compare_type', str.upper),
+        'compare_type': ('compare_type', str),
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False)
     }

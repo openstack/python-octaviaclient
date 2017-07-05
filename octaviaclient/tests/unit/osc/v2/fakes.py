@@ -13,11 +13,10 @@
 
 import copy
 import mock
-import uuid
 
 from octaviaclient.tests import fakes
 from osc_lib.tests import utils
-
+from oslo_utils import uuidutils
 
 LOADBALANCER = {
     'id': 'lbid',
@@ -63,11 +62,11 @@ class FakeLoadBalancer(object):
 
         # Set default attribute
         lb_info = {
-            'id': str(uuid.uuid4()),
-            'name': 'lb-name-' + uuid.uuid4().hex,
-            'project_id': uuid.uuid4().hex,
+            'id': uuidutils.generate_uuid(),
+            'name': 'lb-name-' + uuidutils.generate_uuid(dashed=True),
+            'project_id': uuidutils.generate_uuid(dashed=True),
             'vip_address': '192.0.2.124',
-            'vip_network_id': uuid.uuid4().hex,
+            'vip_network_id': uuidutils.generate_uuid(dashed=True),
             'provisioning_status': 'ONLINE',
             'provider': 'octavia'
         }
@@ -89,9 +88,9 @@ class FakeListener(object):
         attrs = attrs or {}
 
         li_info = {
-            'id': str(uuid.uuid4()),
-            'name': 'li-name-' + uuid.uuid4().hex,
-            'project_id': uuid.uuid4().hex,
+            'id': uuidutils.generate_uuid(),
+            'name': 'li-name-' + uuidutils.generate_uuid(dashed=True),
+            'project_id': uuidutils.generate_uuid(dashed=True),
             'protocol': 'HTTP',
             'protocol_port': 80,
             'provisioning_status': 'ACTIVE',
@@ -119,13 +118,13 @@ class FakePool(object):
         po_info = {
             'admin_state_up': True,
             'description': 'fake desc',
-            'id': str(uuid.uuid4()),
+            'id': uuidutils.generate_uuid(),
             'lb_algorithm': 'ROUND_ROBIN',
-            'listeners': [{'id': str(uuid.uuid4())}],
-            'loadbalancers': [{'id': str(uuid.uuid4())}],
-            'members': [{'id': str(uuid.uuid4())}],
-            'name': 'po-name-' + uuid.uuid4().hex,
-            'project_id': uuid.uuid4().hex,
+            'listeners': [{'id': uuidutils.generate_uuid()}],
+            'loadbalancers': [{'id': uuidutils.generate_uuid()}],
+            'members': [{'id': uuidutils.generate_uuid()}],
+            'name': 'po-name-' + uuidutils.generate_uuid(dashed=True),
+            'project_id': uuidutils.generate_uuid(dashed=True),
             'protocol': 'HTTP',
             'provisioning_status': 'ACTIVE',
         }
@@ -146,18 +145,18 @@ class FakeMember(object):
         attrs = attrs or {}
 
         member = {
-            "project_id": uuid.uuid4().hex,
+            "project_id": uuidutils.generate_uuid(dashed=True),
             "name": "test-member",
             "weight": 1,
             "admin_state_up": True,
-            "subnet_id": uuid.uuid4().hex,
-            "tenant_id": uuid.uuid4().hex,
+            "subnet_id": uuidutils.generate_uuid(dashed=True),
+            "tenant_id": uuidutils.generate_uuid(dashed=True),
             "provisioning_status": "ACTIVE",
             "address": "192.0.2.122",
             "protocol_port": 80,
-            "id": uuid.uuid4().hex,
+            "id": uuidutils.generate_uuid(dashed=True),
             "operating_status": "NO_MONITOR",
-            "pool_id": uuid.uuid4().hex
+            "pool_id": uuidutils.generate_uuid(dashed=True)
         }
 
         member.update(attrs)
@@ -175,17 +174,17 @@ class FakeL7Policy(object):
         attrs = attrs or {}
 
         l7po_info = {
-            "listener_id": str(uuid.uuid4()),
+            "listener_id": uuidutils.generate_uuid(),
             "description": 'fake desc',
             "admin_state_up": True,
-            "rules": [{'id': str(uuid.uuid4())}],
+            "rules": [{'id': uuidutils.generate_uuid()}],
             "provisioning_status": 'active',
-            "redirect_pool_id": str(uuid.uuid4()),
+            "redirect_pool_id": uuidutils.generate_uuid(),
             "action": 'POOL_REDIRECT',
             "position": 1,
-            "project_id": str(uuid.uuid4()),
-            "id": str(uuid.uuid4()),
-            "name": 'l7po-name-' + uuid.uuid4().hex
+            "project_id": uuidutils.generate_uuid(),
+            "id": uuidutils.generate_uuid(),
+            "name": 'l7po-name-' + uuidutils.generate_uuid(dashed=True)
         }
         l7po_info.update(attrs)
 
@@ -211,9 +210,9 @@ class FakeL7Rule(object):
             "admin_state_up": True,
             "value": ".example.com",
             "key": None,
-            "project_id": str(uuid.uuid4()),
+            "project_id": uuidutils.generate_uuid(),
             "type": "HOST_NAME",
-            "id": str(uuid.uuid4()),
+            "id": uuidutils.generate_uuid(),
             "operating_status": "ONLINE"
         }
 
@@ -234,12 +233,12 @@ class FakeHM(object):
         attrs = attrs or {}
 
         hm_info = {
-            "project_id": uuid.uuid4().hex,
-            "name": 'hm-name-' + uuid.uuid4().hex,
+            "project_id": uuidutils.generate_uuid(dashed=True),
+            "name": 'hm-name-' + uuidutils.generate_uuid(dashed=True),
             "admin_state_up": True,
             "pools": [
                 {
-                    "id": uuid.uuid4().hex
+                    "id": uuidutils.generate_uuid(dashed=True)
                 }
             ],
             "created_at": "2017-05-10T06:11:10",
@@ -252,7 +251,7 @@ class FakeHM(object):
             "max_retries_down": 3,
             "url_path": "/some/custom/path",
             "type": "HTTP",
-            "id": uuid.uuid4().hex
+            "id": uuidutils.generate_uuid(dashed=True)
         }
 
         hm_info.update(attrs)

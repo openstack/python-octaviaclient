@@ -17,18 +17,21 @@ This is an OpenStack Client (OSC) plugin for Octavia, an OpenStack
 Load Balancing project.
 
 For more information about Octavia see:
-http://docs.openstack.org/developer/octavia
+https://docs.openstack.org/octavia/latest/
 
 For more information about the OpenStack Client see:
-https://docs.openstack.org/developer/python-openstackclient
+https://docs.openstack.org/python-openstackclient/latest/
 
 * Free software: Apache license
-* Documentation: http://docs.openstack.org/developer/python-octaviaclient
+* Documentation: https://docs.openstack.org/octavia/latest/
 * Source: http://git.openstack.org/cgit/openstack/python-octaviaclient
 * Bugs: http://bugs.launchpad.net/octavia
 
 Getting Started
 ===============
+
+.. note:: This is an OpenStack Client plugin.  The ``python-openstackclient``
+          project should be installed to use this plugin.
 
 Octavia client can be installed from PyPI using pip::
 

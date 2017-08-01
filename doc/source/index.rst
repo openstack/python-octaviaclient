@@ -15,9 +15,9 @@ Getting Started
 .. toctree::
    :maxdepth: 2
 
-   readme
-   installation
-   contributing
+   Project Overview <readme>
+   install/index
+   contributor/index
 
 Usage
 -----
@@ -25,12 +25,11 @@ Usage
 .. toctree::
    :maxdepth: 2
 
-   usage/osc_cli_plugins
-   decoder
+   cli/index
+   reference/index
 
 Indices and tables
 ------------------
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

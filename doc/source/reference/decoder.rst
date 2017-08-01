@@ -6,8 +6,8 @@ the Octavia plugin into OSC. Think of it as a magic decoder ring if you were
 using the legacy CLIs and want to transition to OpenStack CLI.
 Command options are only shown when necessary.
 
-``LBaaS v2 CLI``
-----------------
+LBaaS v2 CLI
+------------
 
 .. csv-table::
    :header: "Neutron CLI", "OSC Equivalent", "Description"

@@ -26,7 +26,7 @@ LOAD_BALANCER_ROWS = (
     'provider',
     'provisioning_status',
     'updated_at',
-    'vip_Address',
+    'vip_address',
     'vip_network_id',
     'vip_port_id',
     'vip_subnet_id')

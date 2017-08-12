@@ -18,6 +18,28 @@ from osc_lib.api import api
 from octaviaclient.api import constants as const
 
 
+def correct_return_codes(func):
+    _status_dict = {400: 'Bad Request', 401: 'Unauthorized',
+                    403: 'Forbidden', 404: 'Not found',
+                    409: 'Conflict', 413: 'Over Limit',
+                    501: 'Not Implemented'}
+
+    def wrapper(*args, **kwargs):
+        try:
+            response = func(*args, **kwargs)
+        except Exception as e:
+            if not hasattr(e, 'response'):
+                raise
+            raise OctaviaClientException(
+                code=e.response.status_code,
+                message=e.response.json().get(
+                    'faultstring',
+                    _status_dict.get(e.response.status_code, 'Unknown Error')),
+                request_id=e.request_id)
+        return response
+    return wrapper
+
+
 class APIv2(api.BaseAPI):
     """Load Balancer v2 API"""
 
@@ -30,7 +52,7 @@ class APIv2(api.BaseAPI):
 
     def _build_url(self):
         if not self.endpoint.endswith(self._endpoint_suffix):
-            self.endpoint = self.endpoint + self._endpoint_suffix
+            self.endpoint += self._endpoint_suffix
 
     def load_balancer_list(self, **params):
         """List all load balancers
@@ -41,9 +63,9 @@ class APIv2(api.BaseAPI):
             List of load balancers
         """
         url = const.BASE_LOADBALANCER_URL
-        load_balancer_list = self.list(url, **params)
+        response = self.list(url, **params)
 
-        return load_balancer_list
+        return response
 
     def load_balancer_show(self, lb_id):
         """Show a load balancer
@@ -53,11 +75,11 @@ class APIv2(api.BaseAPI):
         :return:
             A dict of the specified load balancer's settings
         """
-        load_balancer = self.find(path=const.BASE_LOADBALANCER_URL,
-                                  value=lb_id)
+        response = self.find(path=const.BASE_LOADBALANCER_URL, value=lb_id)
 
-        return load_balancer
+        return response
 
+    @correct_return_codes
     def load_balancer_create(self, **params):
         """Create a load balancer
 
@@ -67,10 +89,11 @@ class APIv2(api.BaseAPI):
             A dict of the created load balancer's settings
         """
         url = const.BASE_LOADBALANCER_URL
-        load_balancer = self.create(url, **params)
+        response = self.create(url, **params)
 
-        return load_balancer
+        return response
 
+    @correct_return_codes
     def load_balancer_delete(self, lb_id, **params):
         """Delete a load balancer
 
@@ -86,6 +109,7 @@ class APIv2(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def load_balancer_set(self, lb_id, **params):
         """Update a load balancer's settings
 
@@ -110,9 +134,9 @@ class APIv2(api.BaseAPI):
             List of listeners
         """
         url = const.BASE_LISTENER_URL
-        listener_list = self.list(url, **kwargs)
+        response = self.list(url, **kwargs)
 
-        return listener_list
+        return response
 
     def listener_show(self, listener_id):
         """Show a listener
@@ -121,10 +145,11 @@ class APIv2(api.BaseAPI):
         :return:
             A dict of the specified listener's settings
         """
-        listener = self.find(path=const.BASE_LISTENER_URL, value=listener_id)
+        response = self.find(path=const.BASE_LISTENER_URL, value=listener_id)
 
-        return listener
+        return response
 
+    @correct_return_codes
     def listener_create(self, **kwargs):
         """Create a listener
 
@@ -134,10 +159,11 @@ class APIv2(api.BaseAPI):
             A dict of the created listener's settings
         """
         url = const.BASE_LISTENER_URL
-        listener = self.create(url, **kwargs)
+        response = self.create(url, **kwargs)
 
-        return listener
+        return response
 
+    @correct_return_codes
     def listener_delete(self, listener_id):
         """Delete a listener
 
@@ -151,6 +177,7 @@ class APIv2(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def listener_set(self, listener_id, **kwargs):
         """Update a listener's settings
 
@@ -175,10 +202,11 @@ class APIv2(api.BaseAPI):
             List of pools
         """
         url = const.BASE_POOL_URL
-        pool_list = self.list(url, **kwargs)
+        response = self.list(url, **kwargs)
 
-        return pool_list
+        return response
 
+    @correct_return_codes
     def pool_create(self, **kwargs):
         """Create a pool
 
@@ -188,10 +216,11 @@ class APIv2(api.BaseAPI):
             A dict of the created pool's settings
         """
         url = const.BASE_POOL_URL
-        pool = self.create(url, **kwargs)
+        response = self.create(url, **kwargs)
 
-        return pool
+        return response
 
+    @correct_return_codes
     def pool_delete(self, pool_id):
         """Delete a pool
 
@@ -201,9 +230,9 @@ class APIv2(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_POOL_URL.format(pool_id=pool_id)
-        deleted_pool = self.delete(url)
+        response = self.delete(url)
 
-        return deleted_pool
+        return response
 
     def pool_show(self, pool_id):
         """Show a pool's settings
@@ -213,10 +242,11 @@ class APIv2(api.BaseAPI):
         :return:
             Dict of the specified pool's settings
         """
-        pool = self.find(path=const.BASE_POOL_URL, value=pool_id)
+        response = self.find(path=const.BASE_POOL_URL, value=pool_id)
 
-        return pool
+        return response
 
+    @correct_return_codes
     def pool_set(self, pool_id, **kwargs):
         """Update a pool's settings
 
@@ -228,9 +258,9 @@ class APIv2(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_POOL_URL.format(pool_id=pool_id)
-        pool = self.create(url, method='PUT', **kwargs)
+        response = self.create(url, method='PUT', **kwargs)
 
-        return pool
+        return response
 
     def member_list(self, pool_id, **kwargs):
         """Lists the member from a given pool id
@@ -243,9 +273,9 @@ class APIv2(api.BaseAPI):
             Response list members
         """
         url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
-        members_list = self.list(url, **kwargs)
+        response = self.list(url, **kwargs)
 
-        return members_list
+        return response
 
     def member_show(self, pool_id, member_id):
         """Showing a member details of a pool
@@ -260,10 +290,11 @@ class APIv2(api.BaseAPI):
             Response of member
         """
         url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
-        member = self.find(path=url, value=member_id)
+        response = self.find(path=url, value=member_id)
 
-        return member
+        return response
 
+    @correct_return_codes
     def member_create(self, pool_id, **kwargs):
         """Creating a member for the given pool id
 
@@ -275,10 +306,11 @@ class APIv2(api.BaseAPI):
             A member details on successful creation
         """
         url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
-        member = self.create(url, **kwargs)
+        response = self.create(url, **kwargs)
 
-        return member
+        return response
 
+    @correct_return_codes
     def member_delete(self, pool_id, member_id):
         """Removing a member from a pool and mark that member as deleted
 
@@ -295,6 +327,7 @@ class APIv2(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def member_set(self, pool_id, member_id, **kwargs):
         """Updating a member settings
 
@@ -309,7 +342,6 @@ class APIv2(api.BaseAPI):
         """
         url = const.BASE_SINGLE_MEMBER_URL.format(pool_id=pool_id,
                                                   member_id=member_id)
-
         response = self.create(url, method='PUT', **kwargs)
 
         return response
@@ -323,10 +355,11 @@ class APIv2(api.BaseAPI):
             List of l7policies
         """
         url = const.BASE_L7POLICY_URL
-        policy_list = self.list(url, **kwargs)
+        response = self.list(url, **kwargs)
 
-        return policy_list
+        return response
 
+    @correct_return_codes
     def l7policy_create(self, **kwargs):
         """Create a l7policy
 
@@ -336,10 +369,11 @@ class APIv2(api.BaseAPI):
             A dict of the created l7policy's settings
         """
         url = const.BASE_L7POLICY_URL
-        policy = self.create(url, **kwargs)
+        response = self.create(url, **kwargs)
 
-        return policy
+        return response
 
+    @correct_return_codes
     def l7policy_delete(self, l7policy_id):
         """Delete a l7policy
 
@@ -361,10 +395,11 @@ class APIv2(api.BaseAPI):
         :return:
             Dict of the specified l7policy's settings
         """
-        l7policy = self.find(path=const.BASE_L7POLICY_URL, value=l7policy_id)
+        response = self.find(path=const.BASE_L7POLICY_URL, value=l7policy_id)
 
-        return l7policy
+        return response
 
+    @correct_return_codes
     def l7policy_set(self, l7policy_id, **kwargs):
         """Update a l7policy's settings
 
@@ -376,7 +411,6 @@ class APIv2(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_L7POLICY_URL.format(policy_uuid=l7policy_id)
-
         response = self.create(url, method='PUT', **kwargs)
 
         return response
@@ -390,10 +424,11 @@ class APIv2(api.BaseAPI):
             List of l7policies
         """
         url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
-        rule_list = self.list(url, **kwargs)
+        response = self.list(url, **kwargs)
 
-        return rule_list
+        return response
 
+    @correct_return_codes
     def l7rule_create(self, l7policy_id, **kwargs):
         """Create a l7rule
 
@@ -405,10 +440,11 @@ class APIv2(api.BaseAPI):
             A dict of the created l7rule's settings
         """
         url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
-        rule = self.create(url, **kwargs)
+        response = self.create(url, **kwargs)
 
-        return rule
+        return response
 
+    @correct_return_codes
     def l7rule_delete(self, l7rule_id, l7policy_id):
         """Delete a l7rule
 
@@ -436,11 +472,11 @@ class APIv2(api.BaseAPI):
             Dict of the specified l7rule's settings
         """
         url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
+        response = self.find(path=url, value=l7rule_id)
 
-        rule = self.find(path=url, value=l7rule_id)
+        return response
 
-        return rule
-
+    @correct_return_codes
     def l7rule_set(self, l7rule_id, l7policy_id, **kwargs):
         """Update a l7rule's settings
 
@@ -468,10 +504,11 @@ class APIv2(api.BaseAPI):
             A dict containing a list of health monitors
         """
         url = const.BASE_HEALTH_MONITOR_URL
-        policy_list = self.list(url, **kwargs)
+        response = self.list(url, **kwargs)
 
-        return policy_list
+        return response
 
+    @correct_return_codes
     def health_monitor_create(self, **kwargs):
         """Create a health monitor
 
@@ -481,10 +518,11 @@ class APIv2(api.BaseAPI):
             A dict of the created health monitor's settings
         """
         url = const.BASE_HEALTH_MONITOR_URL
-        health_monitor = self.create(url, **kwargs)
+        response = self.create(url, **kwargs)
 
-        return health_monitor
+        return response
 
+    @correct_return_codes
     def health_monitor_delete(self, health_monitor_id):
         """Delete a health_monitor
 
@@ -508,10 +546,11 @@ class APIv2(api.BaseAPI):
             Dict of the specified health monitor's settings
         """
         url = const.BASE_HEALTH_MONITOR_URL
-        health_monitor = self.find(path=url, value=health_monitor_id)
+        response = self.find(path=url, value=health_monitor_id)
 
-        return health_monitor
+        return response
 
+    @correct_return_codes
     def health_monitor_set(self, health_monitor_id, **kwargs):
         """Update a health monitor's settings
 
@@ -524,7 +563,20 @@ class APIv2(api.BaseAPI):
         """
         url = const.BASE_SINGLE_HEALTH_MONITOR_URL.format(
             uuid=health_monitor_id)
-
         response = self.create(url, method='PUT', **kwargs)
 
         return response
+
+
+class OctaviaClientException(Exception):
+    """The base exception class for all exceptions this library raises."""
+
+    def __init__(self, code, message=None, request_id=None):
+        self.code = code
+        self.message = message or self.__class__.message
+        self.request_id = request_id
+
+    def __str__(self):
+        return "%s (HTTP %s) (Request-ID: %s)" % (self.message,
+                                                  self.code,
+                                                  self.request_id)

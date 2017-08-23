@@ -219,7 +219,7 @@ class SetLoadBalancer(command.Command):
 
         parser.add_argument(
             'loadbalancer',
-            metavar='<load balancer>',
+            metavar='<load_balancer>',
             help='Name or UUID of the load balancer to update.'
         )
         parser.add_argument(

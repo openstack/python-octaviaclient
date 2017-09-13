@@ -22,7 +22,8 @@ sys.path.insert(0, os.path.abspath('../..'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'openstackdocstheme'
+    'openstackdocstheme',
+    'cliff.sphinxext'
 ]
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy
@@ -81,3 +82,4 @@ bug_project = 'octavia'
 bug_tag = 'doc'
 html_last_updated_fmt = '%Y-%m-%d %H:%M'
 
+autoprogram_cliff_application = 'openstack'

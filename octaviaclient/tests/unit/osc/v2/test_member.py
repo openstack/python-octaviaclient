@@ -190,8 +190,7 @@ class TestMemberShow(TestMember):
         super(TestMemberShow, self).setUp()
         self.api_mock = mock.Mock()
         self.api_mock.member_list.return_value = self.mem_info
-        self.api_mock.member_show.return_value = {
-            'member': self.mem_info['members'][0]}
+        self.api_mock.member_show.return_value = self.mem_info['members'][0]
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

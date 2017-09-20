@@ -42,8 +42,8 @@ def get_resource_id(resource, resource_name, name):
                 return 'non-uuid'
         elif resource_name == 'members':
             names = [re for re in resource(name['pool_id'])['members']
-                     if re.get('id') == name['member_id']
-                     or re.get('name') == name['member_id']]
+                     if re.get('id') == name['member_id'] or
+                     re.get('name') == name['member_id']]
             name = name['member_id']
             if len(names) > 1:
                 msg = ("{0} {1} found with name or ID of {2}. Please try "
@@ -158,7 +158,9 @@ def get_listener_attrs(client_manager, parsed_args):
         ),
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False),
-        'insert_headers': ('insert_headers', _format_kv)
+        'insert_headers': ('insert_headers', _format_kv),
+        'default_tls_container_ref': ('default_tls_container_ref', str),
+        'sni_container_refs': ('sni_container_refs', list)
     }
 
     _attrs = vars(parsed_args)

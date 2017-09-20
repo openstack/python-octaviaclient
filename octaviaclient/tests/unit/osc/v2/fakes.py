@@ -98,6 +98,9 @@ class FakeListener(object):
             'default_pool_id': None,
             'connection_limit': 10,
             'admin_state_up': True,
+            'default_tls_container_ref': str(uuid.uuid4()),
+            'sni_container_refs': [str(uuid.uuid4()),
+                                   str(uuid.uuid4())]
         }
 
         li_info.update(attrs)

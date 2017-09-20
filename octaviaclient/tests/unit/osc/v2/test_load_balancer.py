@@ -166,8 +166,8 @@ class TestLoadBalancerShow(TestLoadBalancer):
         super(TestLoadBalancerShow, self).setUp()
         self.api_mock = mock.Mock()
         self.api_mock.load_balancer_list.return_value = self.lb_info
-        self.api_mock.load_balancer_show.return_value = {
-            'loadbalancer': self.lb_info['loadbalancers'][0]}
+        self.api_mock.load_balancer_show.return_value = (
+            self.lb_info['loadbalancers'][0])
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

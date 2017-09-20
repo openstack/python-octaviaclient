@@ -97,6 +97,9 @@ class FakeListener(object):
             'default_pool_id': None,
             'connection_limit': 10,
             'admin_state_up': True,
+            'default_tls_container_ref': uuidutils.generate_uuid(dashed=True),
+            'sni_container_refs': [uuidutils.generate_uuid(dashed=True),
+                                   uuidutils.generate_uuid(dashed=True)]
         }
 
         li_info.update(attrs)

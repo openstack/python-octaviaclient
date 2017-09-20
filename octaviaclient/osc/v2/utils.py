@@ -158,7 +158,9 @@ def get_listener_attrs(client_manager, parsed_args):
         ),
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False),
-        'insert_headers': ('insert_headers', _format_kv)
+        'insert_headers': ('insert_headers', _format_kv),
+        'default_tls_container_ref': ('default_tls_container_ref', str),
+        'sni_container_refs': ('sni_container_refs', list)
     }
 
     _attrs = vars(parsed_args)

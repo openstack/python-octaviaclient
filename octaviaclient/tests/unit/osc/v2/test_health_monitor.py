@@ -159,8 +159,8 @@ class TestHealthMonitorShow(TestHealthMonitor):
         super(TestHealthMonitorShow, self).setUp()
         self.api_mock = mock.Mock()
         self.api_mock.health_monitor_list.return_value = self.hm_info
-        self.api_mock.health_monitor_show.return_value = {
-            'healthmonitor': self.hm_info['healthmonitors'][0]}
+        self.api_mock.health_monitor_show.return_value = (
+            self.hm_info['healthmonitors'][0])
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

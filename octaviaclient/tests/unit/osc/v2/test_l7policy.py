@@ -170,8 +170,7 @@ class TestL7PolicyShow(TestL7Policy):
         super(TestL7PolicyShow, self).setUp()
         self.api_mock = mock.Mock()
         self.api_mock.l7policy_list.return_value = [{'id': self._l7po.id}]
-        self.api_mock.l7policy_show.return_value = {
-            'l7policy': self.l7po_info}
+        self.api_mock.l7policy_show.return_value = self.l7po_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

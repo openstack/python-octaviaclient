@@ -34,7 +34,8 @@ class TestListener(li_fakes.TestLoadBalancerv2):
         'project_id',
         'protocol',
         'protocol_port',
-        'admin_state_up')
+        'admin_state_up',
+    )
 
     datalist = (
         (
@@ -44,7 +45,7 @@ class TestListener(li_fakes.TestLoadBalancerv2):
             _li.project_id,
             _li.protocol,
             _li.protocol_port,
-            _li.admin_state_up
+            _li.admin_state_up,
         ),
     )
 
@@ -60,7 +61,9 @@ class TestListener(li_fakes.TestLoadBalancerv2):
                 'connection_limit': _li.connection_limit,
                 'protocol': _li.protocol,
                 'protocol_port': _li.protocol_port,
-                'admin_state_up': _li.admin_state_up
+                'admin_state_up': _li.admin_state_up,
+                'default_tls_container_ref': _li.default_tls_container_ref,
+                'sni_container_refs': _li.sni_container_refs
             }]
     }
     li_info = copy.deepcopy(info)
@@ -164,6 +167,32 @@ class TestListenerCreate(TestListener):
         self.api_mock.listener_create.assert_called_with(
             json={'listener': self.li_info['listeners'][0]})
 
+    @mock.patch('octaviaclient.osc.v2.utils.get_listener_attrs')
+    def test_tls_listener_create(self, mock_client):
+        mock_client.return_value = self.li_info['listeners'][0]
+        arglist = ['mock_lb_id',
+                   '--name', self._li.name,
+                   '--protocol', 'TERMINATED_HTTPS',
+                   '--protocol-port', '443',
+                   '--sni-container-refs',
+                   self._li.sni_container_refs[0],
+                   self._li.sni_container_refs[1],
+                   '--default-tls-container-ref',
+                   self._li.default_tls_container_ref]
+        verifylist = [
+            ('loadbalancer', 'mock_lb_id'),
+            ('name', self._li.name),
+            ('protocol', 'TERMINATED_HTTPS'),
+            ('protocol_port', '443'),
+            ('sni_container_refs', self._li.sni_container_refs),
+            ('default_tls_container_ref', self._li.default_tls_container_ref)
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.listener_create.assert_called_with(
+            json={'listener': self.li_info['listeners'][0]})
+
 
 class TestListenerShow(TestListener):
 
@@ -171,8 +200,7 @@ class TestListenerShow(TestListener):
         super(TestListenerShow, self).setUp()
         self.api_mock = mock.Mock()
         self.api_mock.listener_list.return_value = self.li_info
-        self.api_mock.listener_show.return_value = {
-            'listener': self.li_info['listeners'][0]}
+        self.api_mock.listener_show.return_value = self.li_info['listeners'][0]
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -196,13 +224,26 @@ class TestListenerSet(TestListener):
         self.cmd = listener.SetListener(self.app, None)
 
     def test_listener_set(self):
-        arglist = [self._li.id, '--name', 'new_name']
+        arglist = [self._li.id, '--name', 'new_name',
+                   '--sni-container-refs',
+                   self._li.sni_container_refs[0],
+                   self._li.sni_container_refs[1],
+                   '--default-tls-container-ref',
+                   self._li.default_tls_container_ref]
         verifylist = [
             ('listener', self._li.id),
-            ('name', 'new_name')
+            ('name', 'new_name'),
+            ('sni_container_refs', self._li.sni_container_refs),
+            ('default_tls_container_ref', self._li.default_tls_container_ref)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_set.assert_called_with(
-            self._li.id, json={'listener': {'name': 'new_name'}})
+            self._li.id, json={
+                'listener': {
+                    'name': 'new_name',
+                    'sni_container_refs': self._li.sni_container_refs,
+                    'default_tls_container_ref':
+                        self._li.default_tls_container_ref
+                }})

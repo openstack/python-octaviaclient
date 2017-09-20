@@ -185,8 +185,7 @@ class TestL7RuleShow(TestL7Policy):
         self.api_mock = mock.Mock()
         self.api_mock.l7policy_list.return_value = self.l7po_info
         self.api_mock.l7rule_list.return_value = self.l7ru_info
-        self.api_mock.l7rule_show.return_value = {
-            'rule': self.l7ru_info['rules'][0]}
+        self.api_mock.l7rule_show.return_value = self.l7ru_info['rules'][0]
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

@@ -161,8 +161,7 @@ class TestPoolShow(TestPool):
         super(TestPoolShow, self).setUp()
         self.api_mock = mock.Mock()
         self.api_mock.pool_list.return_value = self.po_info
-        self.api_mock.pool_show.return_value = {
-            'pool': self.po_info['pools'][0]}
+        self.api_mock.pool_show.return_value = self.po_info['pools'][0]
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

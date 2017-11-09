@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    Octavia quota support for the OpenStack client plugin.
+
+    * List, show, set, reset quotas
+    * Show quota defaults

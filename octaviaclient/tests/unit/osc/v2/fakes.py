@@ -264,3 +264,28 @@ class FakeHM(object):
             loaded=True)
 
         return hm
+
+
+class FakeQT(object):
+    """Fake one or more Quota."""
+
+    @staticmethod
+    def create_one_quota(attrs=None):
+        attrs = attrs or {}
+
+        qt_info = {
+            "health_monitor": -1,
+            "listener": None,
+            "load_balancer": 5,
+            "member": 50,
+            "pool": None,
+            "project_id": uuidutils.generate_uuid(dashed=True)
+        }
+
+        qt_info.update(attrs)
+
+        qt = fakes.FakeResource(
+            info=copy.deepcopy(qt_info),
+            loaded=True)
+
+        return qt

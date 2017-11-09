@@ -376,6 +376,26 @@ def get_health_monitor_attrs(client_manager, parsed_args):
     return attrs
 
 
+def get_quota_attrs(client_manager, parsed_args):
+    attr_map = {
+        'health_monitor': ('health_monitor', int),
+        'listener': ('listener', int),
+        'load_balancer': ('load_balancer', int),
+        'member': ('member', int),
+        'pool': ('pool', int),
+        'project': (
+            'project_id',
+            'project',
+            client_manager.identity
+        ),
+    }
+
+    _attrs = vars(parsed_args)
+    attrs = _map_attrs(_attrs, attr_map)
+
+    return attrs
+
+
 def format_list(data):
     return '\n'.join(i['id'] for i in data)
 

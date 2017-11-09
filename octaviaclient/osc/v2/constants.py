@@ -206,3 +206,20 @@ MONITOR_COLUMNS = (
     'type',
     'admin_state_up',
 )
+
+QUOTA_ROWS = (
+    'load_balancer',
+    'listener',
+    'pool',
+    'health_monitor',
+    'member'
+)
+
+QUOTA_COLUMNS = (
+    'project_id',
+    'load_balancer',
+    'listener',
+    'pool',
+    'health_monitor',
+    'member'
+)

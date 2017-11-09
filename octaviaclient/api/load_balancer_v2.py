@@ -580,6 +580,72 @@ class APIv2(api.BaseAPI):
 
         return response
 
+    def quota_list(self, **params):
+        """List all quotas
+
+        :param params:
+            Parameters to filter on (not implemented)
+        :return:
+            A ``dict`` representing a list of quotas for the project
+        """
+        url = const.BASE_QUOTA_URL
+        response = self.list(url, **params)
+
+        return response
+
+    def quota_show(self, project_id):
+        """Show a quota
+
+        :param string project_id:
+            ID of the project to show
+        :return:
+            A ``dict`` representing the quota for the project
+        """
+        response = self.find(path=const.BASE_QUOTA_URL, value=project_id)
+
+        return response
+
+    @correct_return_codes
+    def quota_reset(self, project_id):
+        """Reset a quota
+
+        :param string project_id:
+            The ID of the project to reset quotas
+        :return:
+            ``None``
+        """
+        url = const.BASE_SINGLE_QUOTA_URL.format(uuid=project_id)
+        response = self.delete(url)
+
+        return response
+
+    @correct_return_codes
+    def quota_set(self, project_id, **params):
+        """Update a quota's settings
+
+        :param string project_id:
+            The ID of the project to update
+        :param params:
+            A ``dict`` of arguments to update project quota
+        :return:
+            A ``dict`` representing the updated quota
+        """
+        url = const.BASE_SINGLE_QUOTA_URL.format(uuid=project_id)
+        response = self.create(url, method='PUT', **params)
+
+        return response
+
+    def quota_defaults_show(self):
+        """Show quota defaults
+
+        :return:
+            A ``dict`` representing a list of quota defaults
+        """
+        url = const.BASE_QUOTA_DEFAULT_URL
+        response = self.list(url)
+
+        return response
+
 
 class OctaviaClientException(Exception):
     """The base exception class for all exceptions this library raises."""

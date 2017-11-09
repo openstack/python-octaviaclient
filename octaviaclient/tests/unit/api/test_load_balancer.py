@@ -31,6 +31,7 @@ FAKE_ME = uuidutils.generate_uuid()
 FAKE_L7PO = uuidutils.generate_uuid()
 FAKE_L7RU = uuidutils.generate_uuid()
 FAKE_HM = uuidutils.generate_uuid()
+FAKE_PRJ = uuidutils.generate_uuid()
 
 
 LIST_LB_RESP = {
@@ -74,6 +75,16 @@ LIST_HM_RESP = {
          {'id': uuidutils.generate_uuid()}]
 }
 
+LIST_QT_RESP = {
+    'quotas':
+        [{'health_monitor': -1},
+         {'listener': -1},
+         {'load_balancer': 5},
+         {'member': 10},
+         {'pool': 20},
+         {'project': uuidutils.generate_uuid()}]
+}
+
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 SINGLE_LB_STATS_RESP = {'bytes_in': '0'}
@@ -95,6 +106,9 @@ SINGLE_L7RU_UPDATE = {'rule': {'admin_state_up': False}}
 
 SINGLE_HM_RESP = {'healthmonitor': {'id': FAKE_ME}}
 SINGLE_HM_UPDATE = {'healthmonitor': {'admin_state_up': False}}
+
+SINGLE_QT_RESP = {'quota': {'pool': -1}}
+SINGLE_QT_UPDATE = {'quota': {'pool': -1}}
 
 
 class TestLoadBalancerv2(utils.TestCase):
@@ -727,3 +741,66 @@ class TestLoadBalancer(TestLoadBalancerv2):
                                self._error_message,
                                self.api.health_monitor_delete,
                                FAKE_HM)
+
+    def test_list_quota_no_options(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'quotas',
+            json=LIST_QT_RESP,
+            status_code=200,
+        )
+        ret = self.api.quota_list()
+        self.assertEqual(LIST_QT_RESP, ret)
+
+    def test_show_quota(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'quotas/' + FAKE_PRJ,
+            json=SINGLE_QT_RESP,
+            status_code=200
+        )
+        ret = self.api.quota_show(FAKE_PRJ)
+        self.assertEqual(SINGLE_QT_RESP['quota'], ret)
+
+    def test_set_quota(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_URL + 'quotas/' + FAKE_PRJ,
+            json=SINGLE_QT_UPDATE,
+            status_code=200
+        )
+        ret = self.api.quota_set(FAKE_PRJ, json=SINGLE_QT_UPDATE)
+        self.assertEqual(SINGLE_QT_UPDATE, ret)
+
+    def test_set_quota_error(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_URL + 'quotas/' + FAKE_PRJ,
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(lb.OctaviaClientException,
+                               self._error_message,
+                               self.api.quota_set,
+                               FAKE_PRJ, json=SINGLE_QT_UPDATE)
+
+    def test_reset_quota(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_URL + 'quotas/' + FAKE_PRJ,
+            status_code=200
+        )
+        ret = self.api.quota_reset(FAKE_PRJ)
+        self.assertEqual(200, ret.status_code)
+
+    def test_reset_quota_error(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_URL + 'quotas/' + FAKE_PRJ,
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(lb.OctaviaClientException,
+                               self._error_message,
+                               self.api.quota_reset,
+                               FAKE_PRJ)

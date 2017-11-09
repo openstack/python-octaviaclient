@@ -67,3 +67,10 @@ l7rule
 
 .. autoprogram-cliff:: openstack.load_balancer.v2
     :command: loadbalancer l7rule *
+
+=====
+quota
+=====
+
+.. autoprogram-cliff:: openstack.load_balancer.v2
+    :command: loadbalancer quota *

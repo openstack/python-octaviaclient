@@ -20,6 +20,7 @@ from osc_lib import utils
 
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
+from octaviaclient.osc.v2 import validate
 
 ACTION_CHOICES = ['REDIRECT_TO_URL', 'REDIRECT_TO_POOL', 'REJECT']
 
@@ -45,11 +46,7 @@ class CreateL7Policy(command.ShowOne):
             metavar='<description>',
             help="Set l7policy description."
         )
-        parser.add_argument(
-            '--redirect-pool',
-            metavar='<pool>',
-            help="Set the pool to redirect requests to (name or ID)."
-        )
+
         parser.add_argument(
             '--action',
             metavar="{REDIRECT_TO_URL,REDIRECT_TO_POOL,REJECT}",
@@ -57,11 +54,19 @@ class CreateL7Policy(command.ShowOne):
             choices=ACTION_CHOICES,
             help="Set the action of the policy."
         )
-        parser.add_argument(
+
+        redirect_group = parser.add_mutually_exclusive_group()
+        redirect_group.add_argument(
+            '--redirect-pool',
+            metavar='<pool>',
+            help="Set the pool to redirect requests to (name or ID)."
+        )
+        redirect_group.add_argument(
             '--redirect-url',
             metavar='<url>',
             help="Set the URL to redirect requests to."
         )
+
         parser.add_argument(
             '--position',
             metavar='<position>',
@@ -88,7 +93,7 @@ class CreateL7Policy(command.ShowOne):
         rows = const.L7POLICY_ROWS
         attrs = v2_utils.get_l7policy_attrs(self.app.client_manager,
                                             parsed_args)
-        v2_utils.check_l7policy_attrs(attrs)
+        validate.check_l7policy_attrs(attrs)
         body = {"l7policy": attrs}
 
         data = self.app.client_manager.load_balancer.l7policy_create(
@@ -196,21 +201,24 @@ class SetL7Policy(command.Command):
             help="Set l7policy description."
         )
         parser.add_argument(
-            '--redirect-pool',
-            metavar='<pool>',
-            help="Set the pool to redirect requests to (name or ID)."
-        )
-        parser.add_argument(
             '--action',
             metavar="{REDIRECT_TO_URL,REDIRECT_TO_POOL,REJECT}",
             choices=ACTION_CHOICES,
             help="Set the action of the policy."
         )
-        parser.add_argument(
+
+        redirect_group = parser.add_mutually_exclusive_group()
+        redirect_group.add_argument(
+            '--redirect-pool',
+            metavar='<pool>',
+            help="Set the pool to redirect requests to (name or ID)."
+        )
+        redirect_group.add_argument(
             '--redirect-url',
             metavar='<url>',
             help="Set the URL to redirect requests to."
         )
+
         parser.add_argument(
             '--position',
             metavar='<position>',
@@ -237,6 +245,7 @@ class SetL7Policy(command.Command):
         attrs = v2_utils.get_l7policy_attrs(self.app.client_manager,
                                             parsed_args)
 
+        validate.check_l7policy_attrs(attrs)
         l7policy_id = attrs.pop('l7policy_id')
 
         body = {'l7policy': attrs}

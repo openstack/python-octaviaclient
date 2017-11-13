@@ -20,6 +20,7 @@ from osc_lib import utils
 
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
+from octaviaclient.osc.v2 import validate
 
 COMPARE_TYPES = ['REGEX', 'EQUAL_TO', 'CONTAINS', 'ENDS_WITH', 'STARTS_WITH']
 TYPES = ['FILE_TYPE', 'PATH', 'COOKIE', 'HOST_NAME', 'HEADER']
@@ -86,7 +87,7 @@ class CreateL7Rule(command.ShowOne):
         rows = const.L7RULE_ROWS
         attrs = v2_utils.get_l7rule_attrs(self.app.client_manager,
                                           parsed_args)
-        v2_utils.check_l7rule_attrs(attrs)
+        validate.check_l7rule_attrs(attrs)
 
         l7policy_id = attrs.pop('l7policy_id')
         body = {"rule": attrs}
@@ -248,7 +249,7 @@ class SetL7Rule(command.Command):
 
     def take_action(self, parsed_args):
         attrs = v2_utils.get_l7rule_attrs(self.app.client_manager, parsed_args)
-        v2_utils.check_l7rule_attrs(attrs)
+        validate.check_l7rule_attrs(attrs)
 
         l7policy_id = attrs.pop('l7policy_id')
         l7rule_id = attrs.pop('l7rule_id')

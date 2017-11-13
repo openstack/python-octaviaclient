@@ -12,6 +12,7 @@
 #
 
 import copy
+import itertools
 import mock
 
 from osc_lib import exceptions
@@ -158,6 +159,34 @@ class TestLoadBalancerCreate(TestLoadBalancer):
         self.cmd.take_action(parsed_args)
         self.api_mock.load_balancer_create.assert_called_with(
             json={'loadbalancer': self.lb_info['loadbalancers'][0]})
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_create_missing_args(self, mock_client):
+        attrs_list = self.lb_info['loadbalancers'][0]
+        args = ("vip_subnet_id", "vip_network_id", "vip_port_id")
+        for a in args:
+            # init missing keys
+            attrs_list[a] = ''
+        # verify all valid combinations of args
+        for n in range(len(args)+1):
+            for comb in itertools.combinations(args, n):
+                # subtract comb's keys from attrs_list
+                filtered_attrs = {k: v for k, v in attrs_list.items() if (
+                                  k not in comb)}
+                mock_client.return_value = filtered_attrs
+                if not any(k in filtered_attrs for k in args) or all(
+                    k in filtered_attrs for k in ("vip_network_id",
+                                                  "vip_port_id")
+                ):
+                    self.assertRaises(
+                        exceptions.CommandError,
+                        self.cmd.take_action,
+                        filtered_attrs)
+                else:
+                    try:
+                        self.cmd.take_action(filtered_attrs)
+                    except exceptions.CommandError as e:
+                        self.fail("%s raised unexpectedly" % e)
 
 
 class TestLoadBalancerShow(TestLoadBalancer):

@@ -116,19 +116,6 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
     return attrs
 
 
-def check_loadbalancer_attrs(attrs):
-    verify_args = ['vip_subnet_id', 'vip_network_id', 'vip_port_id']
-    if not any(i in attrs.keys() for i in verify_args):
-        msg = ("Missing required argument: Requires one of --vip-subnet-id, "
-               "--vip-network-id or --vip-port-id")
-        raise exceptions.CommandError(msg)
-    elif 'vip_port_id' in attrs:
-        if any(i in attrs.keys() for i in ['vip_subnet_id', 'vip_address']):
-            msg = ("Argument error: --port-id can not be used with "
-                   "--vip-network-id or --vip-subnet-id")
-            raise exceptions.CommandError(msg)
-
-
 def get_listener_attrs(client_manager, parsed_args):
     attr_map = {
         'name': ('name', str),
@@ -282,18 +269,6 @@ def get_l7policy_attrs(client_manager, parsed_args):
     return attrs
 
 
-def check_l7policy_attrs(attrs):
-    msg = None
-    if attrs['action'] == 'REDIRECT_TO_POOL':
-        if 'redirect_pool_id' not in attrs:
-            msg = 'Missing argument: --redirect-pool'
-    elif attrs['action'] == 'REDIRECT_TO_URL':
-        if 'redirect_url' not in attrs:
-            msg = 'Missing argument: --redirect-url'
-    if msg is not None:
-        raise exceptions.CommandError(msg)
-
-
 def get_l7rule_attrs(client_manager, parsed_args):
     attr_map = {
         'action': ('action', str),
@@ -326,18 +301,6 @@ def get_l7rule_attrs(client_manager, parsed_args):
     attrs = _map_attrs(_attrs, attr_map)
 
     return attrs
-
-
-def check_l7rule_attrs(attrs):
-    msg = None
-    if 'type' in attrs.keys() and attrs['type'] == 'COOKIE':
-        if 'key' not in attrs:
-            msg = 'Missing argument: --type COOKIE requires --key <key>'
-    elif 'type' in attrs.keys() and attrs['type'] == 'HEADER':
-        if 'key' not in attrs:
-            msg = 'Missing argument: --type HEADER requires --key <key>'
-    if msg is not None:
-        raise exceptions.CommandError(msg)
 
 
 def get_health_monitor_attrs(client_manager, parsed_args):

@@ -15,6 +15,7 @@
 
 from cliff import lister
 from osc_lib.command import command
+from osc_lib import exceptions
 from osc_lib import utils
 
 from octaviaclient.osc.v2 import constants as const
@@ -23,6 +24,18 @@ from octaviaclient.osc.v2 import utils as v2_utils
 
 class CreateLoadBalancer(command.ShowOne):
     """Create a load balancer"""
+
+    @staticmethod
+    def _check_attrs(attrs):
+        verify_args = ['vip_subnet_id', 'vip_network_id', 'vip_port_id']
+        if not any(i in attrs for i in verify_args):
+            msg = ("Missing required argument: Requires one of "
+                   "--vip-subnet-id, --vip-network-id or --vip-port-id")
+            raise exceptions.CommandError(msg)
+        if all(i in attrs for i in ('vip_network_id', 'vip_port_id')):
+            msg = ("Argument error: --vip-port-id can not be used with "
+                   "--vip-network-id")
+            raise exceptions.CommandError(msg)
 
     def get_parser(self, prog_name):
         parser = super(CreateLoadBalancer, self).get_parser(prog_name)
@@ -42,21 +55,27 @@ class CreateLoadBalancer(command.ShowOne):
             metavar='<vip_address>',
             help="Set the VIP IP Address."
         )
-        parser.add_argument(
+
+        vip_group = parser.add_argument_group(
+            "VIP Network",
+            description="At least one of the following arguments is required."
+        )
+        vip_group.add_argument(
             '--vip-port-id',
             metavar='<vip_port_id>',
             help="Set Port for the load balancer (name or ID)."
         )
-        parser.add_argument(
+        vip_group.add_argument(
             '--vip-subnet-id',
             metavar='<vip_subnet_id>',
             help="Set subnet for the load balancer (name or ID)."
         )
-        parser.add_argument(
+        vip_group.add_argument(
             '--vip-network-id',
             metavar='<vip_network_id>',
             help="Set network for the load balancer (name or ID)."
         )
+
         parser.add_argument(
             '--project',
             metavar='<project>',
@@ -82,7 +101,7 @@ class CreateLoadBalancer(command.ShowOne):
         rows = const.LOAD_BALANCER_ROWS
         attrs = v2_utils.get_loadbalancer_attrs(self.app.client_manager,
                                                 parsed_args)
-        v2_utils.check_loadbalancer_attrs(attrs)
+        self._check_attrs(attrs)
         body = {'loadbalancer': attrs}
 
         data = self.app.client_manager.load_balancer.load_balancer_create(

@@ -23,7 +23,7 @@ AUTH_TOKEN = "foobar"
 AUTH_URL = "http://192.0.2.2"
 
 
-class TestPool(po_fakes.TestLoadBalancerv2):
+class TestPool(po_fakes.TestOctaviaClient):
 
     _po = po_fakes.FakePool.create_one_pool()
 

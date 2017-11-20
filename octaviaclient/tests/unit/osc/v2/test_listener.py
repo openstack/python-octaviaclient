@@ -23,7 +23,7 @@ AUTH_TOKEN = "foobar"
 AUTH_URL = "http://192.0.2.2"
 
 
-class TestListener(li_fakes.TestLoadBalancerv2):
+class TestListener(li_fakes.TestOctaviaClient):
 
     _li = li_fakes.FakeListener.create_one_listener()
 

@@ -21,7 +21,7 @@ AUTH_TOKEN = "foobar"
 AUTH_URL = "http://192.0.2.2"
 
 
-class TestL7Policy(ru_fakes.TestLoadBalancerv2):
+class TestL7Policy(ru_fakes.TestOctaviaClient):
 
     _l7ru = ru_fakes.FakeL7Rule.create_one_l7rule()
     _l7po = ru_fakes.FakeL7Policy.create_one_l7policy()

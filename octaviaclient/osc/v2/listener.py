@@ -31,7 +31,7 @@ class CreateListener(command.ShowOne):
 
         parser.add_argument(
             'loadbalancer',
-            metavar='<load_balancer>',
+            metavar='<loadbalancer>',
             help="Load balancer for the listener (name or ID)."
         )
         parser.add_argument(
@@ -155,12 +155,17 @@ class ListListener(lister.Lister):
     def get_parser(self, prog_name):
         parser = super(ListListener, self).get_parser(prog_name)
 
-        # Filtering will soon be implemented to allow this
         parser.add_argument(
             '--name',
             metavar='<name>',
             help="List listeners by listener name."
         )
+        parser.add_argument(
+            '--loadbalancer',
+            metavar='<loadbalancer>',
+            help="Filter by load balancer (name or ID).",
+        )
+
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
@@ -174,6 +179,7 @@ class ListListener(lister.Lister):
             default=None,
             help="List disabled listeners."
         )
+
         parser.add_argument(
             '--project',
             metavar='<project>',

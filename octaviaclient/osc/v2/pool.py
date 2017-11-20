@@ -127,12 +127,18 @@ class ListPool(lister.Lister):
     def get_parser(self, prog_name):
         parser = super(ListPool, self).get_parser(prog_name)
 
+        parser.add_argument(
+            '--loadbalancer',
+            metavar='<loadbalancer>',
+            help="Filter by load balancer (name or ID).",
+        )
+
         return parser
 
     def take_action(self, parsed_args):
         columns = const.POOL_COLUMNS
-
-        data = self.app.client_manager.load_balancer.pool_list()
+        attrs = v2_utils.get_pool_attrs(self.app.client_manager, parsed_args)
+        data = self.app.client_manager.load_balancer.pool_list(**attrs)
         formatters = {'loadbalancers': v2_utils.format_list,
                       'members': v2_utils.format_list,
                       'listeners': v2_utils.format_list}

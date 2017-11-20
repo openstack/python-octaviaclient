@@ -26,6 +26,9 @@ loadbalancer
 .. autoprogram-cliff:: openstack.load_balancer.v2
     :command: loadbalancer stats show
 
+.. autoprogram-cliff:: openstack.load_balancer.v2
+    :command: loadbalancer failover
+
 ========
 listener
 ========
@@ -74,3 +77,10 @@ quota
 
 .. autoprogram-cliff:: openstack.load_balancer.v2
     :command: loadbalancer quota *
+
+=======
+amphora
+=======
+
+.. autoprogram-cliff:: openstack.load_balancer.v2
+    :command: loadbalancer amphora *

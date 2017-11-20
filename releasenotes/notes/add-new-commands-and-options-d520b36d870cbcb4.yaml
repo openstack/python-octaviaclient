@@ -1,0 +1,5 @@
+---
+features:
+  - Loadbalancer failover command, which allows to trigger failover protocol.
+  - Amphora commands, to query amphorae by ID or by loadbalancer ID, etc.
+  - Filter 'list' calls by loadbalancer ID, for both listeners and pools.

@@ -29,7 +29,8 @@ LOAD_BALANCER_ROWS = (
     'vip_address',
     'vip_network_id',
     'vip_port_id',
-    'vip_subnet_id')
+    'vip_subnet_id',
+)
 
 LOAD_BALANCER_COLUMNS = (
     'id',
@@ -212,7 +213,7 @@ QUOTA_ROWS = (
     'listener',
     'pool',
     'health_monitor',
-    'member'
+    'member',
 )
 
 QUOTA_COLUMNS = (
@@ -221,5 +222,33 @@ QUOTA_COLUMNS = (
     'listener',
     'pool',
     'health_monitor',
-    'member'
+    'member',
+)
+
+AMPHORA_ROWS = (
+    'id',
+    'loadbalancer_id',
+    'compute_id',
+    'lb_network_ip',
+    'vrrp_ip',
+    'ha_ip',
+    'vrrp_port_id',
+    'ha_port_id',
+    'cert_expiration',
+    'cert_busy',
+    'role',
+    'status',
+    'vrrp_interface',
+    'vrrp_id',
+    'vrrp_priority',
+    'cached_zone',
+)
+
+AMPHORA_COLUMNS = (
+    'id',
+    'loadbalancer_id',
+    'status',
+    'role',
+    'lb_network_ip',
+    'ha_ip',
 )

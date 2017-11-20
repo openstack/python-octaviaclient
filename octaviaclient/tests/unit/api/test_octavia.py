@@ -17,12 +17,14 @@ from keystoneauth1 import session
 from oslo_utils import uuidutils
 from requests_mock.contrib import fixture
 
-from octaviaclient.api import load_balancer_v2 as lb
 from osc_lib.tests import utils
+
+from octaviaclient.api.v2 import octavia
 
 FAKE_ACCOUNT = 'q12we34r'
 FAKE_AUTH = '11223344556677889900'
-FAKE_URL = 'http://example.com/v2.0/lbaas/'
+FAKE_URL = 'http://example.com/v2.0/'
+FAKE_LBAAS_URL = FAKE_URL + 'lbaas/'
 
 FAKE_LB = uuidutils.generate_uuid()
 FAKE_LI = uuidutils.generate_uuid()
@@ -111,23 +113,23 @@ SINGLE_QT_RESP = {'quota': {'pool': -1}}
 SINGLE_QT_UPDATE = {'quota': {'pool': -1}}
 
 
-class TestLoadBalancerv2(utils.TestCase):
+class TestOctaviaClient(utils.TestCase):
 
     def setUp(self):
-        super(TestLoadBalancerv2, self).setUp()
+        super(TestOctaviaClient, self).setUp()
         sess = session.Session()
-        self.api = lb.APIv2(session=sess, endpoint=FAKE_URL)
+        self.api = octavia.OctaviaAPI(session=sess, endpoint=FAKE_URL)
         self.requests_mock = self.useFixture(fixture.Fixture())
 
 
-class TestLoadBalancer(TestLoadBalancerv2):
+class TestLoadBalancer(TestOctaviaClient):
 
     _error_message = ("Validation failure: Test message.")
 
     def test_list_load_balancer_no_options(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'loadbalancers',
+            FAKE_LBAAS_URL + 'loadbalancers',
             json=LIST_LB_RESP,
             status_code=200,
         )
@@ -137,7 +139,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_show_load_balancer(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'loadbalancers/' + FAKE_LB,
+            FAKE_LBAAS_URL + 'loadbalancers/' + FAKE_LB,
             json=SINGLE_LB_RESP,
             status_code=200
         )
@@ -147,7 +149,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_load_balancer(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'loadbalancers',
+            FAKE_LBAAS_URL + 'loadbalancers',
             json=SINGLE_LB_RESP,
             status_code=200
         )
@@ -157,11 +159,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_load_balancer_error(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'loadbalancers',
+            FAKE_LBAAS_URL + 'loadbalancers',
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.load_balancer_create,
                                json=SINGLE_LB_RESP)
@@ -169,7 +171,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_load_balancer(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'loadbalancers/' + FAKE_LB,
+            FAKE_LBAAS_URL + 'loadbalancers/' + FAKE_LB,
             json=SINGLE_LB_UPDATE,
             status_code=200
         )
@@ -179,20 +181,41 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_load_balancer_error(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'loadbalancers/' + FAKE_LB,
+            FAKE_LBAAS_URL + 'loadbalancers/' + FAKE_LB,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.load_balancer_set,
                                FAKE_LB,
                                json=SINGLE_LB_UPDATE)
 
+    def test_failover_load_balancer(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_LBAAS_URL + 'loadbalancers/' + FAKE_LB + '/failover',
+            status_code=202,
+        )
+        ret = self.api.load_balancer_failover(FAKE_LB)
+        self.assertEqual(202, ret.status_code)
+
+    def test_failover_load_balancer_error(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_LBAAS_URL + 'loadbalancers/' + FAKE_LB + '/failover',
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=409,
+        )
+        self.assertRaisesRegex(octavia.OctaviaClientException,
+                               self._error_message,
+                               self.api.load_balancer_failover,
+                               FAKE_LB)
+
     def test_delete_load_balancer(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'loadbalancers/' + FAKE_LB,
+            FAKE_LBAAS_URL + 'loadbalancers/' + FAKE_LB,
             status_code=200
         )
         ret = self.api.load_balancer_delete(FAKE_LB)
@@ -201,11 +224,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_load_balancer_error(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'loadbalancers/' + FAKE_LB,
+            FAKE_LBAAS_URL + 'loadbalancers/' + FAKE_LB,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.load_balancer_delete,
                                FAKE_LB)
@@ -213,7 +236,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_stats_show_load_balancer(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'loadbalancers/' + FAKE_LB + '/stats',
+            FAKE_LBAAS_URL + 'loadbalancers/' + FAKE_LB + '/stats',
             json=SINGLE_LB_STATS_RESP,
             status_code=200,
         )
@@ -223,7 +246,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_list_listeners_no_options(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'listeners',
+            FAKE_LBAAS_URL + 'listeners',
             json=LIST_LI_RESP,
             status_code=200,
         )
@@ -233,7 +256,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_show_listener(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'listeners/' + FAKE_LI,
+            FAKE_LBAAS_URL + 'listeners/' + FAKE_LI,
             json=SINGLE_LI_RESP,
             status_code=200
         )
@@ -243,7 +266,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_listener(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'listeners',
+            FAKE_LBAAS_URL + 'listeners',
             json=SINGLE_LI_RESP,
             status_code=200
         )
@@ -253,11 +276,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_listener_error(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'listeners',
+            FAKE_LBAAS_URL + 'listeners',
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.listener_create,
                                json=SINGLE_LI_RESP)
@@ -265,7 +288,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_listeners(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'listeners/' + FAKE_LI,
+            FAKE_LBAAS_URL + 'listeners/' + FAKE_LI,
             json=SINGLE_LI_UPDATE,
             status_code=200
         )
@@ -275,11 +298,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_listeners_error(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'listeners/' + FAKE_LI,
+            FAKE_LBAAS_URL + 'listeners/' + FAKE_LI,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.listener_set,
                                FAKE_LI, json=SINGLE_LI_UPDATE)
@@ -287,7 +310,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_listener(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'listeners/' + FAKE_LI,
+            FAKE_LBAAS_URL + 'listeners/' + FAKE_LI,
             status_code=200
         )
         ret = self.api.listener_delete(FAKE_LI)
@@ -296,11 +319,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_listener_error(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'listeners/' + FAKE_LI,
+            FAKE_LBAAS_URL + 'listeners/' + FAKE_LI,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.listener_delete,
                                FAKE_LI)
@@ -308,7 +331,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_list_pool_no_options(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'pools',
+            FAKE_LBAAS_URL + 'pools',
             json=LIST_PO_RESP,
             status_code=200,
         )
@@ -318,7 +341,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_show_pool(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'pools/' + FAKE_PO,
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO,
             json=SINGLE_PO_RESP,
             status_code=200
         )
@@ -328,7 +351,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_pool(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'pools',
+            FAKE_LBAAS_URL + 'pools',
             json=SINGLE_PO_RESP,
             status_code=200
         )
@@ -338,11 +361,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_pool_error(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'pools',
+            FAKE_LBAAS_URL + 'pools',
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.pool_create,
                                json=SINGLE_PO_RESP)
@@ -350,7 +373,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_pool(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'pools/' + FAKE_PO,
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO,
             json=SINGLE_PO_UPDATE,
             status_code=200
         )
@@ -360,11 +383,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_pool_error(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'pools/' + FAKE_PO,
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.pool_set,
                                FAKE_PO, json=SINGLE_PO_UPDATE)
@@ -372,7 +395,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_pool(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'pools/' + FAKE_PO,
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO,
             status_code=200
         )
         ret = self.api.pool_delete(FAKE_PO)
@@ -381,11 +404,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_pool_error(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'pools/' + FAKE_PO,
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.pool_delete,
                                FAKE_PO)
@@ -393,7 +416,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_list_member_no_options(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'pools/' + FAKE_PO + '/members',
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO + '/members',
             json=LIST_ME_RESP,
             status_code=200,
         )
@@ -403,7 +426,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_show_member(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'pools/' + FAKE_PO + '/members/' + FAKE_ME,
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO + '/members/' + FAKE_ME,
             json=SINGLE_ME_RESP,
             status_code=200
         )
@@ -413,7 +436,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_member(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'pools/' + FAKE_PO + '/members',
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO + '/members',
             json=SINGLE_ME_RESP,
             status_code=200
         )
@@ -423,11 +446,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_member_error(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'pools/' + FAKE_PO + '/members',
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO + '/members',
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.member_create,
                                json=SINGLE_ME_RESP, pool_id=FAKE_PO)
@@ -435,7 +458,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_member(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'pools/' + FAKE_PO + '/members/' + FAKE_ME,
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO + '/members/' + FAKE_ME,
             json=SINGLE_ME_UPDATE,
             status_code=200
         )
@@ -446,11 +469,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_member_error(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'pools/' + FAKE_PO + '/members/' + FAKE_ME,
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO + '/members/' + FAKE_ME,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.member_set,
                                pool_id=FAKE_PO, member_id=FAKE_ME,
@@ -459,7 +482,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_member(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'pools/' + FAKE_PO + '/members/' + FAKE_ME,
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO + '/members/' + FAKE_ME,
             status_code=200
         )
         ret = self.api.member_delete(pool_id=FAKE_PO, member_id=FAKE_ME)
@@ -468,11 +491,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_member_error(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'pools/' + FAKE_PO + '/members/' + FAKE_ME,
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO + '/members/' + FAKE_ME,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.member_delete,
                                pool_id=FAKE_PO, member_id=FAKE_ME)
@@ -480,7 +503,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_list_l7policy_no_options(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'l7policies',
+            FAKE_LBAAS_URL + 'l7policies',
             json=LIST_L7PO_RESP,
             status_code=200,
         )
@@ -490,7 +513,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_show_l7policy(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO,
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO,
             json=SINGLE_L7PO_RESP,
             status_code=200
         )
@@ -500,7 +523,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_l7policy(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'l7policies',
+            FAKE_LBAAS_URL + 'l7policies',
             json=SINGLE_L7PO_RESP,
             status_code=200
         )
@@ -510,11 +533,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_l7policy_error(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'l7policies',
+            FAKE_LBAAS_URL + 'l7policies',
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.l7policy_create,
                                json=SINGLE_L7PO_RESP)
@@ -522,7 +545,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_l7policy(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO,
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO,
             json=SINGLE_L7PO_UPDATE,
             status_code=200
         )
@@ -532,11 +555,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_l7policy_error(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO,
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.l7policy_set,
                                FAKE_L7PO, json=SINGLE_L7PO_UPDATE)
@@ -544,7 +567,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_l7policy(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO,
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO,
             status_code=200
         )
         ret = self.api.l7policy_delete(FAKE_L7PO)
@@ -553,11 +576,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_l7policy_error(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO,
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.l7policy_delete,
                                FAKE_L7PO)
@@ -565,7 +588,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_list_l7rule_no_options(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules',
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO + '/rules',
             json=LIST_L7RU_RESP,
             status_code=200,
         )
@@ -575,7 +598,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_show_l7rule(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
             json=SINGLE_L7RU_RESP,
             status_code=200
         )
@@ -585,7 +608,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_l7rule(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules',
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO + '/rules',
             json=SINGLE_L7RU_RESP,
             status_code=200
         )
@@ -595,11 +618,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_l7rule_error(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules',
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO + '/rules',
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.l7rule_create,
                                FAKE_L7PO, json=SINGLE_L7RU_RESP)
@@ -607,7 +630,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_l7rule(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
             json=SINGLE_L7RU_UPDATE,
             status_code=200
         )
@@ -621,11 +644,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_l7rule_error(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.l7rule_set,
                                l7rule_id=FAKE_L7RU,
@@ -635,7 +658,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_l7rule(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
             status_code=200
         )
         ret = self.api.l7rule_delete(
@@ -647,11 +670,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_l7rule_error(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO + '/rules/' + FAKE_L7RU,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.l7rule_delete,
                                l7rule_id=FAKE_L7RU,
@@ -660,7 +683,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_list_health_monitor_no_options(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'healthmonitors',
+            FAKE_LBAAS_URL + 'healthmonitors',
             json=LIST_HM_RESP,
             status_code=200,
         )
@@ -670,7 +693,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_show_health_monitor(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'healthmonitors/' + FAKE_HM,
+            FAKE_LBAAS_URL + 'healthmonitors/' + FAKE_HM,
             json=SINGLE_HM_RESP,
             status_code=200
         )
@@ -680,7 +703,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_health_monitor(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'healthmonitors',
+            FAKE_LBAAS_URL + 'healthmonitors',
             json=SINGLE_HM_RESP,
             status_code=200
         )
@@ -690,11 +713,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_create_health_monitor_error(self):
         self.requests_mock.register_uri(
             'POST',
-            FAKE_URL + 'healthmonitors',
+            FAKE_LBAAS_URL + 'healthmonitors',
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.health_monitor_create,
                                json=SINGLE_HM_RESP)
@@ -702,7 +725,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_health_monitor(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'healthmonitors/' + FAKE_HM,
+            FAKE_LBAAS_URL + 'healthmonitors/' + FAKE_HM,
             json=SINGLE_HM_UPDATE,
             status_code=200
         )
@@ -712,11 +735,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_health_monitor_error(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'healthmonitors/' + FAKE_HM,
+            FAKE_LBAAS_URL + 'healthmonitors/' + FAKE_HM,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.health_monitor_set,
                                FAKE_HM, json=SINGLE_HM_UPDATE)
@@ -724,7 +747,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_health_monitor(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'healthmonitors/' + FAKE_HM,
+            FAKE_LBAAS_URL + 'healthmonitors/' + FAKE_HM,
             status_code=200
         )
         ret = self.api.health_monitor_delete(FAKE_HM)
@@ -733,11 +756,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_delete_health_monitor_error(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'healthmonitors/' + FAKE_HM,
+            FAKE_LBAAS_URL + 'healthmonitors/' + FAKE_HM,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.health_monitor_delete,
                                FAKE_HM)
@@ -745,7 +768,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_list_quota_no_options(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'quotas',
+            FAKE_LBAAS_URL + 'quotas',
             json=LIST_QT_RESP,
             status_code=200,
         )
@@ -755,7 +778,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_show_quota(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_URL + 'quotas/' + FAKE_PRJ,
+            FAKE_LBAAS_URL + 'quotas/' + FAKE_PRJ,
             json=SINGLE_QT_RESP,
             status_code=200
         )
@@ -765,7 +788,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_quota(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'quotas/' + FAKE_PRJ,
+            FAKE_LBAAS_URL + 'quotas/' + FAKE_PRJ,
             json=SINGLE_QT_UPDATE,
             status_code=200
         )
@@ -775,11 +798,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_set_quota_error(self):
         self.requests_mock.register_uri(
             'PUT',
-            FAKE_URL + 'quotas/' + FAKE_PRJ,
+            FAKE_LBAAS_URL + 'quotas/' + FAKE_PRJ,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.quota_set,
                                FAKE_PRJ, json=SINGLE_QT_UPDATE)
@@ -787,7 +810,7 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_reset_quota(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'quotas/' + FAKE_PRJ,
+            FAKE_LBAAS_URL + 'quotas/' + FAKE_PRJ,
             status_code=200
         )
         ret = self.api.quota_reset(FAKE_PRJ)
@@ -796,11 +819,11 @@ class TestLoadBalancer(TestLoadBalancerv2):
     def test_reset_quota_error(self):
         self.requests_mock.register_uri(
             'DELETE',
-            FAKE_URL + 'quotas/' + FAKE_PRJ,
+            FAKE_LBAAS_URL + 'quotas/' + FAKE_PRJ,
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(lb.OctaviaClientException,
+        self.assertRaisesRegex(octavia.OctaviaClientException,
                                self._error_message,
                                self.api.quota_reset,
                                FAKE_PRJ)

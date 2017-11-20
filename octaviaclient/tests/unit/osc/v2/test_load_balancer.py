@@ -24,7 +24,7 @@ AUTH_TOKEN = "foobar"
 AUTH_URL = "http://192.0.2.2"
 
 
-class TestLoadBalancer(lb_fakes.TestLoadBalancerv2):
+class TestLoadBalancer(lb_fakes.TestOctaviaClient):
 
     _lb = lb_fakes.FakeLoadBalancer.create_one_load_balancer()
 
@@ -256,4 +256,22 @@ class TestLoadBalancerStats(TestLoadBalancer):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.load_balancer_stats_show.assert_called_with(
+            lb_id=self._lb.id)
+
+
+class TestLoadBalancerFailover(TestLoadBalancer):
+
+    def setUp(self):
+        super(TestLoadBalancerFailover, self).setUp()
+        self.cmd = load_balancer.FailoverLoadBalancer(self.app, None)
+
+    def test_load_balancer_failover(self):
+        arglist = [self._lb.id]
+        verifylist = [
+            ('loadbalancer', self._lb.id)
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_failover.assert_called_with(
             lb_id=self._lb.id)

@@ -11,7 +11,7 @@
 #   under the License.
 #
 
-"""Load Balancer v2 API Library"""
+"""Octavia API Library"""
 
 from osc_lib.api import api
 
@@ -40,13 +40,13 @@ def correct_return_codes(func):
     return wrapper
 
 
-class APIv2(api.BaseAPI):
-    """Load Balancer v2 API"""
+class OctaviaAPI(api.BaseAPI):
+    """Octavia API"""
 
-    _endpoint_suffix = '/v2.0/lbaas'
+    _endpoint_suffix = '/v2.0'
 
     def __init__(self, endpoint=None, **kwargs):
-        super(APIv2, self).__init__(endpoint=endpoint, **kwargs)
+        super(OctaviaAPI, self).__init__(endpoint=endpoint, **kwargs)
         self.endpoint = self.endpoint.rstrip('/')
         self._build_url()
 
@@ -58,7 +58,7 @@ class APIv2(api.BaseAPI):
         """List all load balancers
 
         :param params:
-            Parameters to filter on (not implemented)
+            Parameters to filter on
         :return:
             List of load balancers
         """
@@ -114,7 +114,7 @@ class APIv2(api.BaseAPI):
         """Update a load balancer's settings
 
         :param string lb_id:
-            The ID of the load baalancer to update
+            The ID of the load balancer to update
         :param params:
             A dict of arguments to update a loadbalancer
         :return:
@@ -138,11 +138,25 @@ class APIv2(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
+    def load_balancer_failover(self, lb_id):
+        """Trigger load balancer failover
+
+        :param string lb_id:
+            ID of the load balancer to failover
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_LOADBALANCER_FAILOVER_URL.format(uuid=lb_id)
+        response = self.create(url, method='PUT')
+
+        return response
+
     def listener_list(self, **kwargs):
         """List all listeners
 
         :param kwargs:
-            Parameters to filter on (not implemented)
+            Parameters to filter on
         :return:
             List of listeners
         """
@@ -155,6 +169,7 @@ class APIv2(api.BaseAPI):
         """Show a listener
 
         :param string listener_id:
+            ID of the listener to show
         :return:
             A dict of the specified listener's settings
         """
@@ -210,7 +225,7 @@ class APIv2(api.BaseAPI):
         """List all pools
 
         :param kwargs:
-            Parameters to filter on (not implemented)
+            Parameters to filter on
         :return:
             List of pools
         """
@@ -363,7 +378,7 @@ class APIv2(api.BaseAPI):
         """List all l7policies
 
         :param kwargs:
-            Parameters to filter on (not implemented)
+            Parameters to filter on
         :return:
             List of l7policies
         """
@@ -432,7 +447,7 @@ class APIv2(api.BaseAPI):
         """List all l7rules for a l7policy
 
         :param kwargs:
-            Parameters to filter on (not implemented)
+            Parameters to filter on
         :return:
             List of l7policies
         """
@@ -512,7 +527,7 @@ class APIv2(api.BaseAPI):
         """List all health monitors
 
         :param kwargs:
-            Parameters to filter on (not implemented)
+            Parameters to filter on
         :return:
             A dict containing a list of health monitors
         """
@@ -643,6 +658,32 @@ class APIv2(api.BaseAPI):
         """
         url = const.BASE_QUOTA_DEFAULT_URL
         response = self.list(url)
+
+        return response
+
+    def amphora_show(self, amphora_id):
+        """Show an amphora
+
+        :param string amphora_id:
+            ID of the amphora to show
+        :return:
+            A ``dict`` of the specified amphora's attributes
+        """
+        url = const.BASE_AMPHORA_URL
+        response = self.find(path=url, value=amphora_id)
+
+        return response
+
+    def amphora_list(self, **kwargs):
+        """List all amphorae
+
+        :param kwargs:
+            Parameters to filter on
+        :return:
+            A ``dict`` containing a list of amphorae
+        """
+        url = const.BASE_AMPHORA_URL
+        response = self.list(path=url, **kwargs)
 
         return response
 

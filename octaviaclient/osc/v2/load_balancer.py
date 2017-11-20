@@ -81,6 +81,7 @@ class CreateLoadBalancer(command.ShowOne):
             metavar='<project>',
             help="Project for the load balancer (name or ID)."
         )
+
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
@@ -146,6 +147,27 @@ class DeleteLoadBalancer(command.Command):
 
         self.app.client_manager.load_balancer.load_balancer_delete(
             lb_id=lb_id, **attrs)
+
+
+class FailoverLoadBalancer(command.Command):
+    """Trigger load balancer failover"""
+
+    def get_parser(self, prog_name):
+        parser = super(FailoverLoadBalancer, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'loadbalancer',
+            metavar='<load_balancer>',
+            help="Name or UUID of the load balancer."
+        )
+
+        return parser
+
+    def take_action(self, parsed_args):
+        attrs = v2_utils.get_loadbalancer_attrs(self.app.client_manager,
+                                                parsed_args)
+        self.app.client_manager.load_balancer.load_balancer_failover(
+            lb_id=attrs.pop('loadbalancer_id'))
 
 
 class ListLoadBalancer(lister.Lister):
@@ -250,6 +272,7 @@ class SetLoadBalancer(command.Command):
             metavar='<description>',
             help="Set load balancer description."
         )
+
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',

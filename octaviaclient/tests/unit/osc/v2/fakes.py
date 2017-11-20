@@ -28,7 +28,7 @@ LOADBALANCER = {
 }
 
 
-class FakeLoadBalancerv2Client(object):
+class FakeOctaviaClient(object):
     def __init__(self, **kwargs):
         self.load_balancers = mock.Mock()
         self.load_balancers.resource_class = fakes.FakeResource(None, {})
@@ -36,11 +36,11 @@ class FakeLoadBalancerv2Client(object):
         self.management_url = kwargs['endpoint']
 
 
-class TestLoadBalancerv2(utils.TestCommand):
+class TestOctaviaClient(utils.TestCommand):
 
     def setUp(self):
-        super(TestLoadBalancerv2, self).setUp()
-        self.app.client_manager.load_balancer = FakeLoadBalancerv2Client(
+        super(TestOctaviaClient, self).setUp()
+        self.app.client_manager.load_balancer = FakeOctaviaClient(
             endpoint=fakes.AUTH_URL,
             token=fakes.AUTH_TOKEN,
         )
@@ -112,7 +112,7 @@ class FakeListener(object):
 
 
 class FakePool(object):
-    """Fake one or more pool."""
+    """Fake one or more pools."""
 
     @staticmethod
     def create_one_pool(attrs=None):
@@ -142,6 +142,7 @@ class FakePool(object):
 
 
 class FakeMember(object):
+    """Fake one or more members."""
 
     @staticmethod
     def create_member(attrs=None):
@@ -170,7 +171,7 @@ class FakeMember(object):
 
 
 class FakeL7Policy(object):
-    """Fake one or more L7policy."""
+    """Fake one or more L7policies."""
 
     @staticmethod
     def create_one_l7policy(attrs=None):
@@ -199,7 +200,7 @@ class FakeL7Policy(object):
 
 
 class FakeL7Rule(object):
-    """Fake one or more L7policy."""
+    """Fake one or more L7rules."""
 
     @staticmethod
     def create_one_l7rule(attrs=None):
@@ -229,7 +230,7 @@ class FakeL7Rule(object):
 
 
 class FakeHM(object):
-    """Fake one or more L7policy."""
+    """Fake one or more health monitors."""
 
     @staticmethod
     def create_one_health_monitor(attrs=None):
@@ -289,3 +290,36 @@ class FakeQT(object):
             loaded=True)
 
         return qt
+
+
+class FakeAmphora(object):
+    """Fake one or more amphorae."""
+
+    @staticmethod
+    def create_one_amphora(attrs=None):
+        attrs = attrs or {}
+
+        amphora = {
+            "id": uuidutils.generate_uuid(dashed=True),
+            "loadbalancer_id": uuidutils.generate_uuid(dashed=True),
+            "compute_id": uuidutils.generate_uuid(dashed=True),
+            "lb_network_ip": "192.168.1.3",
+            "vrrp_ip": "192.168.1.6",
+            "ha_ip": "192.168.1.10",
+            "vrrp_port_id": uuidutils.generate_uuid(dashed=True),
+            "ha_port_id": uuidutils.generate_uuid(dashed=True),
+            "cert_expiration": "2019-09-19 00:34:51",
+            "cert_busy": 0,
+            "role": "BACKUP",
+            "status": "ALLOCATED",
+            "vrrp_interface": "eth1",
+            "vrrp_id": 1,
+            "vrrp_priority": 200,
+            "cached_zone": "zone2",
+        }
+
+        amphora.update(attrs)
+
+        return fakes.FakeResource(
+            info=copy.deepcopy(amphora),
+            loaded=True)

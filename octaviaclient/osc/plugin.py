@@ -14,7 +14,7 @@
 
 import logging
 
-from octaviaclient.api import load_balancer_v2
+from octaviaclient.api.v2 import octavia
 from osc_lib import utils
 
 LOG = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ API_VERSION_OPTION = 'os_loadbalancer_api_version'
 API_NAME = 'load_balancer'
 LOAD_BALANCER_API_TYPE = 'loadbalancer'
 LOAD_BALANCER_API_VERSIONS = {
-    '2.0': 'octaviaclient.api.load_balancer_v2.APIv2',
+    '2.0': 'octaviaclient.api.v2.octavia.OctaviaAPI',
 }
 
 
@@ -35,7 +35,7 @@ def make_client(instance):
         region_name=instance.region_name,
         interface=instance.interface,
     )
-    client = load_balancer_v2.APIv2(
+    client = octavia.OctaviaAPI(
         session=instance.session,
         service_type='load-balancer',
         endpoint=endpoint,

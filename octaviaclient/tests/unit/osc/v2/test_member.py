@@ -17,10 +17,10 @@ import mock
 
 from octaviaclient.osc.v2 import member
 from octaviaclient.tests.unit.osc.v2 import fakes as mem_fakes
-from osc_lib.tests.utils import ParserException
+import osc_lib.tests.utils as osc_test_utils
 
 
-class TestMember(mem_fakes.TestLoadBalancerv2):
+class TestMember(mem_fakes.TestOctaviaClient):
 
     mem = mem_fakes.FakeMember.create_member()
 
@@ -84,7 +84,7 @@ class TestListMember(TestMember):
         arglist = []
         verifylist = []
 
-        self.assertRaises(ParserException,
+        self.assertRaises(osc_test_utils.ParserException,
                           self.check_parser, self.cmd, arglist, verifylist)
 
     @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')

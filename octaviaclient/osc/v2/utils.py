@@ -17,6 +17,47 @@ from osc_lib import exceptions
 from openstackclient.identity import common as identity_common
 
 
+def _map_attrs(args, source_attr_map):
+    res = {}
+    for k, v in args.items():
+        if (v is None) or (k not in source_attr_map):
+            continue
+        source_val = source_attr_map[k]
+        # Attributes with 2 values map directly to a callable
+        if len(source_val) == 2:
+            res[source_val[0]] = source_val[1](v)
+        # Attributes with 3 values map directly to a resource
+        elif len(source_val) == 3:
+            if not isinstance(v, list):
+                res[source_val[0]] = get_resource_id(
+                    source_val[2],
+                    source_val[1],
+                    v,
+                )
+            else:
+                res[source_val[0]] = [get_resource_id(
+                    source_val[2],
+                    source_val[1],
+                    x,
+                ) for x in v]
+
+        # Attributes with 4 values map to a resource with a parent
+        elif len(source_val) == 4:
+            parent = source_attr_map[source_val[2]]
+            parent_id = get_resource_id(
+                parent[2],
+                parent[1],
+                args[source_val[2]],
+            )
+            child = source_val
+            res[child[0]] = get_resource_id(
+                child[3],
+                child[1],
+                {child[0]: str(v), parent[0]: str(parent_id)},
+            )
+    return res
+
+
 def get_resource_id(resource, resource_name, name):
     """Converts a resource name into a UUID for consumption for the API
 
@@ -359,6 +400,26 @@ def get_quota_attrs(client_manager, parsed_args):
     return attrs
 
 
+def get_amphora_attrs(client_manager, parsed_args):
+    attr_map = {
+        'amphora_id': (
+            'amphora_id',
+            'amphorae',
+            client_manager.load_balancer.amphora_list,
+        ),
+        'loadbalancer': (
+            'loadbalancer_id',
+            'loadbalancers',
+            client_manager.load_balancer.load_balancer_list,
+        ),
+        'compute_id': ('compute_id', str),
+        'role': ('role', str),
+        'status': ('status', str),
+    }
+
+    return _map_attrs(vars(parsed_args), attr_map)
+
+
 def format_list(data):
     return '\n'.join(i['id'] for i in data)
 
@@ -378,35 +439,3 @@ def _format_kv(data):
         formatted_kv[k] = v
 
     return formatted_kv
-
-
-def _map_attrs(attrs, attr_map):
-    mapped_attrs = {}
-    for k, v in attrs.items():
-        if v is not None and k in attr_map.keys():
-            # Attributes with 2 values map directly to a callable
-            if len(attr_map[k]) is 2:
-                mapped_attrs[attr_map[k][0]] = attr_map[k][1](v)
-            # Attributes with 3 values map directly to a resource
-            elif len(attr_map[k]) is 3:
-                mapped_attrs[attr_map[k][0]] = get_resource_id(
-                    attr_map[k][2],
-                    attr_map[k][1],
-                    v
-                )
-            # Attributes with 4 values map to a resource with a parent
-            else:
-                parent = attr_map[attr_map[k][2]]
-                parent_id = get_resource_id(
-                    parent[2],
-                    parent[1],
-                    attrs[attr_map[k][2]]
-                )
-                child = attr_map[k]
-                mapped_attrs[child[0]] = get_resource_id(
-                    child[3],
-                    child[1],
-                    {child[0]: str(v), parent[0]: str(parent_id)}
-                )
-
-    return mapped_attrs

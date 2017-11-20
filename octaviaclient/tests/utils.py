@@ -19,10 +19,7 @@ import os
 import testtools
 
 from octaviaclient.tests import fakes
-
-
-class ParserException(Exception):
-    pass
+import osc_lib.tests.utils as osc_test_utils
 
 
 class TestCase(testtools.TestCase):
@@ -65,8 +62,10 @@ class TestCommand(TestCase):
         cmd_parser = cmd.get_parser('check_parser')
         try:
             parsed_args = cmd_parser.parse_args(args)
+        except osc_test_utils.ParserException:
+            raise
         except SystemExit:
-            raise ParserException("Argument parse failed")
+            raise osc_test_utils.ParserException("Argument parse failed")
         for av in verify_args:
             attr, value = av
             if attr:

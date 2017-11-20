@@ -23,7 +23,7 @@ AUTH_TOKEN = "foobar"
 AUTH_URL = "http://192.0.2.2"
 
 
-class TestHealthMonitor(hm_fakes.TestLoadBalancerv2):
+class TestHealthMonitor(hm_fakes.TestOctaviaClient):
 
     _hm = hm_fakes.FakeHM.create_one_health_monitor()
 

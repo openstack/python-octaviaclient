@@ -125,6 +125,19 @@ class APIv2(api.BaseAPI):
 
         return response
 
+    def load_balancer_stats_show(self, lb_id, **kwargs):
+        """Shows the current statistics for a load balancer.
+
+        :param string lb_id:
+            ID of the load balancer
+        :return:
+            A dict of the specified load balancer's statistics
+        """
+        url = const.BASE_LB_STATS_URL.format(uuid=lb_id)
+        response = self.list(url, **kwargs)
+
+        return response
+
     def listener_list(self, **kwargs):
         """List all listeners
 

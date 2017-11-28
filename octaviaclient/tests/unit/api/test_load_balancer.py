@@ -76,6 +76,7 @@ LIST_HM_RESP = {
 
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
+SINGLE_LB_STATS_RESP = {'bytes_in': '0'}
 
 SINGLE_LI_RESP = {'listener': {'id': FAKE_LI, 'name': 'li1'}}
 SINGLE_LI_UPDATE = {"listener": {"admin_state_up": False}}
@@ -194,6 +195,16 @@ class TestLoadBalancer(TestLoadBalancerv2):
                                self._error_message,
                                self.api.load_balancer_delete,
                                FAKE_LB)
+
+    def test_stats_show_load_balancer(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_URL + 'loadbalancers/' + FAKE_LB + '/stats',
+            json=SINGLE_LB_STATS_RESP,
+            status_code=200,
+        )
+        ret = self.api.load_balancer_stats_show(FAKE_LB)
+        self.assertEqual(SINGLE_LB_STATS_RESP, ret)
 
     def test_list_listeners_no_options(self):
         self.requests_mock.register_uri(

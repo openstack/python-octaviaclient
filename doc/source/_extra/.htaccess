@@ -1,0 +1,7 @@
+# The docs migration did not get completed in pike for this project.
+# Redirect auto-generated links to the locations in pike.
+# Note: do not pull this file forward to queens or beyond
+redirectmatch 301 ^/python-octaviaclient/([^/]+)/cli* /python-octaviaclient/$1/usage/osc_cli_plugins.html
+redirectmatch 301 ^/python-octaviaclient/([^/]+)/contributor* /python-octaviaclient/$1/contributing.html
+redirectmatch 301 ^/python-octaviaclient/([^/]+)/install* /python-octaviaclient/$1/installation.html
+redirectmatch 301 ^/python-octaviaclient/([^/]+)/reference* /python-octaviaclient/$1/decoder.html

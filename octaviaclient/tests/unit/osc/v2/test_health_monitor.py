@@ -137,14 +137,16 @@ class TestHealthMonitorCreate(TestHealthMonitor):
                    '--delay', str(self._hm.delay),
                    '--timeout', str(self._hm.timeout),
                    '--max-retries', str(self._hm.max_retries),
-                   '--type', self._hm.type]
+                   '--type', self._hm.type.lower(),
+                   '--http-method', self._hm.http_method.lower()]
         verifylist = [
             ('pool', 'mock_pool_id'),
             ('name', self._hm.name),
             ('delay', str(self._hm.delay)),
             ('timeout', str(self._hm.timeout)),
             ('max_retries', self._hm.max_retries),
-            ('type', self._hm.type)
+            ('type', self._hm.type),
+            ('http_method', self._hm.http_method),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)

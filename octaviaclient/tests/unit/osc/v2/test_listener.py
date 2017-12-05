@@ -172,7 +172,7 @@ class TestListenerCreate(TestListener):
         mock_client.return_value = self.li_info['listeners'][0]
         arglist = ['mock_lb_id',
                    '--name', self._li.name,
-                   '--protocol', 'TERMINATED_HTTPS',
+                   '--protocol', 'TERMINATED_HTTPS'.lower(),
                    '--protocol-port', '443',
                    '--sni-container-refs',
                    self._li.sni_container_refs[0],

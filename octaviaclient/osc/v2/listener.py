@@ -22,6 +22,8 @@ from osc_lib import utils
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
 
+PROTOCOL_CHOICES = ['TCP', 'HTTP', 'HTTPS', 'TERMINATED_HTTPS']
+
 
 class CreateListener(command.ShowOne):
     """Create a listener"""
@@ -46,8 +48,9 @@ class CreateListener(command.ShowOne):
         )
         parser.add_argument(
             '--protocol',
-            metavar='{TCP,HTTP,HTTPS,TERMINATED_HTTPS}',
-            choices=['TCP', 'HTTP', 'HTTPS', 'TERMINATED_HTTPS'],
+            metavar='{' + ','.join(PROTOCOL_CHOICES) + '}',
+            choices=PROTOCOL_CHOICES,
+            type=lambda s: s.upper(),  # case insensitive
             required=True,
             help="The protocol for the listener."
         )

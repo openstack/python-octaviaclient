@@ -143,7 +143,7 @@ class TestL7PolicyCreate(TestL7Policy):
         }
         arglist = ['mock_li_id',
                    '--name', self._l7po.name,
-                   '--action', 'REDIRECT_TO_POOL',
+                   '--action', 'REDIRECT_TO_POOL'.lower(),
                    '--redirect-pool', self._l7po.redirect_pool_id]
 
         verifylist = [

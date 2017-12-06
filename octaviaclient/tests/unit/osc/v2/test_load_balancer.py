@@ -178,7 +178,6 @@ class TestLoadBalancerShow(TestLoadBalancer):
         verifylist = [
             ('loadbalancer', self._lb.id),
         ]
-
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.load_balancer_show.assert_called_with(lb_id=self._lb.id)
@@ -188,6 +187,11 @@ class TestLoadBalancerSet(TestLoadBalancer):
 
     def setUp(self):
         super(TestLoadBalancerSet, self).setUp()
+        self.api_mock.load_balancer_list.return_value = self.lb_info
+        self.api_mock.load_balancer_show.return_value = {
+            'loadbalancer': self.lb_info['loadbalancers'][0]}
+        lb_client = self.app.client_manager
+        lb_client.load_balancer = self.api_mock
         self.cmd = load_balancer.SetLoadBalancer(self.app, None)
 
     def test_load_balancer_set(self):
@@ -201,3 +205,26 @@ class TestLoadBalancerSet(TestLoadBalancer):
         self.cmd.take_action(parsed_args)
         self.api_mock.load_balancer_set.assert_called_with(
             self._lb.id, json={'loadbalancer': {'name': 'new_name'}})
+
+
+class TestLoadBalancerStats(TestLoadBalancer):
+
+    def setUp(self):
+        super(TestLoadBalancerStats, self).setUp()
+        lb_stats_info = {'stats': {'bytes_in': '0'}}
+        self.api_mock.load_balancer_stats_show.return_value = {
+            'stats': lb_stats_info['stats']}
+        lb_client = self.app.client_manager
+        lb_client.load_balancer = self.api_mock
+        self.cmd = load_balancer.ShowLoadBalancerStats(self.app, None)
+
+    def test_load_balancer_stats_show(self):
+        arglist = [self._lb.id]
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_stats_show.assert_called_with(
+            lb_id=self._lb.id)

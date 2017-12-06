@@ -39,6 +39,13 @@ LOAD_BALANCER_COLUMNS = (
     'provisioning_status',
     'provider')
 
+LOAD_BALANCER_STATS_ROWS = (
+    'active_connections',
+    'bytes_in',
+    'bytes_out',
+    'request_errors',
+    'total_connections')
+
 LISTENER_ROWS = (
     'admin_state_up',
     'connection_limit',

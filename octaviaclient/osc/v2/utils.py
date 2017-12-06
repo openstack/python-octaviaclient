@@ -71,6 +71,11 @@ def get_resource_id(resource, resource_name, name):
         The UUID of the found resource
     """
     try:
+        # Allow None as a value
+        if resource_name in ('policies',):
+            if name.lower() in ('none', 'null', 'void'):
+                return None
+
         # Projects can be non-uuid so we need to account for this
         if resource_name == 'project':
             if name != 'non-uuid':
@@ -145,6 +150,11 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
             'vip_network_id',
             'networks',
             client_manager.neutronclient.list_networks
+        ),
+        'vip_qos_policy_id': (
+            'vip_qos_policy_id',
+            'policies',
+            client_manager.neutronclient.list_qos_policies,
         ),
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False),

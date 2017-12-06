@@ -75,6 +75,11 @@ class CreateLoadBalancer(command.ShowOne):
             metavar='<vip_network_id>',
             help="Set network for the load balancer (name or ID)."
         )
+        parser.add_argument(
+            '--vip-qos-policy-id',
+            metavar='<vip_qos_policy_id>',
+            help="Set QoS policy ID for VIP port. Unset with 'None'.",
+        )
 
         parser.add_argument(
             '--project',
@@ -271,6 +276,11 @@ class SetLoadBalancer(command.Command):
             '--description',
             metavar='<description>',
             help="Set load balancer description."
+        )
+        parser.add_argument(
+            '--vip-qos-policy-id',
+            metavar='<vip_qos_policy_id>',
+            help="Set QoS policy ID for VIP port. Unset with 'None'.",
         )
 
         admin_group = parser.add_mutually_exclusive_group()

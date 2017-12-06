@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Optional QoS policy argument for VIP, in loadbalancer create,
+    and loadbalancer set.

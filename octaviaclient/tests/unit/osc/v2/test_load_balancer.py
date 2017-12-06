@@ -16,6 +16,7 @@ import itertools
 import mock
 
 from osc_lib import exceptions
+from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import load_balancer as load_balancer
 from octaviaclient.tests.unit.osc.v2 import fakes as lb_fakes
@@ -161,8 +162,36 @@ class TestLoadBalancerCreate(TestLoadBalancer):
             json={'loadbalancer': self.lb_info['loadbalancers'][0]})
 
     @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_create_with_qos_policy(self, mock_client):
+        qos_policy_id = 'qos_id'
+        lb_info = copy.deepcopy(self.lb_info['loadbalancers'][0])
+        lb_info.update({'vip_qos_policy_id': qos_policy_id})
+        mock_client.return_value = lb_info
+
+        arglist = [
+            '--name', self._lb.name,
+            '--vip-network-id', self._lb.vip_network_id,
+            '--project', self._lb.project_id,
+            '--vip-qos-policy-id', qos_policy_id,
+        ]
+        verifylist = [
+            ('name', self._lb.name),
+            ('vip_network_id', self._lb.vip_network_id),
+            ('project', self._lb.project_id),
+            ('vip_qos_policy_id', qos_policy_id),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_create.assert_called_with(
+            json={'loadbalancer': lb_info})
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
     def test_load_balancer_create_missing_args(self, mock_client):
-        attrs_list = self.lb_info['loadbalancers'][0]
+        # Clone load balancer to avoid race conditions
+        lb = lb_fakes.FakeLoadBalancer.create_one_load_balancer()
+        attrs_list = lb.to_dict()
+
         args = ("vip_subnet_id", "vip_network_id", "vip_port_id")
         for a in args:
             # init missing keys
@@ -223,17 +252,49 @@ class TestLoadBalancerSet(TestLoadBalancer):
         lb_client.load_balancer = self.api_mock
         self.cmd = load_balancer.SetLoadBalancer(self.app, None)
 
-    def test_load_balancer_set(self):
-        arglist = [self._lb.id, '--name', 'new_name']
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_set(self, mock_attrs):
+        qos_policy_id = uuidutils.generate_uuid()
+        mock_attrs.return_value = {
+            'loadbalancer_id': self._lb.id,
+            'name': 'new_name',
+            'vip_qos_policy_id': qos_policy_id,
+        }
+        arglist = [self._lb.id, '--name', 'new_name',
+                   '--vip-qos-policy-id', qos_policy_id]
         verifylist = [
             ('loadbalancer', self._lb.id),
-            ('name', 'new_name')
+            ('name', 'new_name'),
+            ('vip_qos_policy_id', qos_policy_id),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.load_balancer_set.assert_called_with(
-            self._lb.id, json={'loadbalancer': {'name': 'new_name'}})
+            self._lb.id, json={
+                'loadbalancer': {
+                    'name': 'new_name',
+                    'vip_qos_policy_id': qos_policy_id,
+                }
+            })
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_remove_qos_policy(self, mock_attrs):
+        mock_attrs.return_value = {
+            'loadbalancer_id': self._lb.id,
+            'vip_qos_policy_id': None,
+        }
+        arglist = [self._lb.id, '--vip-qos-policy-id', 'None']
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('vip_qos_policy_id', 'None'),
+        ]
+
+        try:
+            parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+            self.cmd.take_action(parsed_args)
+        except Exception as e:
+            self.fail("%s raised unexpectedly" % e)
 
 
 class TestLoadBalancerStats(TestLoadBalancer):

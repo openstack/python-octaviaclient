@@ -328,6 +328,16 @@ class TestLoadBalancer(TestOctaviaClient):
                                self.api.listener_delete,
                                FAKE_LI)
 
+    def test_stats_show_listener(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'listeners/' + FAKE_LI + '/stats',
+            json=SINGLE_LB_STATS_RESP,
+            status_code=200,
+        )
+        ret = self.api.listener_stats_show(FAKE_LI)
+        self.assertEqual(SINGLE_LB_STATS_RESP, ret)
+
     def test_list_pool_no_options(self):
         self.requests_mock.register_uri(
             'GET',

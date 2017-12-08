@@ -221,6 +221,19 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    def listener_stats_show(self, listener_id, **kwargs):
+        """Shows the current statistics for a listener
+
+        :param string listener_id:
+            ID of the listener
+        :return:
+            A dict of the specified listener's statistics
+        """
+        url = const.BASE_LISTENER_STATS_URL.format(uuid=listener_id)
+        response = self.list(url, **kwargs)
+
+        return response
+
     def pool_list(self, **kwargs):
         """List all pools
 

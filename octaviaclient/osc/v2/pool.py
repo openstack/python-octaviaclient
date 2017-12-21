@@ -21,6 +21,9 @@ from osc_lib import utils
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
 
+PROTOCOL_CHOICES = ['TCP', 'HTTP', 'HTTPS', 'TERMINATED_HTTPS', 'PROXY']
+ALGORITHM_CHOICES = ['SOURCE_IP', 'ROUND_ROBIN', 'LEAST_CONNECTIONS']
+
 
 class CreatePool(command.ShowOne):
     """Create a pool"""
@@ -40,9 +43,10 @@ class CreatePool(command.ShowOne):
         )
         parser.add_argument(
             '--protocol',
-            metavar="{TCP,HTTP,HTTPS,TERMINATED_HTTPS,PROXY}",
+            metavar='{' + ','.join(PROTOCOL_CHOICES) + '}',
             required=True,
-            choices=['TCP', 'HTTP', 'HTTPS', 'TERMINATED_HTTPS', 'PROXY'],
+            choices=PROTOCOL_CHOICES,
+            type=lambda s: s.upper(),  # case insensitive
             help="Set the pool protocol."
         )
         parent_group = parser.add_mutually_exclusive_group(required=True)
@@ -63,9 +67,10 @@ class CreatePool(command.ShowOne):
         )
         parser.add_argument(
             '--lb-algorithm',
-            metavar="{SOURCE_IP,ROUND_ROBIN,LEAST_CONNECTIONS}",
+            metavar='{' + ','.join(ALGORITHM_CHOICES) + '}',
             required=True,
-            choices=['SOURCE_IP', 'ROUND_ROBIN', 'LEAST_CONNECTIONS'],
+            choices=ALGORITHM_CHOICES,
+            type=lambda s: s.upper(),  # case insensitive
             help="Load balancing algorithm to use."
         )
         admin_group = parser.add_mutually_exclusive_group()
@@ -208,8 +213,9 @@ class SetPool(command.Command):
         )
         parser.add_argument(
             '--lb-algorithm',
-            metavar="{SOURCE_IP,ROUND_ROBIN,LEAST_CONNECTIONS}",
-            choices=['SOURCE_IP', 'ROUND_ROBIN', 'LEAST_CONNECTIONS'],
+            metavar='{' + ','.join(ALGORITHM_CHOICES) + '}',
+            choices=ALGORITHM_CHOICES,
+            type=lambda s: s.upper(),  # case insensitive
             help="Set the load balancing algorithm to use."
         )
         admin_group = parser.add_mutually_exclusive_group()

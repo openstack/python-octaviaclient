@@ -24,6 +24,7 @@ from octaviaclient.osc.v2 import utils as v2_utils
 
 HTTP_METHODS = ['GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'OPTIONS', 'PATCH',
                 'CONNECT', 'TRACE']
+TYPE_CHOICES = ['PING', 'HTTP', 'TCP', 'HTTPS', 'TLS-HELLO']
 
 
 class CreateHealthMonitor(command.ShowOne):
@@ -55,9 +56,10 @@ class CreateHealthMonitor(command.ShowOne):
                  "the member to declare it healthy."
         )
         parser.add_argument(
-            '--http_method',
-            metavar="{GET,POST,DELETE,PUT,HEAD,OPTIONS,PATCH,CONNECT,TRACE}",
+            '--http-method',
+            metavar='{' + ','.join(HTTP_METHODS) + '}',
             choices=HTTP_METHODS,
+            type=lambda s: s.upper(),  # case insensitive
             help="Set the HTTP method that the health monitor uses for "
                  "requests."
         )
@@ -86,10 +88,11 @@ class CreateHealthMonitor(command.ShowOne):
         )
         parser.add_argument(
             '--type',
-            metavar="{PING,HTTP,TCP,HTTPS,TLS-HELLO}",
+            metavar='{' + ','.join(TYPE_CHOICES) + '}',
             required=True,
-            choices=['PING', 'HTTP', 'TCP', 'HTTPS', 'TLS-HELLO'],
-            help="Set the type of health monitor."
+            choices=TYPE_CHOICES,
+            type=lambda s: s.upper(),  # case insensitive
+            help="Set the health monitor type."
         )
         parser.add_argument(
             '--max-retries-down',
@@ -234,9 +237,10 @@ class SetHealthMonitor(command.Command):
                  "the member to declare it healthy."
         )
         parser.add_argument(
-            '--http_method',
-            metavar="{GET,POST,DELETE,PUT,HEAD,OPTIONS,PATCH,CONNECT,TRACE}",
+            '--http-method',
+            metavar='{' + ','.join(HTTP_METHODS) + '}',
             choices=HTTP_METHODS,
+            type=lambda s: s.upper(),  # case insensitive
             help="Set the HTTP method that the health monitor uses for "
                  "requests."
         )

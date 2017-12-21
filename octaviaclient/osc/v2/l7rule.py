@@ -38,9 +38,10 @@ class CreateL7Rule(command.ShowOne):
         )
         parser.add_argument(
             '--compare-type',
-            metavar="{REGEX,EQUAL_TO,CONTAINS,ENDS_WITH,STARTS_WITH}",
+            metavar='{' + ','.join(COMPARE_TYPES) + '}',
             required=True,
             choices=COMPARE_TYPES,
+            type=lambda s: s.upper(),  # case insensitive
             help="Set the compare type for the l7rule."
         )
         parser.add_argument(
@@ -62,9 +63,10 @@ class CreateL7Rule(command.ShowOne):
         )
         parser.add_argument(
             '--type',
-            metavar="{FILE_TYPE,PATH,COOKIE,HOST_NAME,HEADER}",
+            metavar='{' + ','.join(TYPES) + '}',
             required=True,
             choices=TYPES,
+            type=lambda s: s.upper(),  # case insensitive
             help="Set the type for the l7rule."
         )
         admin_group = parser.add_mutually_exclusive_group()
@@ -205,8 +207,9 @@ class SetL7Rule(command.Command):
         )
         parser.add_argument(
             '--compare-type',
-            metavar="{REGEX,EQUAL_TO,CONTAINS,ENDS_WITH,STARTS_WITH}",
+            metavar='{' + ','.join(COMPARE_TYPES) + '}',
             choices=COMPARE_TYPES,
+            type=lambda s: s.upper(),  # case insensitive
             help="Set the compare type for the l7rule."
         )
         parser.add_argument(
@@ -227,8 +230,9 @@ class SetL7Rule(command.Command):
         )
         parser.add_argument(
             '--type',
-            metavar="{FILE_TYPE,PATH,COOKIE,HOST_NAME,HEADER}",
+            metavar='{' + ','.join(TYPES) + '}',
             choices=TYPES,
+            type=lambda s: s.upper(),  # case insensitive
             help="Set the type for the l7rule."
         )
         admin_group = parser.add_mutually_exclusive_group()

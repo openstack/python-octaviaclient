@@ -158,7 +158,7 @@ class TestL7RuleCreate(TestL7Policy):
         arglist = [self._l7po.id,
                    '--compare-type', 'ENDS_WITH',
                    '--value', '.example.com',
-                   '--type', 'HOST_NAME']
+                   '--type', 'HOST_NAME'.lower()]
 
         verifylist = [
             ('l7policy', self._l7po.id),

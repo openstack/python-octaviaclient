@@ -15,14 +15,15 @@
 import copy
 import mock
 
-from octaviaclient.osc.v2 import member
-from octaviaclient.tests.unit.osc.v2 import fakes as mem_fakes
 import osc_lib.tests.utils as osc_test_utils
 
+from octaviaclient.osc.v2 import member
+from octaviaclient.tests.unit.osc.v2 import fakes
 
-class TestMember(mem_fakes.TestOctaviaClient):
 
-    mem = mem_fakes.FakeMember.create_member()
+class TestMember(fakes.TestOctaviaClient):
+
+    _mem = fakes.createFakeResource('member')
 
     columns = (
         'id',
@@ -37,27 +38,27 @@ class TestMember(mem_fakes.TestOctaviaClient):
 
     datalist = (
         (
-            mem.id,
-            mem.name,
-            mem.project_id,
-            mem.provisioning_status,
-            mem.address,
-            mem.protocol_port,
-            mem.operating_status,
-            mem.weight
+            _mem.id,
+            _mem.name,
+            _mem.project_id,
+            _mem.provisioning_status,
+            _mem.address,
+            _mem.protocol_port,
+            _mem.operating_status,
+            _mem.weight
         ),
     )
 
     info = {'members': [{
-        'id': mem.id,
-        'name': mem.name,
-        'project_id': mem.project_id,
-        'provisioning_status': mem.provisioning_status,
-        'address': mem.address,
-        'protocol_port': mem.protocol_port,
-        'operating_status': mem.operating_status,
-        'weight': mem.weight,
-        'pool_id': mem.pool_id}]
+        'id': _mem.id,
+        'name': _mem.name,
+        'project_id': _mem.project_id,
+        'provisioning_status': _mem.provisioning_status,
+        'address': _mem.address,
+        'protocol_port': _mem.protocol_port,
+        'operating_status': _mem.operating_status,
+        'weight': _mem.weight,
+        'pool_id': _mem.pool_id}]
     }
 
     mem_info = copy.deepcopy(info)
@@ -90,7 +91,7 @@ class TestListMember(TestMember):
     @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
     def test_member_list(self, mock_attrs):
         mock_attrs.return_value = {'pool_id': 'pool_id',
-                                   'project_id': self.mem.project_id}
+                                   'project_id': self._mem.project_id}
         arglist = ['pool_id']
         verifylist = []
 
@@ -115,10 +116,10 @@ class TestCreateMember(TestMember):
     def test_member_create(self, mock_attrs):
         mock_attrs.return_value = {
             'ip_address': '192.0.2.122',
-            'protocol_port': self.mem.protocol_port,
-            'weight': self.mem.weight,
+            'protocol_port': self._mem.protocol_port,
+            'weight': self._mem.weight,
             'admin_state_up': True,
-            'pool_id': self.mem.pool_id}
+            'pool_id': self._mem.pool_id}
 
         arglist = ['pool_id', '--address', '192.0.2.122',
                    '--protocol-port', '80',
@@ -132,10 +133,10 @@ class TestCreateMember(TestMember):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.member_create.assert_called_with(
-            pool_id=self.mem.pool_id, json={
+            pool_id=self._mem.pool_id, json={
                 'member': {'ip_address': '192.0.2.122',
-                           'protocol_port': self.mem.protocol_port,
-                           'weight': self.mem.weight,
+                           'protocol_port': self._mem.protocol_port,
+                           'weight': self._mem.weight,
                            'admin_state_up': True}})
 
 
@@ -198,17 +199,17 @@ class TestMemberShow(TestMember):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
     def test_member_show(self, mock_attrs):
-        mock_attrs.return_value = {'member_id': self.mem.id,
-                                   'pool_id': self.mem.pool_id}
-        arglist = [self.mem.pool_id, self.mem.id]
+        mock_attrs.return_value = {'member_id': self._mem.id,
+                                   'pool_id': self._mem.pool_id}
+        arglist = [self._mem.pool_id, self._mem.id]
         verifylist = [
-            ('pool', self.mem.pool_id),
-            ('member', self.mem.id)
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.member_show.assert_called_with(
-            member_id=self.mem.id,
-            pool_id=self.mem.pool_id
+            member_id=self._mem.id,
+            pool_id=self._mem.pool_id
         )

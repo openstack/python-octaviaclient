@@ -99,7 +99,7 @@ POOL_COLUMNS = (
     'id',
     'name',
     'project_id',
-    'provisioning status',
+    'provisioning_status',
     'protocol',
     'lb_algorithm',
     'admin_state_up')

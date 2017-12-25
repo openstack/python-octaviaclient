@@ -16,16 +16,13 @@ import mock
 
 from osc_lib import exceptions
 
-from octaviaclient.osc.v2 import listener as listener
-from octaviaclient.tests.unit.osc.v2 import fakes as li_fakes
-
-AUTH_TOKEN = "foobar"
-AUTH_URL = "http://192.0.2.2"
+from octaviaclient.osc.v2 import listener
+from octaviaclient.tests.unit.osc.v2 import fakes
 
 
-class TestListener(li_fakes.TestOctaviaClient):
+class TestListener(fakes.TestOctaviaClient):
 
-    _li = li_fakes.FakeListener.create_one_listener()
+    _li = fakes.createFakeResource('listener')
 
     columns = (
         'id',

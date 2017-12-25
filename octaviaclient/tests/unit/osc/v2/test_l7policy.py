@@ -17,15 +17,12 @@ import mock
 from osc_lib import exceptions
 
 from octaviaclient.osc.v2 import l7policy
-from octaviaclient.tests.unit.osc.v2 import fakes as po_fakes
-
-AUTH_TOKEN = "foobar"
-AUTH_URL = "http://192.0.2.2"
+from octaviaclient.tests.unit.osc.v2 import fakes
 
 
-class TestL7Policy(po_fakes.TestOctaviaClient):
+class TestL7Policy(fakes.TestOctaviaClient):
 
-    _l7po = po_fakes.FakeL7Policy.create_one_l7policy()
+    _l7po = fakes.createFakeResource('l7policy')
 
     columns = (
         'id',

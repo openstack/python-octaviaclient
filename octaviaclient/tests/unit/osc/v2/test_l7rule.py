@@ -15,16 +15,14 @@ import copy
 import mock
 
 from octaviaclient.osc.v2 import l7rule
-from octaviaclient.tests.unit.osc.v2 import fakes as ru_fakes
-
-AUTH_TOKEN = "foobar"
-AUTH_URL = "http://192.0.2.2"
+from octaviaclient.tests.unit.osc.v2 import fakes
+from octaviaclient.tests.unit.osc.v2 import test_l7policy
 
 
-class TestL7Policy(ru_fakes.TestOctaviaClient):
+class TestL7Rule(fakes.TestOctaviaClient):
 
-    _l7ru = ru_fakes.FakeL7Rule.create_one_l7rule()
-    _l7po = ru_fakes.FakeL7Policy.create_one_l7policy()
+    _l7ru = fakes.createFakeResource('l7rule')
+    _l7po = fakes.createFakeResource('l7policy')
 
     columns = (
         'id',
@@ -64,24 +62,14 @@ class TestL7Policy(ru_fakes.TestOctaviaClient):
         'admin_state_up': _l7ru.admin_state_up,
         'invert': _l7ru.invert
     }]}
-    po_info = {'l7policies': [{
-        "listener_id": _l7po.listener_id,
-        "description": _l7po.description,
-        "admin_state_up": _l7po.admin_state_up,
-        "rules": _l7po.rules,
-        "provisioning_status": _l7po.provisioning_status,
-        "redirect_pool_id": _l7po.redirect_pool_id,
-        "action": _l7po.action,
-        "position": _l7po.position,
-        "project_id": _l7po.project_id,
-        "id": _l7po.id,
-        "name": _l7po.name
-    }]}
+
+    po_info = test_l7policy.TestL7Policy.info
+
     l7po_info = copy.deepcopy(po_info)
     l7ru_info = copy.deepcopy(info)
 
     def setUp(self):
-        super(TestL7Policy, self).setUp()
+        super(TestL7Rule, self).setUp()
         self.l7ru_mock = self.app.client_manager.load_balancer.load_balancers
         self.l7ru_mock.reset_mock()
 
@@ -92,7 +80,7 @@ class TestL7Policy(ru_fakes.TestOctaviaClient):
         lb_client.load_balancer = self.api_mock
 
 
-class TestL7RuleList(TestL7Policy):
+class TestL7RuleList(TestL7Rule):
 
     def setUp(self):
         super(TestL7RuleList, self).setUp()
@@ -112,7 +100,7 @@ class TestL7RuleList(TestL7Policy):
         self.assertEqual(self.datalist, tuple(data))
 
 
-class TestL7RuleDelete(TestL7Policy):
+class TestL7RuleDelete(TestL7Rule):
 
     def setUp(self):
         super(TestL7RuleDelete, self).setUp()
@@ -135,7 +123,7 @@ class TestL7RuleDelete(TestL7Policy):
         )
 
 
-class TestL7RuleCreate(TestL7Policy):
+class TestL7RuleCreate(TestL7Rule):
 
     def setUp(self):
         super(TestL7RuleCreate, self).setUp()
@@ -178,7 +166,7 @@ class TestL7RuleCreate(TestL7Policy):
             })
 
 
-class TestL7RuleShow(TestL7Policy):
+class TestL7RuleShow(TestL7Rule):
 
     def setUp(self):
         super(TestL7RuleShow, self).setUp()
@@ -206,7 +194,7 @@ class TestL7RuleShow(TestL7Policy):
         )
 
 
-class TestL7RuleSet(TestL7Policy):
+class TestL7RuleSet(TestL7Rule):
 
     def setUp(self):
         super(TestL7RuleSet, self).setUp()

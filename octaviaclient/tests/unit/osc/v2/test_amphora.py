@@ -18,15 +18,12 @@ import osc_lib.tests.utils as osc_test_utils
 
 from octaviaclient.osc.v2 import amphora
 from octaviaclient.osc.v2 import constants
-from octaviaclient.tests.unit.osc.v2 import fakes as amp_fakes
-
-AUTH_TOKEN = "foobar"
-AUTH_URL = "http://192.0.2.2"
+from octaviaclient.tests.unit.osc.v2 import fakes
 
 
-class TestAmphora(amp_fakes.TestOctaviaClient):
+class TestAmphora(fakes.TestOctaviaClient):
 
-    _amp = amp_fakes.FakeAmphora.create_one_amphora()
+    _amp = fakes.createFakeResource('amphora')
 
     columns = constants.AMPHORA_COLUMNS
     rows = constants.AMPHORA_ROWS

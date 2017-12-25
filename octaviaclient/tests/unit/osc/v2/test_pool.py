@@ -17,20 +17,17 @@ import mock
 from osc_lib import exceptions
 
 from octaviaclient.osc.v2 import pool as pool
-from octaviaclient.tests.unit.osc.v2 import fakes as po_fakes
-
-AUTH_TOKEN = "foobar"
-AUTH_URL = "http://192.0.2.2"
+from octaviaclient.tests.unit.osc.v2 import fakes
 
 
-class TestPool(po_fakes.TestOctaviaClient):
+class TestPool(fakes.TestOctaviaClient):
 
-    _po = po_fakes.FakePool.create_one_pool()
+    _po = fakes.createFakeResource('pool')
 
     columns = ('id',
                'name',
                'project_id',
-               'provisioning status',
+               'provisioning_status',
                'protocol',
                'lb_algorithm',
                'admin_state_up')

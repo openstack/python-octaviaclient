@@ -17,15 +17,12 @@ import mock
 from osc_lib import exceptions
 
 from octaviaclient.osc.v2 import quota
-from octaviaclient.tests.unit.osc.v2 import fakes as qt_fakes
-
-AUTH_TOKEN = "foobar"
-AUTH_URL = "http://192.0.2.2"
+from octaviaclient.tests.unit.osc.v2 import fakes
 
 
-class TestQuota(qt_fakes.TestOctaviaClient):
+class TestQuota(fakes.TestOctaviaClient):
 
-    _qt = qt_fakes.FakeQT.create_one_quota()
+    _qt = fakes.createFakeResource('quota')
 
     columns = ('project_id', 'load_balancer', 'listener', 'pool',
                'health_monitor', 'member')
@@ -212,7 +209,7 @@ class TestQuotaReset(TestQuota):
         # due to a race condition
         project_id = 'fake_project_id'
         attrs = {'project_id': project_id}
-        qt_reset = qt_fakes.FakeQT.create_one_quota(attrs)
+        qt_reset = fakes.createFakeResource('quota', attrs)
 
         mock_attrs.return_value = qt_reset.to_dict()
 

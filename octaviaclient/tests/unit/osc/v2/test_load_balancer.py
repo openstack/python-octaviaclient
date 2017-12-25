@@ -18,16 +18,13 @@ import mock
 from osc_lib import exceptions
 from oslo_utils import uuidutils
 
-from octaviaclient.osc.v2 import load_balancer as load_balancer
-from octaviaclient.tests.unit.osc.v2 import fakes as lb_fakes
-
-AUTH_TOKEN = "foobar"
-AUTH_URL = "http://192.0.2.2"
+from octaviaclient.osc.v2 import load_balancer
+from octaviaclient.tests.unit.osc.v2 import fakes
 
 
-class TestLoadBalancer(lb_fakes.TestOctaviaClient):
+class TestLoadBalancer(fakes.TestOctaviaClient):
 
-    _lb = lb_fakes.FakeLoadBalancer.create_one_load_balancer()
+    _lb = fakes.createFakeResource('loadbalancer')
 
     columns = (
         'id',
@@ -189,7 +186,7 @@ class TestLoadBalancerCreate(TestLoadBalancer):
     @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
     def test_load_balancer_create_missing_args(self, mock_client):
         # Clone load balancer to avoid race conditions
-        lb = lb_fakes.FakeLoadBalancer.create_one_load_balancer()
+        lb = fakes.createFakeResource('loadbalancer')
         attrs_list = lb.to_dict()
 
         args = ("vip_subnet_id", "vip_network_id", "vip_port_id")

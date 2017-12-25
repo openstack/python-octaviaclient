@@ -11,9 +11,10 @@
 #   under the License.
 #
 
-from octaviaclient.osc.v2 import validate
 from osc_lib import exceptions
 from osc_lib.tests import utils
+
+from octaviaclient.osc.v2 import validate
 
 
 class TestValidations(utils.TestCommand):

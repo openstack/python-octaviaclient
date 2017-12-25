@@ -17,15 +17,12 @@ import mock
 from osc_lib import exceptions
 
 from octaviaclient.osc.v2 import health_monitor
-from octaviaclient.tests.unit.osc.v2 import fakes as hm_fakes
-
-AUTH_TOKEN = "foobar"
-AUTH_URL = "http://192.0.2.2"
+from octaviaclient.tests.unit.osc.v2 import fakes
 
 
-class TestHealthMonitor(hm_fakes.TestOctaviaClient):
+class TestHealthMonitor(fakes.TestOctaviaClient):
 
-    _hm = hm_fakes.FakeHM.create_one_health_monitor()
+    _hm = fakes.createFakeResource('hm')
 
     columns = ('id', 'name', 'project_id', 'type', 'admin_state_up')
 

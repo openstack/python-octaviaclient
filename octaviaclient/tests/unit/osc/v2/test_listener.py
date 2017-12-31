@@ -16,62 +16,24 @@ import mock
 
 from osc_lib import exceptions
 
+from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import listener
+from octaviaclient.tests.unit.osc.v2 import constants as attr_consts
 from octaviaclient.tests.unit.osc.v2 import fakes
 
 
 class TestListener(fakes.TestOctaviaClient):
 
-    _li = fakes.createFakeResource('listener')
-
-    columns = (
-        'id',
-        'default_pool_id',
-        'name',
-        'project_id',
-        'protocol',
-        'protocol_port',
-        'admin_state_up',
-    )
-
-    datalist = (
-        (
-            _li.id,
-            _li.default_pool_id,
-            _li.name,
-            _li.project_id,
-            _li.protocol,
-            _li.protocol_port,
-            _li.admin_state_up,
-        ),
-    )
-
-    info = {
-        'listeners':
-            [{
-                'id': _li.id,
-                'name': _li.name,
-                'project_id': _li.project_id,
-                'loadbalancers': None,
-                'provisioning_status': _li.provisioning_status,
-                'default_pool_id': _li.default_pool_id,
-                'connection_limit': _li.connection_limit,
-                'protocol': _li.protocol,
-                'protocol_port': _li.protocol_port,
-                'admin_state_up': _li.admin_state_up,
-                'default_tls_container_ref': _li.default_tls_container_ref,
-                'sni_container_refs': _li.sni_container_refs
-            }]
-    }
-    li_info = copy.deepcopy(info)
-
     def setUp(self):
         super(TestListener, self).setUp()
-        self.li_mock = self.app.client_manager.load_balancer.load_balancers
-        self.li_mock.reset_mock()
+
+        self._listener = fakes.createFakeResource('listener')
+        self.listener_info = copy.deepcopy(attr_consts.LISTENER_ATTRS)
+        self.columns = copy.deepcopy(constants.LISTENER_COLUMNS)
 
         self.api_mock = mock.Mock()
-        self.api_mock.listener_list.return_value = self.li_info
+        self.api_mock.listener_list.return_value = copy.deepcopy(
+            {'listeners': [attr_consts.LISTENER_ATTRS]})
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -80,6 +42,8 @@ class TestListenerList(TestListener):
 
     def setUp(self):
         super(TestListenerList, self).setUp()
+        self.datalist = (tuple(
+            attr_consts.LISTENER_ATTRS[k] for k in self.columns),)
         self.cmd = listener.ListListener(self.app, None)
 
     def test_listener_list_no_options(self):
@@ -112,15 +76,15 @@ class TestListenerDelete(TestListener):
         self.cmd = listener.DeleteListener(self.app, None)
 
     def test_listener_delete(self):
-        arglist = [self._li.id]
+        arglist = [self._listener.id]
         verifylist = [
-            ('listener', self._li.id)
+            ('listener', self._listener.id)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_delete.assert_called_with(
-            listener_id=self._li.id)
+            listener_id=self._listener.id)
 
     def test_listener_delete_failure(self):
         arglist = ['unknown_lb']
@@ -137,9 +101,8 @@ class TestListenerCreate(TestListener):
 
     def setUp(self):
         super(TestListenerCreate, self).setUp()
-        self.api_mock = mock.Mock()
         self.api_mock.listener_create.return_value = {
-            'listener': self.li_info['listeners'][0]}
+            'listener': self.listener_info}
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -147,14 +110,14 @@ class TestListenerCreate(TestListener):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_listener_attrs')
     def test_listener_create(self, mock_client):
-        mock_client.return_value = self.li_info['listeners'][0]
+        mock_client.return_value = self.listener_info
         arglist = ['mock_lb_id',
-                   '--name', self._li.name,
+                   '--name', self._listener.name,
                    '--protocol', 'HTTP',
                    '--protocol-port', '80']
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
-            ('name', self._li.name),
+            ('name', self._listener.name),
             ('protocol', 'HTTP'),
             ('protocol_port', '80')
         ]
@@ -162,56 +125,56 @@ class TestListenerCreate(TestListener):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_create.assert_called_with(
-            json={'listener': self.li_info['listeners'][0]})
+            json={'listener': self.listener_info})
 
     @mock.patch('octaviaclient.osc.v2.utils.get_listener_attrs')
     def test_tls_listener_create(self, mock_client):
-        mock_client.return_value = self.li_info['listeners'][0]
+        mock_client.return_value = self.listener_info
         arglist = ['mock_lb_id',
-                   '--name', self._li.name,
+                   '--name', self._listener.name,
                    '--protocol', 'TERMINATED_HTTPS'.lower(),
                    '--protocol-port', '443',
                    '--sni-container-refs',
-                   self._li.sni_container_refs[0],
-                   self._li.sni_container_refs[1],
+                   self._listener.sni_container_refs[0],
+                   self._listener.sni_container_refs[1],
                    '--default-tls-container-ref',
-                   self._li.default_tls_container_ref]
+                   self._listener.default_tls_container_ref]
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
-            ('name', self._li.name),
+            ('name', self._listener.name),
             ('protocol', 'TERMINATED_HTTPS'),
             ('protocol_port', '443'),
-            ('sni_container_refs', self._li.sni_container_refs),
-            ('default_tls_container_ref', self._li.default_tls_container_ref)
+            ('sni_container_refs', self._listener.sni_container_refs),
+            ('default_tls_container_ref',
+             self._listener.default_tls_container_ref)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_create.assert_called_with(
-            json={'listener': self.li_info['listeners'][0]})
+            json={'listener': self.listener_info})
 
 
 class TestListenerShow(TestListener):
 
     def setUp(self):
         super(TestListenerShow, self).setUp()
-        self.api_mock = mock.Mock()
-        self.api_mock.listener_list.return_value = self.li_info
-        self.api_mock.listener_show.return_value = self.li_info['listeners'][0]
+        self.api_mock.listener_show.return_value = self.listener_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
         self.cmd = listener.ShowListener(self.app, None)
 
     def test_listener_show(self):
-        arglist = [self._li.id]
+        arglist = [self._listener.id]
         verifylist = [
-            ('listener', self._li.id),
+            ('listener', self._listener.id),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
-        self.api_mock.listener_show.assert_called_with(listener_id=self._li.id)
+        self.api_mock.listener_show.assert_called_with(
+            listener_id=self._listener.id)
 
 
 class TestListenerSet(TestListener):
@@ -221,28 +184,29 @@ class TestListenerSet(TestListener):
         self.cmd = listener.SetListener(self.app, None)
 
     def test_listener_set(self):
-        arglist = [self._li.id, '--name', 'new_name',
+        arglist = [self._listener.id, '--name', 'new_name',
                    '--sni-container-refs',
-                   self._li.sni_container_refs[0],
-                   self._li.sni_container_refs[1],
+                   self._listener.sni_container_refs[0],
+                   self._listener.sni_container_refs[1],
                    '--default-tls-container-ref',
-                   self._li.default_tls_container_ref]
+                   self._listener.default_tls_container_ref]
         verifylist = [
-            ('listener', self._li.id),
+            ('listener', self._listener.id),
             ('name', 'new_name'),
-            ('sni_container_refs', self._li.sni_container_refs),
-            ('default_tls_container_ref', self._li.default_tls_container_ref)
+            ('sni_container_refs', self._listener.sni_container_refs),
+            ('default_tls_container_ref',
+                self._listener.default_tls_container_ref)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_set.assert_called_with(
-            self._li.id, json={
+            self._listener.id, json={
                 'listener': {
                     'name': 'new_name',
-                    'sni_container_refs': self._li.sni_container_refs,
+                    'sni_container_refs': self._listener.sni_container_refs,
                     'default_tls_container_ref':
-                        self._li.default_tls_container_ref
+                        self._listener.default_tls_container_ref
                 }})
 
 
@@ -258,12 +222,12 @@ class TestListenerStatsShow(TestListener):
         self.cmd = listener.ShowListenerStats(self.app, None)
 
     def test_listener_stats_show(self):
-        arglist = [self._li.id]
+        arglist = [self._listener.id]
         verifylist = [
-            ('listener', self._li.id),
+            ('listener', self._listener.id),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_stats_show.assert_called_with(
-            listener_id=self._li.id)
+            listener_id=self._listener.id)

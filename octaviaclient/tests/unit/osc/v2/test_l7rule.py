@@ -14,68 +14,28 @@
 import copy
 import mock
 
+from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import l7rule
+from octaviaclient.tests.unit.osc.v2 import constants as attr_consts
 from octaviaclient.tests.unit.osc.v2 import fakes
-from octaviaclient.tests.unit.osc.v2 import test_l7policy
 
 
 class TestL7Rule(fakes.TestOctaviaClient):
 
-    _l7ru = fakes.createFakeResource('l7rule')
-    _l7po = fakes.createFakeResource('l7policy')
-
-    columns = (
-        'id',
-        'project_id',
-        'provisioning_status',
-        'compare_type',
-        'type',
-        'key',
-        'value',
-        'invert',
-        'admin_state_up')
-
-    datalist = (
-        (
-            _l7ru.id,
-            _l7ru.project_id,
-            _l7ru.provisioning_status,
-            _l7ru.compare_type,
-            _l7ru.type,
-            _l7ru.key,
-            _l7ru.value,
-            _l7ru.invert,
-            _l7ru.admin_state_up
-        ),
-    )
-
-    info = {'rules': [{
-        "provisioning_status": _l7ru.provisioning_status,
-        "compare_type": _l7ru.compare_type,
-        "type": _l7ru.type,
-        "key": _l7ru.key,
-        "project_id": _l7ru.project_id,
-        "id": _l7ru.id,
-        "value": _l7ru.value,
-        'l7rule_id': _l7ru.id,
-        'l7policy_id': _l7po.id,
-        'admin_state_up': _l7ru.admin_state_up,
-        'invert': _l7ru.invert
-    }]}
-
-    po_info = test_l7policy.TestL7Policy.info
-
-    l7po_info = copy.deepcopy(po_info)
-    l7ru_info = copy.deepcopy(info)
-
     def setUp(self):
         super(TestL7Rule, self).setUp()
-        self.l7ru_mock = self.app.client_manager.load_balancer.load_balancers
-        self.l7ru_mock.reset_mock()
+
+        self._l7ru = fakes.createFakeResource('l7rule')
+        self.l7rule_info = copy.deepcopy(attr_consts.L7RULE_ATTRS)
+        self.columns = copy.deepcopy(constants.L7RULE_COLUMNS)
+        self._l7po = fakes.createFakeResource('l7policy')
 
         self.api_mock = mock.Mock()
-        self.api_mock.l7rule_list.return_value = self.l7ru_info
-        self.api_mock.l7pool_list.return_value = self.l7po_info
+        self.api_mock.l7rule_list.return_value = copy.deepcopy(
+            {'rules': [attr_consts.L7RULE_ATTRS]})
+        self.api_mock.l7policy_list.return_value = copy.deepcopy(
+            {'l7policies': [attr_consts.L7POLICY_ATTRS]})
+
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -84,11 +44,13 @@ class TestL7RuleList(TestL7Rule):
 
     def setUp(self):
         super(TestL7RuleList, self).setUp()
+        self.datalist = (tuple(
+            attr_consts.L7RULE_ATTRS[k] for k in self.columns),)
         self.cmd = l7rule.ListL7Rule(self.app, None)
 
     @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
     def test_l7rule_list_no_options(self, mock_attrs):
-        mock_attrs.return_value = self.l7ru_info['rules'][0]
+        mock_attrs.return_value = {'l7policy_id': self._l7po.id}
         arglist = [self._l7po.id]
         verifylist = [('l7policy', self._l7po.id)]
 
@@ -108,7 +70,10 @@ class TestL7RuleDelete(TestL7Rule):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
     def test_l7rule_delete(self, mock_attrs):
-        mock_attrs.return_value = self.l7ru_info['rules'][0]
+        mock_attrs.return_value = {
+            'l7policy_id': self._l7po.id,
+            'l7rule_id': self._l7ru.id,
+        }
         arglist = [self._l7po.id, self._l7ru.id]
         verifylist = [
             ('l7policy', self._l7po.id),
@@ -127,9 +92,8 @@ class TestL7RuleCreate(TestL7Rule):
 
     def setUp(self):
         super(TestL7RuleCreate, self).setUp()
-        self.api_mock = mock.Mock()
         self.api_mock.l7rule_create.return_value = {
-            'rule': self.l7ru_info}
+            'rule': self.l7rule_info}
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -170,10 +134,7 @@ class TestL7RuleShow(TestL7Rule):
 
     def setUp(self):
         super(TestL7RuleShow, self).setUp()
-        self.api_mock = mock.Mock()
-        self.api_mock.l7policy_list.return_value = self.l7po_info
-        self.api_mock.l7rule_list.return_value = self.l7ru_info
-        self.api_mock.l7rule_show.return_value = self.l7ru_info['rules'][0]
+        self.api_mock.l7rule_show.return_value = self.l7rule_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

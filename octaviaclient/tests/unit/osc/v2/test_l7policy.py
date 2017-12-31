@@ -16,58 +16,25 @@ import mock
 
 from osc_lib import exceptions
 
+from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import l7policy
+from octaviaclient.tests.unit.osc.v2 import constants as attr_consts
 from octaviaclient.tests.unit.osc.v2 import fakes
 
 
 class TestL7Policy(fakes.TestOctaviaClient):
 
-    _l7po = fakes.createFakeResource('l7policy')
-
-    columns = (
-        'id',
-        'name',
-        'project_id',
-        'provisioning_status',
-        'action',
-        'position',
-        'admin_state_up'
-    )
-
-    datalist = (
-        (
-            _l7po.id,
-            _l7po.name,
-            _l7po.project_id,
-            _l7po.provisioning_status,
-            _l7po.action,
-            _l7po.position,
-            _l7po.admin_state_up
-        ),
-    )
-
-    info = {'l7policies': [{
-        'listener_id': _l7po.listener_id,
-        'description': _l7po.description,
-        'admin_state_up': _l7po.admin_state_up,
-        'rules': _l7po.rules,
-        'provisioning_status': _l7po.provisioning_status,
-        'redirect_pool_id': _l7po.redirect_pool_id,
-        'action': _l7po.action,
-        'position': _l7po.position,
-        'project_id': _l7po.project_id,
-        'id': _l7po.id,
-        'name': _l7po.name
-    }]}
-    l7po_info = copy.deepcopy(info)
-
     def setUp(self):
         super(TestL7Policy, self).setUp()
-        self.l7po_mock = self.app.client_manager.load_balancer.load_balancers
-        self.l7po_mock.reset_mock()
+
+        self._l7po = fakes.createFakeResource('l7policy')
+        self.l7po_info = copy.deepcopy(attr_consts.L7POLICY_ATTRS)
+        self.columns = copy.deepcopy(constants.L7POLICY_COLUMNS)
 
         self.api_mock = mock.Mock()
-        self.api_mock.l7policy_list.return_value = self.l7po_info
+        self.api_mock.l7policy_list.return_value = copy.deepcopy(
+            {'l7policies': [attr_consts.L7POLICY_ATTRS]})
+
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -76,6 +43,8 @@ class TestL7PolicyList(TestL7Policy):
 
     def setUp(self):
         super(TestL7PolicyList, self).setUp()
+        self.datalist = (tuple(
+            attr_consts.L7POLICY_ATTRS[k] for k in self.columns),)
         self.cmd = l7policy.ListL7Policy(self.app, None)
 
     def test_l7policy_list_no_options(self):
@@ -122,7 +91,6 @@ class TestL7PolicyCreate(TestL7Policy):
 
     def setUp(self):
         super(TestL7PolicyCreate, self).setUp()
-        self.api_mock = mock.Mock()
         self.api_mock.l7policy_create.return_value = {
             'l7policy': self.l7po_info}
         lb_client = self.app.client_manager
@@ -165,7 +133,6 @@ class TestL7PolicyShow(TestL7Policy):
 
     def setUp(self):
         super(TestL7PolicyShow, self).setUp()
-        self.api_mock = mock.Mock()
         self.api_mock.l7policy_list.return_value = [{'id': self._l7po.id}]
         self.api_mock.l7policy_show.return_value = self.l7po_info
         lb_client = self.app.client_manager

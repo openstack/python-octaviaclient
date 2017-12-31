@@ -16,54 +16,27 @@ import mock
 
 from osc_lib import exceptions
 
+from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import health_monitor
+from octaviaclient.tests.unit.osc.v2 import constants as attr_consts
 from octaviaclient.tests.unit.osc.v2 import fakes
 
 
 class TestHealthMonitor(fakes.TestOctaviaClient):
 
-    _hm = fakes.createFakeResource('hm')
-
-    columns = ('id', 'name', 'project_id', 'type', 'admin_state_up')
-
-    datalist = (
-        (
-            _hm.id,
-            _hm.name,
-            _hm.project_id,
-            _hm.type,
-            _hm.admin_state_up
-        ),
-    )
-
-    info = {
-        'healthmonitors':
-            [{
-                "project_id": _hm.project_id,
-                "name": _hm.name,
-                "admin_state_up": True,
-                "pools": _hm.pools,
-                "created_at": _hm.created_at,
-                "delay": _hm.delay,
-                "expected_codes": _hm.expected_codes,
-                "max_retries": _hm.max_retries,
-                "http_method": _hm.http_method,
-                "timeout": _hm.timeout,
-                "max_retries_down": _hm.max_retries_down,
-                "url_path": _hm.url_path,
-                "type": _hm.type,
-                "id": _hm.id
-            }]
-    }
-    hm_info = copy.deepcopy(info)
-
     def setUp(self):
         super(TestHealthMonitor, self).setUp()
-        self.li_mock = self.app.client_manager.load_balancer.load_balancers
-        self.li_mock.reset_mock()
 
+        self._hm = fakes.createFakeResource('hm')
+        self.hm_info = copy.deepcopy(attr_consts.HM_ATTRS)
+        self.columns = copy.deepcopy(constants.MONITOR_COLUMNS)
+
+        info_list = {'healthmonitors': [
+            {k: v for k, v in attr_consts.HM_ATTRS.items() if (
+                k in self.columns)},
+        ]}
         self.api_mock = mock.Mock()
-        self.api_mock.health_monitor_list.return_value = self.hm_info
+        self.api_mock.health_monitor_list.return_value = info_list
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -72,6 +45,7 @@ class TestHealthMonitorList(TestHealthMonitor):
 
     def setUp(self):
         super(TestHealthMonitorList, self).setUp()
+        self.datalist = (tuple(attr_consts.HM_ATTRS[k] for k in self.columns),)
         self.cmd = health_monitor.ListHealthMonitor(self.app, None)
 
     def test_health_monitor_list_no_options(self):
@@ -120,7 +94,7 @@ class TestHealthMonitorCreate(TestHealthMonitor):
         super(TestHealthMonitorCreate, self).setUp()
         self.api_mock = mock.Mock()
         self.api_mock.health_monitor_create.return_value = {
-            'healthmonitor': self.hm_info['healthmonitors'][0]}
+            'healthmonitor': self.hm_info}
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -128,7 +102,7 @@ class TestHealthMonitorCreate(TestHealthMonitor):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_health_monitor_attrs')
     def test_health_monitor_create(self, mock_client):
-        mock_client.return_value = self.hm_info['healthmonitors'][0]
+        mock_client.return_value = self.hm_info
         arglist = ['mock_pool_id',
                    '--name', self._hm.name,
                    '--delay', str(self._hm.delay),
@@ -149,17 +123,16 @@ class TestHealthMonitorCreate(TestHealthMonitor):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.health_monitor_create.assert_called_with(
-            json={'healthmonitor': self.hm_info['healthmonitors'][0]})
+            json={'healthmonitor': self.hm_info})
 
 
 class TestHealthMonitorShow(TestHealthMonitor):
 
     def setUp(self):
         super(TestHealthMonitorShow, self).setUp()
-        self.api_mock = mock.Mock()
-        self.api_mock.health_monitor_list.return_value = self.hm_info
-        self.api_mock.health_monitor_show.return_value = (
-            self.hm_info['healthmonitors'][0])
+        self.api_mock.health_monitor_show.return_value = {
+            'healthmonitor': self.hm_info,
+        }
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

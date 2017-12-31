@@ -62,6 +62,7 @@ LISTENER_ATTRS = {
     "protocol_port": 80,
     "provisioning_status": "ACTIVE",
     "default_pool_id": None,
+    "loadbalancers": None,
     "connection_limit": 10,
     "admin_state_up": True,
     "default_tls_container_ref": uuidutils.generate_uuid(dashed=True),

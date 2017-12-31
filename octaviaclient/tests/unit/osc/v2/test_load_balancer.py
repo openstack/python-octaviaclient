@@ -18,54 +18,25 @@ import mock
 from osc_lib import exceptions
 from oslo_utils import uuidutils
 
+from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import load_balancer
+from octaviaclient.tests.unit.osc.v2 import constants as attr_consts
 from octaviaclient.tests.unit.osc.v2 import fakes
 
 
 class TestLoadBalancer(fakes.TestOctaviaClient):
 
-    _lb = fakes.createFakeResource('loadbalancer')
-
-    columns = (
-        'id',
-        'name',
-        'project_id',
-        'vip_address',
-        'provisioning_status',
-        'provider'
-    )
-
-    datalist = (
-        (
-            _lb.id,
-            _lb.name,
-            _lb.project_id,
-            _lb.vip_address,
-            _lb.provisioning_status,
-            _lb.provider
-        ),
-    )
-
-    info = {
-        'loadbalancers':
-            [{'id': _lb.id,
-              'name': _lb.name,
-              'project_id': _lb.project_id,
-              'vip_address': _lb.vip_address,
-              'vip_network_id': _lb.vip_network_id,
-              'provisioning_status': _lb.provisioning_status,
-              'provider': _lb.provider
-              }]
-    }
-    lb_info = copy.deepcopy(info)
-
     def setUp(self):
         super(TestLoadBalancer, self).setUp()
-        self.lb_mock = self.app.client_manager.load_balancer.load_balancers
-        self.lb_mock.reset_mock()
+
+        self._lb = fakes.createFakeResource('loadbalancer')
+        self.lb_info = copy.deepcopy(attr_consts.LOADBALANCER_ATTRS)
+        self.columns = copy.deepcopy(constants.LOAD_BALANCER_COLUMNS)
 
         self.api_mock = mock.Mock()
-        self.api_mock.load_balancer_list.return_value = self.lb_info
+        self.api_mock.load_balancer_list.return_value = copy.deepcopy(
+            {'loadbalancers': [attr_consts.LOADBALANCER_ATTRS]})
+
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
         lb_client.neutronclient = mock.MagicMock()
@@ -75,6 +46,8 @@ class TestLoadBalancerList(TestLoadBalancer):
 
     def setUp(self):
         super(TestLoadBalancerList, self).setUp()
+        self.datalist = (tuple(
+            attr_consts.LOADBALANCER_ATTRS[k] for k in self.columns),)
         self.cmd = load_balancer.ListLoadBalancer(self.app, None)
 
     def test_load_balancer_list_no_options(self):
@@ -132,9 +105,9 @@ class TestLoadBalancerCreate(TestLoadBalancer):
 
     def setUp(self):
         super(TestLoadBalancerCreate, self).setUp()
-        self.api_mock = mock.Mock()
+
         self.api_mock.load_balancer_create.return_value = {
-            'loadbalancer': self.lb_info['loadbalancers'][0]
+            'loadbalancer': self.lb_info
         }
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
@@ -143,7 +116,7 @@ class TestLoadBalancerCreate(TestLoadBalancer):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
     def test_load_balancer_create(self, mock_client):
-        mock_client.return_value = self.lb_info['loadbalancers'][0]
+        mock_client.return_value = self.lb_info
         arglist = ['--name', self._lb.name,
                    '--vip-network-id', self._lb.vip_network_id,
                    '--project', self._lb.project_id]
@@ -156,12 +129,12 @@ class TestLoadBalancerCreate(TestLoadBalancer):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.load_balancer_create.assert_called_with(
-            json={'loadbalancer': self.lb_info['loadbalancers'][0]})
+            json={'loadbalancer': self.lb_info})
 
     @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
     def test_load_balancer_create_with_qos_policy(self, mock_client):
         qos_policy_id = 'qos_id'
-        lb_info = copy.deepcopy(self.lb_info['loadbalancers'][0])
+        lb_info = copy.deepcopy(self.lb_info)
         lb_info.update({'vip_qos_policy_id': qos_policy_id})
         mock_client.return_value = lb_info
 
@@ -185,10 +158,9 @@ class TestLoadBalancerCreate(TestLoadBalancer):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
     def test_load_balancer_create_missing_args(self, mock_client):
-        # Clone load balancer to avoid race conditions
-        lb = fakes.createFakeResource('loadbalancer')
-        attrs_list = lb.to_dict()
+        attrs_list = self.lb_info
 
+        # init missing keys
         args = ("vip_subnet_id", "vip_network_id", "vip_port_id")
         for a in args:
             # init missing keys
@@ -198,7 +170,7 @@ class TestLoadBalancerCreate(TestLoadBalancer):
             for comb in itertools.combinations(args, n):
                 # subtract comb's keys from attrs_list
                 filtered_attrs = {k: v for k, v in attrs_list.items() if (
-                                  k not in comb)}
+                    k not in comb)}
                 mock_client.return_value = filtered_attrs
                 if not any(k in filtered_attrs for k in args) or all(
                     k in filtered_attrs for k in ("vip_network_id",
@@ -219,10 +191,8 @@ class TestLoadBalancerShow(TestLoadBalancer):
 
     def setUp(self):
         super(TestLoadBalancerShow, self).setUp()
-        self.api_mock = mock.Mock()
-        self.api_mock.load_balancer_list.return_value = self.lb_info
-        self.api_mock.load_balancer_show.return_value = (
-            self.lb_info['loadbalancers'][0])
+        self.api_mock.load_balancer_show.return_value = {
+            'loadbalancer': self.lb_info}
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -242,9 +212,6 @@ class TestLoadBalancerSet(TestLoadBalancer):
 
     def setUp(self):
         super(TestLoadBalancerSet, self).setUp()
-        self.api_mock.load_balancer_list.return_value = self.lb_info
-        self.api_mock.load_balancer_show.return_value = {
-            'loadbalancer': self.lb_info['loadbalancers'][0]}
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
         self.cmd = load_balancer.SetLoadBalancer(self.app, None)

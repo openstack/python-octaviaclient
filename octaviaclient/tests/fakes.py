@@ -13,6 +13,7 @@
 #   under the License.
 #
 
+import copy
 import json
 import mock
 import sys
@@ -217,7 +218,7 @@ class FakeResource(object):
         return list(self._info)
 
     def to_dict(self):
-        return self._info
+        return copy.deepcopy(self._info)
 
     @property
     def info(self):

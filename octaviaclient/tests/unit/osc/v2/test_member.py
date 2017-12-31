@@ -17,59 +17,28 @@ import mock
 
 import osc_lib.tests.utils as osc_test_utils
 
+from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import member
+from octaviaclient.tests.unit.osc.v2 import constants as attr_consts
 from octaviaclient.tests.unit.osc.v2 import fakes
 
 
 class TestMember(fakes.TestOctaviaClient):
 
-    _mem = fakes.createFakeResource('member')
-
-    columns = (
-        'id',
-        'name',
-        'project_id',
-        'provisioning_status',
-        'address',
-        'protocol_port',
-        'operating_status',
-        'weight'
-    )
-
-    datalist = (
-        (
-            _mem.id,
-            _mem.name,
-            _mem.project_id,
-            _mem.provisioning_status,
-            _mem.address,
-            _mem.protocol_port,
-            _mem.operating_status,
-            _mem.weight
-        ),
-    )
-
-    info = {'members': [{
-        'id': _mem.id,
-        'name': _mem.name,
-        'project_id': _mem.project_id,
-        'provisioning_status': _mem.provisioning_status,
-        'address': _mem.address,
-        'protocol_port': _mem.protocol_port,
-        'operating_status': _mem.operating_status,
-        'weight': _mem.weight,
-        'pool_id': _mem.pool_id}]
-    }
-
-    mem_info = copy.deepcopy(info)
-
     def setUp(self):
         super(TestMember, self).setUp()
-        self.mem_mock = self.app.client_manager.load_balancer.load_balancers
-        self.mem_mock.reset_mock()
 
+        self._mem = fakes.createFakeResource('member')
+        self.mem_info = copy.deepcopy(attr_consts.MEMBER_ATTRS)
+        self.columns = copy.deepcopy(constants.MEMBER_COLUMNS)
+
+        info_list = {'members': [
+            {k: v for k, v in attr_consts.MEMBER_ATTRS.items() if (
+                k in self.columns)}
+        ]}
         self.api_mock = mock.Mock()
-        self.api_mock.member_list.return_value = self.mem_info
+        self.api_mock.member_list.return_value = info_list
+
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
         lb_client.neutronclient = mock.MagicMock()
@@ -79,6 +48,8 @@ class TestListMember(TestMember):
 
     def setUp(self):
         super(TestListMember, self).setUp()
+        self.datalist = (tuple(
+            attr_consts.MEMBER_ATTRS[k] for k in self.columns),)
         self.cmd = member.ListMember(self.app, None)
 
     def test_member_list_no_options(self):
@@ -189,9 +160,7 @@ class TestMemberShow(TestMember):
 
     def setUp(self):
         super(TestMemberShow, self).setUp()
-        self.api_mock = mock.Mock()
-        self.api_mock.member_list.return_value = self.mem_info
-        self.api_mock.member_show.return_value = self.mem_info['members'][0]
+        self.api_mock.member_show.return_value = self.mem_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

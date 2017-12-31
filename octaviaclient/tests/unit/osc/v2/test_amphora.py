@@ -18,88 +18,30 @@ import osc_lib.tests.utils as osc_test_utils
 
 from octaviaclient.osc.v2 import amphora
 from octaviaclient.osc.v2 import constants
+from octaviaclient.tests.unit.osc.v2 import constants as attr_consts
 from octaviaclient.tests.unit.osc.v2 import fakes
 
 
 class TestAmphora(fakes.TestOctaviaClient):
 
-    _amp = fakes.createFakeResource('amphora')
-
-    columns = constants.AMPHORA_COLUMNS
-    rows = constants.AMPHORA_ROWS
-
-    data_show = (
-        (
-            _amp.id,
-            _amp.loadbalancer_id,
-            _amp.compute_id,
-            _amp.lb_network_ip,
-            _amp.vrrp_ip,
-            _amp.ha_ip,
-            _amp.vrrp_port_id,
-            _amp.ha_port_id,
-            _amp.cert_expiration,
-            _amp.cert_busy,
-            _amp.role,
-            _amp.status,
-            _amp.vrrp_interface,
-            _amp.vrrp_id,
-            _amp.vrrp_priority,
-            _amp.cached_zone,
-        ),
-    )
-
-    info_show = {
-        'id': _amp.id,
-        'loadbalancer_id': _amp.loadbalancer_id,
-        'compute_id': _amp.compute_id,
-        'lb_network_ip': _amp.lb_network_ip,
-        'vrrp_ip': _amp.vrrp_ip,
-        'ha_ip': _amp.ha_ip,
-        'vrrp_port_id': _amp.vrrp_port_id,
-        'ha_port_id': _amp.ha_port_id,
-        'cert_expiration': _amp.cert_expiration,
-        'cert_busy': _amp.cert_busy,
-        'role': _amp.role,
-        'status': _amp.status,
-        'vrrp_interface': _amp.vrrp_interface,
-        'vrrp_id': _amp.vrrp_id,
-        'vrrp_priority': _amp.vrrp_priority,
-        'cached_zone': _amp.cached_zone,
-    }
-
-    data_list = (
-        (
-            _amp.id,
-            _amp.loadbalancer_id,
-            _amp.status,
-            _amp.role,
-            _amp.lb_network_ip,
-            _amp.ha_ip,
-        ),
-    )
-
-    info_list = {
-        'amphorae':
-            [{
-                'id': _amp.id,
-                'loadbalancer_id': _amp.loadbalancer_id,
-                'status': _amp.status,
-                'role': _amp.role,
-                'lb_network_ip': _amp.lb_network_ip,
-                'ha_ip': _amp.ha_ip,
-            }],
-    }
-    amp_info = copy.deepcopy(info_list)
-
     def setUp(self):
         super(TestAmphora, self).setUp()
 
+        self._amp = fakes.createFakeResource('amphora')
+        self.amp_info = copy.deepcopy(attr_consts.AMPHORA_ATTRS)
+        self.columns = copy.deepcopy(constants.AMPHORA_COLUMNS)
+        self.rows = copy.deepcopy(constants.AMPHORA_ROWS)
+
+        info_list = {'amphorae': [
+            {k: v for k, v in attr_consts.AMPHORA_ATTRS.items() if (
+                k in self.columns)},
+        ]}
         self.api_mock = mock.Mock()
-        self.api_mock.amphora_list.return_value = self.amp_info
+        self.api_mock.amphora_list.return_value = info_list
         self.api_mock.amphora_show.return_value = {
-            "amphora": self.amp_info['amphorae'][0],
+            "amphora": info_list['amphorae'][0],
         }
+
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -108,6 +50,8 @@ class TestAmphoraList(TestAmphora):
 
     def setUp(self):
         super(TestAmphoraList, self).setUp()
+        self.data_list = (tuple(
+            attr_consts.AMPHORA_ATTRS[k] for k in self.columns),)
         self.cmd = amphora.ListAmphora(self.app, None)
 
     def test_amphora_list_no_options(self):

@@ -16,59 +16,24 @@ import mock
 
 from osc_lib import exceptions
 
+from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import pool as pool
+from octaviaclient.tests.unit.osc.v2 import constants as attr_consts
 from octaviaclient.tests.unit.osc.v2 import fakes
 
 
 class TestPool(fakes.TestOctaviaClient):
 
-    _po = fakes.createFakeResource('pool')
-
-    columns = ('id',
-               'name',
-               'project_id',
-               'provisioning_status',
-               'protocol',
-               'lb_algorithm',
-               'admin_state_up')
-
-    datalist = (
-        (
-            _po.id,
-            _po.name,
-            _po.project_id,
-            _po.provisioning_status,
-            _po.protocol,
-            _po.lb_algorithm,
-            True
-        ),
-    )
-
-    info = {
-        'pools':
-            [{'id': _po.id,
-                'name': _po.name,
-                'project_id': _po.project_id,
-                'provisioning_status': _po.provisioning_status,
-                'members': _po.members,
-                'protocol': _po.protocol,
-                'lb_algorithm': _po.lb_algorithm,
-                'loadbalancers': _po.loadbalancers,
-                'listeners': _po.listeners,
-                'pool_id': _po.id,
-                'admin_state_up': True,
-                'session_persistance': {'k': 'v'}
-              }]
-    }
-    po_info = copy.deepcopy(info)
-
     def setUp(self):
         super(TestPool, self).setUp()
-        self.li_mock = self.app.client_manager.load_balancer.load_balancers
-        self.li_mock.reset_mock()
+
+        self._po = fakes.createFakeResource('pool')
+        self.pool_info = copy.deepcopy(attr_consts.POOL_ATTRS)
+        self.columns = copy.deepcopy(constants.POOL_COLUMNS)
 
         self.api_mock = mock.Mock()
-        self.api_mock.pool_list.return_value = self.po_info
+        self.api_mock.pool_list.return_value = copy.deepcopy(
+            {'pools': [attr_consts.POOL_ATTRS]})
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -77,6 +42,9 @@ class TestPoolList(TestPool):
 
     def setUp(self):
         super(TestPoolList, self).setUp()
+        self.datalist = (tuple(
+            attr_consts.POOL_ATTRS[k] for k in self.columns
+        ),)
         self.cmd = pool.ListPool(self.app, None)
 
     def test_pool_list_no_options(self):
@@ -123,9 +91,8 @@ class TestPoolCreate(TestPool):
 
     def setUp(self):
         super(TestPoolCreate, self).setUp()
-        self.api_mock = mock.Mock()
         self.api_mock.pool_create.return_value = {
-            'pool': self.po_info}
+            'pool': self.pool_info}
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -133,7 +100,7 @@ class TestPoolCreate(TestPool):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_pool_attrs')
     def test_pool_create(self, mock_attrs):
-        mock_attrs.return_value = self.po_info
+        mock_attrs.return_value = self.pool_info
         arglist = ['--loadbalancer', 'mock_lb_id',
                    '--name', self._po.name,
                    '--protocol', 'HTTP',
@@ -149,16 +116,14 @@ class TestPoolCreate(TestPool):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.pool_create.assert_called_with(
-            json={'pool': self.po_info})
+            json={'pool': self.pool_info})
 
 
 class TestPoolShow(TestPool):
 
     def setUp(self):
         super(TestPoolShow, self).setUp()
-        self.api_mock = mock.Mock()
-        self.api_mock.pool_list.return_value = self.po_info
-        self.api_mock.pool_show.return_value = self.po_info['pools'][0]
+        self.api_mock.pool_show.return_value = self.pool_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

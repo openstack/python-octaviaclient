@@ -16,48 +16,25 @@ import mock
 
 from osc_lib import exceptions
 
+from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import quota
+from octaviaclient.tests.unit.osc.v2 import constants as attr_consts
 from octaviaclient.tests.unit.osc.v2 import fakes
 
 
 class TestQuota(fakes.TestOctaviaClient):
 
-    _qt = fakes.createFakeResource('quota')
-
-    columns = ('project_id', 'load_balancer', 'listener', 'pool',
-               'health_monitor', 'member')
-
-    datalist = (
-        (
-            _qt.project_id,
-            _qt.load_balancer,
-            _qt.listener,
-            _qt.pool,
-            _qt.health_monitor,
-            _qt.member
-        ),
-    )
-
-    info = {
-        'quotas':
-            [{
-                "project_id": _qt.project_id,
-                "load_balancer": _qt.load_balancer,
-                "listener": _qt.listener,
-                "pool": _qt.pool,
-                "health_monitor": _qt.health_monitor,
-                "member": _qt.member
-            }]
-    }
-    qt_info = copy.deepcopy(info)
-
     def setUp(self):
         super(TestQuota, self).setUp()
-        self.qt_mock = self.app.client_manager.load_balancer.load_balancers
-        self.qt_mock.reset_mock()
+
+        self._qt = fakes.createFakeResource('quota')
+        self.quota_info = copy.deepcopy(attr_consts.QUOTA_ATTRS)
+        self.columns = copy.deepcopy(constants.QUOTA_COLUMNS)
 
         self.api_mock = mock.Mock()
-        self.api_mock.quota_list.return_value = self.qt_info
+        self.api_mock.quota_list.return_value = copy.deepcopy(
+            {'quotas': [attr_consts.QUOTA_ATTRS]})
+
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -66,6 +43,8 @@ class TestQuotaList(TestQuota):
 
     def setUp(self):
         super(TestQuotaList, self).setUp()
+        self.datalist = (tuple(
+            attr_consts.QUOTA_ATTRS[k] for k in self.columns),)
         self.cmd = quota.ListQuota(self.app, None)
 
     def test_quota_list_no_options(self):
@@ -84,10 +63,8 @@ class TestQuotaShow(TestQuota):
 
     def setUp(self):
         super(TestQuotaShow, self).setUp()
-        self.api_mock = mock.Mock()
-        self.api_mock.quota_list.return_value = self.qt_info
         self.api_mock.quota_show.return_value = {
-            'quota': self.qt_info['quotas'][0]}
+            'quota': self.quota_info}
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -95,7 +72,7 @@ class TestQuotaShow(TestQuota):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_quota_attrs')
     def test_quota_show(self, mock_attrs):
-        mock_attrs.return_value = self.qt_info['quotas'][0]
+        mock_attrs.return_value = self.quota_info
         arglist = [self._qt.project_id]
         verifylist = [
             ('project', self._qt.project_id),
@@ -120,7 +97,6 @@ class TestQuotaDefaultsShow(TestQuota):
     def setUp(self):
         super(TestQuotaDefaultsShow, self).setUp()
 
-        self.api_mock = mock.Mock()
         self.api_mock.quota_defaults_show.return_value = {
             'quota': self.qt_defaults}
 
@@ -145,9 +121,9 @@ class TestQuotaSet(TestQuota):
 
     def setUp(self):
         super(TestQuotaSet, self).setUp()
-        self.api_mock = mock.Mock()
+
         self.api_mock.quota_set.return_value = {
-            'quota': self.qt_info['quotas'][0]}
+            'quota': self.quota_info}
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

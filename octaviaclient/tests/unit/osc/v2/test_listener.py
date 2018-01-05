@@ -247,3 +247,26 @@ class TestListenerSet(TestListener):
                     'default_tls_container_ref':
                         self._li.default_tls_container_ref
                 }})
+
+
+class TestListenerStatsShow(TestListener):
+
+    def setUp(self):
+        super(TestListenerStatsShow, self).setUp()
+        listener_stats_info = {'stats': {'bytes_in': '0'}}
+        self.api_mock.listener_stats_show.return_value = {
+            'stats': listener_stats_info['stats']}
+        lb_client = self.app.client_manager
+        lb_client.load_balancer = self.api_mock
+        self.cmd = listener.ShowListenerStats(self.app, None)
+
+    def test_listener_stats_show(self):
+        arglist = [self._li.id]
+        verifylist = [
+            ('listener', self._li.id),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.listener_stats_show.assert_called_with(
+            listener_id=self._li.id)

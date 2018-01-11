@@ -114,3 +114,18 @@ class TestAmphoraShow(TestAmphora):
         rows, data = self.cmd.take_action(parsed_args)
         self.assertEqual(self.rows, rows)
         self.api_mock.amphora_show.assert_called_with(amphora_id=self._amp.id)
+
+
+class TestAmphoraFailover(TestAmphora):
+    def setUp(self):
+        super(TestAmphoraFailover, self).setUp()
+        self.cmd = amphora.FailoverAmphora(self.app, None)
+
+    def test_amphora_failover(self):
+        arglist = [self._amp.id]
+        verify_list = [('amphora_id', self._amp.id)]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.amphora_failover.assert_called_with(
+            amphora_id=self._amp.id)

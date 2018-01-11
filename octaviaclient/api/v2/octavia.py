@@ -713,6 +713,20 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
+    def amphora_failover(self, amphora_id):
+        """Force failover an amphorae
+
+        :param string amphora_id:
+            ID of the amphora to failover
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_AMPHORA_FAILOVER_URL.format(uuid=amphora_id)
+        response = self.create(url, method='PUT')
+
+        return response
+
 
 class OctaviaClientException(Exception):
     """The base exception class for all exceptions this library raises."""

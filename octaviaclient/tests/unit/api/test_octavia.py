@@ -25,6 +25,7 @@ FAKE_ACCOUNT = 'q12we34r'
 FAKE_AUTH = '11223344556677889900'
 FAKE_URL = 'http://example.com/v2.0/'
 FAKE_LBAAS_URL = FAKE_URL + 'lbaas/'
+FAKE_OCTAVIA_URL = FAKE_URL + 'octavia/'
 
 FAKE_LB = uuidutils.generate_uuid()
 FAKE_LI = uuidutils.generate_uuid()
@@ -34,6 +35,7 @@ FAKE_L7PO = uuidutils.generate_uuid()
 FAKE_L7RU = uuidutils.generate_uuid()
 FAKE_HM = uuidutils.generate_uuid()
 FAKE_PRJ = uuidutils.generate_uuid()
+FAKE_AMP = uuidutils.generate_uuid()
 
 
 LIST_LB_RESP = {
@@ -87,6 +89,12 @@ LIST_QT_RESP = {
          {'project': uuidutils.generate_uuid()}]
 }
 
+LIST_AMP_RESP = {
+    'amphorae':
+        [{'id': uuidutils.generate_uuid()},
+         {'id': uuidutils.generate_uuid()}]
+}
+
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 SINGLE_LB_STATS_RESP = {'bytes_in': '0'}
@@ -113,6 +121,7 @@ SINGLE_HM_UPDATE = {'healthmonitor': {'admin_state_up': False}}
 
 SINGLE_QT_RESP = {'quota': {'pool': -1}}
 SINGLE_QT_UPDATE = {'quota': {'pool': -1}}
+SINGLB_AMP_RESP = {'amphora': {'id': FAKE_AMP}}
 
 
 class TestOctaviaClient(utils.TestCase):
@@ -849,3 +858,44 @@ class TestLoadBalancer(TestOctaviaClient):
                                self._error_message,
                                self.api.quota_reset,
                                FAKE_PRJ)
+
+    def test_list_amphora_no_options(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_OCTAVIA_URL + 'amphorae?/' + FAKE_LB,
+            json=LIST_AMP_RESP,
+            status_code=200,
+        )
+        ret = self.api.amphora_list()
+        self.assertEqual(LIST_AMP_RESP, ret)
+
+    def test_show_amphora(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_OCTAVIA_URL + 'amphorae/' + FAKE_AMP,
+            json=SINGLB_AMP_RESP,
+            status_code=200
+        )
+        ret = self.api.amphora_show(FAKE_AMP)
+        self.assertEqual(SINGLB_AMP_RESP['amphora'], ret)
+
+    def test_failover_amphora(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_OCTAVIA_URL + 'amphorae/' + FAKE_AMP + '/failover',
+            status_code=202,
+        )
+        ret = self.api.amphora_failover(FAKE_AMP)
+        self.assertEqual(202, ret.status_code)
+
+    def test_failover_amphora_error(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_OCTAVIA_URL + 'amphorae/' + FAKE_AMP + '/failover',
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=409,
+        )
+        self.assertRaisesRegex(octavia.OctaviaClientException,
+                               self._error_message,
+                               self.api.amphora_failover,
+                               FAKE_AMP)

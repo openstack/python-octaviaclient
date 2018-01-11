@@ -115,3 +115,25 @@ class ShowAmphora(command.ShowOne):
 
         return (rows, utils.get_dict_properties(data, rows,
                                                 formatters=formatters))
+
+
+class FailoverAmphora(command.Command):
+    """Force failover an amphora"""
+
+    def get_parser(self, prog_name):
+        parser = super(FailoverAmphora, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'amphora_id',
+            metavar='<amphora-id>',
+            help='UUID of the amphora.',
+        )
+
+        return parser
+
+    def take_action(self, parsed_args):
+        attrs = v2_utils.get_amphora_attrs(self.app.client_manager,
+                                           parsed_args)
+
+        self.app.client_manager.load_balancer.amphora_failover(
+            amphora_id=attrs.pop('amphora_id'))

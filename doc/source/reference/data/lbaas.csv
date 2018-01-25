@@ -23,7 +23,7 @@ lbaas-loadbalancer-delete,loadbalancer delete,LBaaS v2 Delete a given loadbalanc
 lbaas-loadbalancer-list,loadbalancer list,LBaaS v2 List loadbalancers that belong to a given tenant.
 lbaas-loadbalancer-list-on-agent,,List the loadbalancers on a loadbalancer v2 agent.
 lbaas-loadbalancer-show,loadbalancer show,LBaaS v2 Show information of a given loadbalancer.
-lbaas-loadbalancer-stats,,Retrieve stats for a given loadbalancer.
+lbaas-loadbalancer-stats,loadbalancer stats show,Retrieve stats for a given loadbalancer.
 lbaas-loadbalancer-status,,Retrieve status for a given loadbalancer.
 lbaas-loadbalancer-update,loadbalancer set,LBaaS v2 Update a given loadbalancer.
 lbaas-member-create,loadbalancer member create,LBaaS v2 Create a member.

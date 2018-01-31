@@ -24,7 +24,8 @@ from octaviaclient.osc.v2 import utils as v2_utils
 
 HTTP_METHODS = ['GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'OPTIONS', 'PATCH',
                 'CONNECT', 'TRACE']
-TYPE_CHOICES = ['PING', 'HTTP', 'TCP', 'HTTPS', 'TLS-HELLO']
+TYPE_CHOICES = ['PING', 'HTTP', 'TCP', 'HTTPS', 'TLS-HELLO',
+                'UDP-CONNECT']
 
 
 class CreateHealthMonitor(command.ShowOne):

@@ -44,7 +44,7 @@ extensions = [
 
 # openstackdocstheme options
 repository_name = 'openstack/python-octaviaclient'
-bug_project = 'octavia'
+bug_project = '911'
 bug_tag = 'doc'
 
 # Add any paths that contain templates here, relative to this directory.

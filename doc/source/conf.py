@@ -60,6 +60,10 @@ pygments_style = 'sphinx'
 
 html_theme = 'openstackdocs'
 
+html_theme_options = {
+    'show_other_versions': True
+}
+
 # Output file base name for HTML help builder.
 htmlhelp_basename = '%sdoc' % project
 
@@ -78,7 +82,7 @@ latex_documents = [
 
 # openstackdocstheme options
 repository_name = 'openstack/python-octaviaclient'
-bug_project = 'octavia'
+bug_project = '911'
 bug_tag = 'doc'
 html_last_updated_fmt = '%Y-%m-%d %H:%M'
 

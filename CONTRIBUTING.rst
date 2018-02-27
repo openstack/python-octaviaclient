@@ -12,6 +12,6 @@ submitted for review via the Gerrit tool:
 
 Pull requests submitted through GitHub will be ignored.
 
-Bugs should be filed on Launchpad, not GitHub:
+Bugs should be filed on OpenStack Storyboard, not GitHub:
 
-   https://bugs.launchpad.net/octavia
+   https://storyboard.openstack.org/#!/project/911

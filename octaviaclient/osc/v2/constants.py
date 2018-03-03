@@ -243,6 +243,9 @@ AMPHORA_ROWS = (
     'vrrp_id',
     'vrrp_priority',
     'cached_zone',
+    'created_at',
+    'updated_at',
+    'image_id',
 )
 
 AMPHORA_COLUMNS = (

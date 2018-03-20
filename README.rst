@@ -2,8 +2,8 @@
 Team and repository tags
 ========================
 
-.. image:: https://governance.openstack.org/badges/python-octaviaclient.svg
-    :target: https://governance.openstack.org/reference/tags/index.html
+.. image:: https://governance.openstack.org/tc/badges/python-octaviaclient.svg
+    :target: https://governance.openstack.org/tc/reference/tags/index.html
 
 .. Change things from this point on
 
@@ -26,7 +26,7 @@ https://docs.openstack.org/python-openstackclient/latest/
 * Documentation: https://docs.openstack.org/octavia/latest/
 * Source: http://git.openstack.org/cgit/openstack/python-octaviaclient
 * Release notes: https://docs.openstack.org/releasenotes/python-octaviaclient/
-* Bugs: http://bugs.launchpad.net/octavia
+* Bugs: https://storyboard.openstack.org/#!/project/911
 
 Getting Started
 ===============

@@ -25,6 +25,7 @@ https://docs.openstack.org/python-openstackclient/latest/
 * Free software: Apache license
 * Documentation: https://docs.openstack.org/octavia/latest/
 * Source: http://git.openstack.org/cgit/openstack/python-octaviaclient
+* Release notes: https://docs.openstack.org/releasenotes/python-octaviaclient/
 * Bugs: http://bugs.launchpad.net/octavia
 
 Getting Started

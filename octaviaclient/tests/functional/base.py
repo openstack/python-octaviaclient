@@ -57,7 +57,7 @@ class TestCase(utils.TestCase):
         return cls.openstack('configuration show ' + opts)
 
     @classmethod
-    def get_openstack_extention_names(cls):
+    def get_openstack_extension_names(cls):
         opts = cls.get_opts(['Name'])
         return cls.openstack('extension list ' + opts)
 

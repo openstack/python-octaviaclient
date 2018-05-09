@@ -27,6 +27,9 @@ loadbalancer
     :command: loadbalancer stats show
 
 .. autoprogram-cliff:: openstack.load_balancer.v2
+    :command: loadbalancer status show
+
+.. autoprogram-cliff:: openstack.load_balancer.v2
     :command: loadbalancer failover
 
 ========

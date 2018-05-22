@@ -198,7 +198,11 @@ def get_listener_attrs(client_manager, parsed_args):
         'disable': ('admin_state_up', lambda x: False),
         'insert_headers': ('insert_headers', _format_kv),
         'default_tls_container_ref': ('default_tls_container_ref', str),
-        'sni_container_refs': ('sni_container_refs', list)
+        'sni_container_refs': ('sni_container_refs', list),
+        'timeout_client_data': ('timeout_client_data', int),
+        'timeout_member_connect': ('timeout_member_connect', int),
+        'timeout_member_data': ('timeout_member_data', int),
+        'timeout_tcp_inspect': ('timeout_tcp_inspect', int),
     }
 
     _attrs = vars(parsed_args)

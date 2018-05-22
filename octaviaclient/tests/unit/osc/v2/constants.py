@@ -68,6 +68,10 @@ LISTENER_ATTRS = {
     "default_tls_container_ref": uuidutils.generate_uuid(dashed=True),
     "sni_container_refs": [uuidutils.generate_uuid(dashed=True),
                            uuidutils.generate_uuid(dashed=True)],
+    "timeout_client_data": 50000,
+    "timeout_member_connect": 5000,
+    "timeout_member_data": 50000,
+    "timeout_tcp_inspect": 0,
 }
 
 LOADBALANCER_ATTRS = {

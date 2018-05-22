@@ -66,6 +66,10 @@ LISTENER_ROWS = (
     'protocol_port',
     'provisioning_status',
     'sni_container_refs',
+    'timeout_client_data',
+    'timeout_member_connect',
+    'timeout_member_data',
+    'timeout_tcp_inspect',
     'updated_at')
 
 LISTENER_COLUMNS = (

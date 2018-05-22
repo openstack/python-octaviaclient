@@ -94,6 +94,34 @@ class CreateListener(command.ShowOne):
             required=True,
             help="Set the protocol port number for the listener."
         )
+        parser.add_argument(
+            '--timeout-client-data',
+            type=int,
+            metavar='<timeout>',
+            help="Frontend client inactivity timeout in milliseconds. "
+                 "Default: 50000."
+        )
+        parser.add_argument(
+            '--timeout-member-connect',
+            type=int,
+            metavar='<timeout>',
+            help="Backend member connection timeout in milliseconds. "
+                 "Default: 5000."
+        )
+        parser.add_argument(
+            '--timeout-member-data',
+            type=int,
+            metavar='<timeout>',
+            help="Backend member inactivity timeout in milliseconds. "
+                 "Default: 50000."
+        )
+        parser.add_argument(
+            '--timeout-tcp-inspect',
+            type=int,
+            metavar='<timeout>',
+            help="Time, in milliseconds, to wait for additional TCP packets "
+                 "for content inspection. Default: 0."
+        )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
@@ -288,6 +316,34 @@ class SetListener(command.Command):
             metavar='<header=value>',
             help="A dictionary of optional headers to insert into the request "
                  "before it is sent to the backend member."
+        )
+        parser.add_argument(
+            '--timeout-client-data',
+            type=int,
+            metavar='<timeout>',
+            help="Frontend client inactivity timeout in milliseconds. "
+                 "Default: 50000."
+        )
+        parser.add_argument(
+            '--timeout-member-connect',
+            type=int,
+            metavar='<timeout>',
+            help="Backend member connection timeout in milliseconds. "
+                 "Default: 5000."
+        )
+        parser.add_argument(
+            '--timeout-member-data',
+            type=int,
+            metavar='<timeout>',
+            help="Backend member inactivity timeout in milliseconds. "
+                 "Default: 50000."
+        )
+        parser.add_argument(
+            '--timeout-tcp-inspect',
+            type=int,
+            metavar='<timeout>',
+            help="Time, in milliseconds, to wait for additional TCP packets "
+                 "for content inspection. Default: 0."
         )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(

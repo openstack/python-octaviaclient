@@ -1,0 +1,8 @@
+---
+features:
+  - |
+    Added ``--timeout-client-data``, ``--timeout-member-connect``,
+    ``--timeout-member-data`` and ``--timeout-tcp-inspect`` options to
+    ``listener create`` and ``listener set`` commands. Those options control
+    the connection, inactivity and content inspection timeouts on the load
+    balancer.

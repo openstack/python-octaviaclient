@@ -90,6 +90,8 @@ LIST_QT_RESP = {
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 SINGLE_LB_STATS_RESP = {'bytes_in': '0'}
+SINGLE_LB_STATUS_RESP = {'statuses': {'operating_status': 'ONLINE',
+                                      'provisioning_status': 'ACTIVE'}}
 
 SINGLE_LI_RESP = {'listener': {'id': FAKE_LI, 'name': 'li1'}}
 SINGLE_LI_UPDATE = {"listener": {"admin_state_up": False}}
@@ -242,6 +244,16 @@ class TestLoadBalancer(TestOctaviaClient):
         )
         ret = self.api.load_balancer_stats_show(FAKE_LB)
         self.assertEqual(SINGLE_LB_STATS_RESP, ret)
+
+    def test_status_show_load_balancer(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'loadbalancers/' + FAKE_LB + '/status',
+            json=SINGLE_LB_STATUS_RESP,
+            status_code=200,
+        )
+        ret = self.api.load_balancer_status_show(FAKE_LB)
+        self.assertEqual(SINGLE_LB_STATUS_RESP, ret)
 
     def test_list_listeners_no_options(self):
         self.requests_mock.register_uri(

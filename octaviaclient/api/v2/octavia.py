@@ -138,6 +138,19 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    def load_balancer_status_show(self, lb_id, **kwargs):
+        """Display load balancer status tree in json format.
+
+        :param string lb_id:
+            ID of the load balancer
+        :return:
+            A dict of the specified load balancer's status
+        """
+        url = const.BASE_LOADBALANCER_STATUS_URL.format(uuid=lb_id)
+        response = self.list(url, **kwargs)
+
+        return response
+
     @correct_return_codes
     def load_balancer_failover(self, lb_id):
         """Trigger load balancer failover

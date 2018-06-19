@@ -90,11 +90,12 @@ class TestCreateMember(TestMember):
             'protocol_port': self._mem.protocol_port,
             'weight': self._mem.weight,
             'admin_state_up': True,
-            'pool_id': self._mem.pool_id}
+            'pool_id': self._mem.pool_id,
+            'backup': False}
 
         arglist = ['pool_id', '--address', '192.0.2.122',
                    '--protocol-port', '80',
-                   '--weight', '1', '--enable']
+                   '--weight', '1', '--enable', '--disable-backup']
         verifylist = [
             ('address', '192.0.2.122'),
             ('protocol_port', 80),
@@ -108,7 +109,8 @@ class TestCreateMember(TestMember):
                 'member': {'ip_address': '192.0.2.122',
                            'protocol_port': self._mem.protocol_port,
                            'weight': self._mem.weight,
-                           'admin_state_up': True}})
+                           'admin_state_up': True,
+                           'backup': False}})
 
 
 class TestMemberDelete(TestMember):
@@ -140,9 +142,10 @@ class TestMemberSet(TestMember):
     def test_member_set(self, mock_attrs):
         mock_attrs.return_value = {'pool_id': 'test_pool_id',
                                    'member_id': 'test_mem_id',
-                                   'name': 'new_name'}
+                                   'name': 'new_name',
+                                   'backup': True}
         arglist = ['test_pool_id', 'test_mem_id', '--name',
-                   'new_name']
+                   'new_name', '--enable-backup']
         verifylist = [
             ('pool', 'test_pool_id'),
             ('member', 'test_mem_id'),
@@ -153,7 +156,8 @@ class TestMemberSet(TestMember):
         self.cmd.take_action(parsed_args)
         self.api_mock.member_set.assert_called_with(
             pool_id='test_pool_id', member_id='test_mem_id',
-            json={'member': {'name': 'new_name'}})
+            json={'member': {'name': 'new_name',
+                             'backup': True}})
 
 
 class TestMemberShow(TestMember):

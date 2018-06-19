@@ -101,6 +101,19 @@ class CreateMember(command.ShowOne):
             metavar='<name>',
             help="Name of the member."
         )
+        backup = parser.add_mutually_exclusive_group()
+        backup.add_argument(
+            '--disable-backup',
+            action='store_true',
+            default=None,
+            help="Disable member backup (default)"
+        )
+        backup.add_argument(
+            '--enable-backup',
+            action='store_true',
+            default=None,
+            help="Enable member backup"
+        )
         parser.add_argument(
             '--weight',
             metavar='<weight>',
@@ -196,6 +209,19 @@ class SetMember(command.Command):
             '--name',
             metavar='<name>',
             help="Set the name of the member"
+        )
+        backup = parser.add_mutually_exclusive_group()
+        backup.add_argument(
+            '--disable-backup',
+            action='store_true',
+            default=None,
+            help="Disable member backup (default)"
+        )
+        backup.add_argument(
+            '--enable-backup',
+            action='store_true',
+            default=None,
+            help="Enable member backup"
         )
         parser.add_argument(
             '--weight',

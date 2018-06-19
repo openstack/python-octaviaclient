@@ -269,6 +269,8 @@ def get_member_attrs(client_manager, parsed_args):
             'pool',
             client_manager.load_balancer.member_list
         ),
+        'enable_backup': ('backup', lambda x: True),
+        'disable_backup': ('backup', lambda x: False),
         'weight': ('weight', int),
         'subnet_id': (
             'subnet_id',

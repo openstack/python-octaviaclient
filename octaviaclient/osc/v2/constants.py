@@ -122,7 +122,9 @@ MEMBER_ROWS = (
     'updated_at',
     'weight',
     'monitor_port',
-    'monitor_address')
+    'monitor_address',
+    'backup'
+)
 
 MEMBER_COLUMNS = (
     'id',

@@ -22,6 +22,12 @@ from oslo_serialization import jsonutils
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
 
+PROVISIONING_STATUS = ['ACTIVE', 'DELETED', 'ERROR', 'PENDING_CREATE',
+                       'PENDING_UPDATE', 'PENDING_DELETE']
+
+OPERATING_STATUS = ['ONLINE', 'DRAINING', 'OFFLINE', 'DEGRADED', 'ERROR',
+                    'NO_MONITOR']
+
 
 class CreateLoadBalancer(command.ShowOne):
     """Create a load balancer"""
@@ -204,6 +210,49 @@ class ListLoadBalancer(lister.Lister):
             '--project',
             metavar='<project-id>',
             help="List load balancers according to their project (name or ID)."
+        )
+        parser.add_argument(
+            '--vip-network-id',
+            metavar='<vip_network_id>',
+            help="List load balancers according to their VIP network "
+                 "(name or ID)."
+        )
+        parser.add_argument(
+            '--vip-subnet-id',
+            metavar='<vip_subnet_id>',
+            help="List load balancers according to their VIP subnet "
+                 "(name or ID)."
+        )
+        parser.add_argument(
+            '--vip-qos-policy-id',
+            metavar='<vip_qos_policy_id>',
+            help="List load balancers according to their VIP Qos policy "
+                 "(name or ID)."
+        )
+        parser.add_argument(
+            '--vip-port-id',
+            metavar='<vip_port_id>',
+            help="List load balancers according to their VIP port "
+                 "(name or ID)."
+        )
+        parser.add_argument(
+            '--provisioning-status',
+            metavar='{' + ','.join(PROVISIONING_STATUS) + '}',
+            choices=PROVISIONING_STATUS,
+            type=lambda s: s.upper(),
+            help="List load balancers according to their provisioning status."
+        )
+        parser.add_argument(
+            '--operating-status',
+            metavar='{' + ','.join(OPERATING_STATUS) + '}',
+            choices=OPERATING_STATUS,
+            type=lambda s: s.upper(),
+            help="List load balancers according to their operating status."
+        )
+        parser.add_argument(
+            '--provider',
+            metavar='<provider>',
+            help="List load balancers according to their provider."
         )
 
         return parser

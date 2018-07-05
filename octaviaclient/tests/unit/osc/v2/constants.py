@@ -80,7 +80,10 @@ LOADBALANCER_ATTRS = {
     "project_id": uuidutils.generate_uuid(dashed=True),
     "vip_address": "192.0.2.124",
     "vip_network_id": uuidutils.generate_uuid(dashed=True),
-    "provisioning_status": "ONLINE",
+    "vip_subnet_id": uuidutils.generate_uuid(dashed=True),
+    "vip_qos_policy_id": uuidutils.generate_uuid(dashed=True),
+    "provisioning_status": "ACTIVE",
+    "operating_status": "ONLINE",
     "provider": "octavia",
 }
 

@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Optional backup argument for member, in loadbalancer member create,
+    and loadbalancer member set.

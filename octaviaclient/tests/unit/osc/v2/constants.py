@@ -115,6 +115,7 @@ L7RULE_ATTRS = {
 MEMBER_ATTRS = {
     "project_id": uuidutils.generate_uuid(dashed=True),
     "name": "test-member",
+    "backup": False,
     "weight": 1,
     "admin_state_up": True,
     "subnet_id": uuidutils.generate_uuid(dashed=True),

@@ -158,7 +158,10 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
         ),
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False),
-        'cascade': ('cascade', lambda x: True)
+        'cascade': ('cascade', lambda x: True),
+        'provisioning_status': ('provisioning_status', str),
+        'operating_status': ('operating_status', str),
+        'provider': ('provider', str)
     }
 
     _attrs = vars(parsed_args)

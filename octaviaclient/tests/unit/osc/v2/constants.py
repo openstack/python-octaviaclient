@@ -165,6 +165,8 @@ QUOTA_ATTRS = {
     "load_balancer": 5,
     "member": 50,
     "pool": None,
+    "l7policy": 20,
+    "l7rule": 30,
     "project_id": uuidutils.generate_uuid(dashed=True),
 }
 

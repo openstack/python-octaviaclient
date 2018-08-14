@@ -101,7 +101,7 @@ class SetQuota(command.ShowOne):
     @staticmethod
     def _check_attrs(attrs):
         args = ['health_monitor', 'listener', 'load_balancer', 'member',
-                'pool']
+                'pool', 'l7policy', 'l7rule']
 
         if not any(arg in attrs for arg in args):
             args = [arg.replace('_', '') for arg in args]
@@ -147,6 +147,20 @@ class SetQuota(command.ShowOne):
             '--pool',
             metavar='<pool>',
             help=('New value for the pool quota limit. Value -1 means '
+                  'unlimited.')
+        )
+
+        quota_group.add_argument(
+            '--l7policy',
+            metavar='<l7policy>',
+            help=('New value for the l7policy quota limit. Value -1 means '
+                  'unlimited.')
+        )
+
+        quota_group.add_argument(
+            '--l7rule',
+            metavar='<l7rule>',
+            help=('New value for the l7rule quota limit. Value -1 means '
                   'unlimited.')
         )
 
@@ -231,6 +245,16 @@ class UnsetQuota(command.Command):
             '--healthmonitor',
             action='store_true',
             help="Reset the health monitor quota to the default."
+        )
+        parser.add_argument(
+            '--l7policy',
+            action='store_true',
+            help="Reset the l7policy quota to the default."
+        )
+        parser.add_argument(
+            '--l7rule',
+            action='store_true',
+            help="Reset the l7rule quota to the default."
         )
         return parser
 

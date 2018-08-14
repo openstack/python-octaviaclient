@@ -90,7 +90,9 @@ class TestQuotaDefaultsShow(TestQuota):
         "listener": 2,
         "load_balancer": 3,
         "member": 4,
-        "pool": 5
+        "pool": 5,
+        "l7policy": 6,
+        "l7rule": 7
     }
 
     def setUp(self):
@@ -136,17 +138,22 @@ class TestQuotaSet(TestQuota):
             'listener': '1',
             'load_balancer': '2',
             'member': '3',
-            'pool': '4'
+            'pool': '4',
+            'l7policy': '5',
+            'l7rule': '6',
         }
         arglist = [self._qt.project_id, '--healthmonitor', '-1', '--listener',
-                   '1', '--loadbalancer', '2', '--member', '3', '--pool', '4']
+                   '1', '--loadbalancer', '2', '--member', '3', '--pool', '4',
+                   '--l7policy', '5', '--l7rule', '6']
         verifylist = [
             ('project', self._qt.project_id),
             ('health_monitor', '-1'),
             ('listener', '1'),
             ('load_balancer', '2'),
             ('member', '3'),
-            ('pool', '4')
+            ('pool', '4'),
+            ('l7policy', '5'),
+            ('l7rule', '6')
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -156,7 +163,9 @@ class TestQuotaSet(TestQuota):
                                                  'listener': '1',
                                                  'load_balancer': '2',
                                                  'member': '3',
-                                                 'pool': '4'}})
+                                                 'pool': '4',
+                                                 'l7policy': '5',
+                                                 'l7rule': '6'}})
 
     @mock.patch('octaviaclient.osc.v2.utils.get_quota_attrs')
     def test_quota_set_no_args(self, mock_attrs):
@@ -201,7 +210,7 @@ class TestQuotaReset(TestQuota):
 
 class TestQuotaUnset(TestQuota):
     PARAMETERS = ('loadbalancer', 'listener', 'pool',
-                  'member', 'healthmonitor')
+                  'member', 'healthmonitor', 'l7policy', 'l7rule')
 
     def setUp(self):
         super(TestQuotaUnset, self).setUp()
@@ -221,6 +230,12 @@ class TestQuotaUnset(TestQuota):
 
     def test_quota_unset_member(self):
         self._test_quota_unset_param('member')
+
+    def test_quota_unset_l7policy(self):
+        self._test_quota_unset_param('l7policy')
+
+    def test_quota_unset_l7rule(self):
+        self._test_quota_unset_param('l7rule')
 
     @mock.patch('octaviaclient.osc.v2.utils.get_resource_id')
     def _test_quota_unset_param(self, param, mock_get_resource):

@@ -147,6 +147,7 @@ L7POLICY_ROWS = (
     'updated_at',
     'redirect_pool_id',
     'redirect_url',
+    'redirect_prefix',
     'action',
     'position',
     'id',

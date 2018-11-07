@@ -135,6 +135,12 @@ class CreateListener(command.ShowOne):
             default=None,
             help="Disable listener."
         )
+        parser.add_argument(
+            '--client-ca-tls-container-ref',
+            metavar='<container_ref>',
+            help="The URI to the key manager service secrets container "
+                 "containing the CA certificate for TERMINATED_TLS listeners."
+        )
 
         return parser
 
@@ -357,6 +363,12 @@ class SetListener(command.Command):
             action='store_true',
             default=None,
             help="Disable listener."
+        )
+        parser.add_argument(
+            '--client-ca-tls-container-ref',
+            metavar='<container_ref>',
+            help="The URI to the key manager service secrets container "
+                 "containing the CA certificate for TERMINATED_TLS listeners."
         )
 
         return parser

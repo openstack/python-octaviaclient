@@ -211,6 +211,8 @@ def get_listener_attrs(client_manager, parsed_args):
         'timeout_member_connect': ('timeout_member_connect', int),
         'timeout_member_data': ('timeout_member_data', int),
         'timeout_tcp_inspect': ('timeout_tcp_inspect', int),
+        'client_ca_tls_container_ref': ('client_ca_tls_container_ref',
+                                        _format_str_if_need_treat_unset),
     }
 
     _attrs = vars(parsed_args)
@@ -515,3 +517,9 @@ def _format_kv(data):
         formatted_kv[k] = v
 
     return formatted_kv
+
+
+def _format_str_if_need_treat_unset(data):
+    if data.lower() in ('none', 'null', 'void'):
+        return None
+    return str(data)

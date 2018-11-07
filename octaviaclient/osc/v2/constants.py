@@ -70,7 +70,8 @@ LISTENER_ROWS = (
     'timeout_member_connect',
     'timeout_member_data',
     'timeout_tcp_inspect',
-    'updated_at')
+    'updated_at',
+    'client_ca_tls_container_ref')
 
 LISTENER_COLUMNS = (
     'id',

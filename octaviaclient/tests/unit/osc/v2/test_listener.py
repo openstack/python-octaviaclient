@@ -138,7 +138,9 @@ class TestListenerCreate(TestListener):
                    self._listener.sni_container_refs[0],
                    self._listener.sni_container_refs[1],
                    '--default-tls-container-ref',
-                   self._listener.default_tls_container_ref]
+                   self._listener.default_tls_container_ref,
+                   '--client-ca-tls-container-ref',
+                   self._listener.client_ca_tls_container_ref]
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
             ('name', self._listener.name),
@@ -146,7 +148,9 @@ class TestListenerCreate(TestListener):
             ('protocol_port', '443'),
             ('sni_container_refs', self._listener.sni_container_refs),
             ('default_tls_container_ref',
-             self._listener.default_tls_container_ref)
+             self._listener.default_tls_container_ref),
+            ('client_ca_tls_container_ref',
+             self._listener.client_ca_tls_container_ref)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -216,13 +220,17 @@ class TestListenerSet(TestListener):
                    self._listener.sni_container_refs[0],
                    self._listener.sni_container_refs[1],
                    '--default-tls-container-ref',
-                   self._listener.default_tls_container_ref]
+                   self._listener.default_tls_container_ref,
+                   '--client-ca-tls-container-ref',
+                   self._listener.client_ca_tls_container_ref]
         verifylist = [
             ('listener', self._listener.id),
             ('name', 'new_name'),
             ('sni_container_refs', self._listener.sni_container_refs),
             ('default_tls_container_ref',
-                self._listener.default_tls_container_ref)
+                self._listener.default_tls_container_ref),
+            ('client_ca_tls_container_ref',
+             self._listener.client_ca_tls_container_ref)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -233,7 +241,9 @@ class TestListenerSet(TestListener):
                     'name': 'new_name',
                     'sni_container_refs': self._listener.sni_container_refs,
                     'default_tls_container_ref':
-                        self._listener.default_tls_container_ref
+                        self._listener.default_tls_container_ref,
+                    'client_ca_tls_container_ref':
+                        self._listener.client_ca_tls_container_ref
                 }})
 
 

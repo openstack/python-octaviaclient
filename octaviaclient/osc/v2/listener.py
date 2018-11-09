@@ -23,6 +23,7 @@ from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
 
 PROTOCOL_CHOICES = ['TCP', 'HTTP', 'HTTPS', 'TERMINATED_HTTPS', 'UDP']
+CLIENT_AUTH_CHOICES = ['NONE', 'OPTIONAL', 'MANDATORY']
 
 
 class CreateListener(command.ShowOne):
@@ -140,6 +141,14 @@ class CreateListener(command.ShowOne):
             metavar='<container_ref>',
             help="The URI to the key manager service secrets container "
                  "containing the CA certificate for TERMINATED_TLS listeners."
+        )
+        parser.add_argument(
+            '--client-authentication',
+            metavar='{' + ','.join(CLIENT_AUTH_CHOICES) + '}',
+            choices=CLIENT_AUTH_CHOICES,
+            type=lambda s: s.upper(),  # case insensitive
+            help="The TLS client authentication verify options for "
+                 "TERMINATED_TLS listeners."
         )
 
         return parser
@@ -370,7 +379,14 @@ class SetListener(command.Command):
             help="The URI to the key manager service secrets container "
                  "containing the CA certificate for TERMINATED_TLS listeners."
         )
-
+        parser.add_argument(
+            '--client-authentication',
+            metavar='{' + ','.join(CLIENT_AUTH_CHOICES) + '}',
+            choices=CLIENT_AUTH_CHOICES,
+            type=lambda s: s.upper(),  # case insensitive
+            help="The TLS client authentication verify options for "
+                 "TERMINATED_TLS listeners."
+        )
         return parser
 
     def take_action(self, parsed_args):

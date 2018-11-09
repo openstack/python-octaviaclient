@@ -140,7 +140,9 @@ class TestListenerCreate(TestListener):
                    '--default-tls-container-ref',
                    self._listener.default_tls_container_ref,
                    '--client-ca-tls-container-ref',
-                   self._listener.client_ca_tls_container_ref]
+                   self._listener.client_ca_tls_container_ref,
+                   '--client-authentication',
+                   self._listener.client_authentication]
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
             ('name', self._listener.name),
@@ -150,7 +152,8 @@ class TestListenerCreate(TestListener):
             ('default_tls_container_ref',
              self._listener.default_tls_container_ref),
             ('client_ca_tls_container_ref',
-             self._listener.client_ca_tls_container_ref)
+             self._listener.client_ca_tls_container_ref),
+            ('client_authentication', self._listener.client_authentication)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -222,7 +225,9 @@ class TestListenerSet(TestListener):
                    '--default-tls-container-ref',
                    self._listener.default_tls_container_ref,
                    '--client-ca-tls-container-ref',
-                   self._listener.client_ca_tls_container_ref]
+                   self._listener.client_ca_tls_container_ref,
+                   '--client-authentication',
+                   self._listener.client_authentication]
         verifylist = [
             ('listener', self._listener.id),
             ('name', 'new_name'),
@@ -230,7 +235,9 @@ class TestListenerSet(TestListener):
             ('default_tls_container_ref',
                 self._listener.default_tls_container_ref),
             ('client_ca_tls_container_ref',
-             self._listener.client_ca_tls_container_ref)
+             self._listener.client_ca_tls_container_ref),
+            ('client_authentication',
+             self._listener.client_authentication)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -243,7 +250,9 @@ class TestListenerSet(TestListener):
                     'default_tls_container_ref':
                         self._listener.default_tls_container_ref,
                     'client_ca_tls_container_ref':
-                        self._listener.client_ca_tls_container_ref
+                        self._listener.client_ca_tls_container_ref,
+                    'client_authentication':
+                        self._listener.client_authentication
                 }})
 
 

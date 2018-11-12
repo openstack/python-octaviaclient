@@ -150,7 +150,13 @@ class CreateListener(command.ShowOne):
             help="The TLS client authentication verify options for "
                  "TERMINATED_TLS listeners."
         )
-
+        parser.add_argument(
+            '--client-crl-container-ref',
+            metavar='<client_crl_container_ref>',
+            help="The URI to the key manager service secrets container "
+                 "containting the CA revocation list file for TERMINATED_TLS "
+                 "listeners."
+        )
         return parser
 
     def take_action(self, parsed_args):
@@ -386,6 +392,13 @@ class SetListener(command.Command):
             type=lambda s: s.upper(),  # case insensitive
             help="The TLS client authentication verify options for "
                  "TERMINATED_TLS listeners."
+        )
+        parser.add_argument(
+            '--client-crl-container-ref',
+            metavar='<client_crl_container_ref>',
+            help="The URI to the key manager service secrets container "
+                 "containting the CA revocation list file for TERMINATED_TLS "
+                 "listeners."
         )
         return parser
 

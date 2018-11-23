@@ -77,6 +77,7 @@ LISTENER_ATTRS = {
     'client_ca_tls_container_ref': uuidutils.generate_uuid(dashed=True),
     'client_authentication': "OPTIONAL",
     'client_crl_container_ref': uuidutils.generate_uuid(dashed=True),
+    "allowed_cidrs": ['192.0.2.0/24', '198.51.100.0/24'],
 }
 
 LOADBALANCER_ATTRS = {

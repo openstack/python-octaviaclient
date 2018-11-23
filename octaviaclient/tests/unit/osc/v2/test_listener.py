@@ -233,7 +233,11 @@ class TestListenerSet(TestListener):
                    '--client-authentication',
                    self._listener.client_authentication,
                    '--client-crl-container-ref',
-                   self._listener.client_crl_container_ref]
+                   self._listener.client_crl_container_ref,
+                   '--allowed-cidr',
+                   self._listener.allowed_cidrs[0],
+                   '--allowed-cidr',
+                   self._listener.allowed_cidrs[1]]
         verifylist = [
             ('listener', self._listener.id),
             ('name', 'new_name'),
@@ -245,7 +249,8 @@ class TestListenerSet(TestListener):
             ('client_authentication',
              self._listener.client_authentication),
             ('client_crl_container_ref',
-             self._listener.client_crl_container_ref)
+             self._listener.client_crl_container_ref),
+            ('allowed_cidrs', self._listener.allowed_cidrs)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -262,7 +267,8 @@ class TestListenerSet(TestListener):
                     'client_authentication':
                         self._listener.client_authentication,
                     'client_crl_container_ref':
-                        self._listener.client_crl_container_ref
+                        self._listener.client_crl_container_ref,
+                    'allowed_cidrs': self._listener.allowed_cidrs,
                 }})
 
 
@@ -295,7 +301,8 @@ class TestListenerUnset(TestListener):
                   'insert_headers', 'timeout_client_data',
                   'timeout_member_connect', 'timeout_member_data',
                   'timeout_tcp_inspect', 'client_ca_tls_container_ref',
-                  'client_authentication', 'client_crl_container_ref')
+                  'client_authentication', 'client_crl_container_ref',
+                  'allowed_cidrs')
 
     def setUp(self):
         super(TestListenerUnset, self).setUp()
@@ -342,6 +349,9 @@ class TestListenerUnset(TestListener):
 
     def test_listener_unset_client_crl_container_ref(self):
         self._test_listener_unset_param('client_crl_container_ref')
+
+    def test_listener_unset_allowed_cidrs(self):
+        self._test_listener_unset_param('allowed_cidrs')
 
     def _test_listener_unset_param(self, param):
         self.api_mock.listener_set.reset_mock()

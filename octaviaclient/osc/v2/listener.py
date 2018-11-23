@@ -157,6 +157,16 @@ class CreateListener(command.ShowOne):
                  "containting the CA revocation list file for TERMINATED_TLS "
                  "listeners."
         )
+        parser.add_argument(
+            '--allowed-cidr',
+            dest='allowed_cidrs',
+            metavar='<allowed_cidr>',
+            nargs='?',
+            action='append',
+            help="CIDR to allow access to the listener (can be set multiple "
+                 "times)."
+        )
+
         return parser
 
     def take_action(self, parsed_args):
@@ -169,7 +179,8 @@ class CreateListener(command.ShowOne):
         formatters = {'loadbalancers': v2_utils.format_list,
                       'pools': v2_utils.format_list,
                       'l7policies': v2_utils.format_list,
-                      'insert_headers': v2_utils.format_hash}
+                      'insert_headers': v2_utils.format_hash,
+                      'allowed_cidrs': v2_utils.format_list_flat}
 
         return (rows,
                 (utils.get_dict_properties(data['listener'],
@@ -277,7 +288,8 @@ class ShowListener(command.ShowOne):
         formatters = {'loadbalancers': v2_utils.format_list,
                       'pools': v2_utils.format_list,
                       'l7policies': v2_utils.format_list,
-                      'insert_headers': v2_utils.format_hash}
+                      'insert_headers': v2_utils.format_hash,
+                      'allowed_cidrs': v2_utils.format_list_flat}
 
         return rows, utils.get_dict_properties(data, rows,
                                                formatters=formatters)
@@ -400,6 +412,16 @@ class SetListener(command.Command):
                  "containting the CA revocation list file for TERMINATED_TLS "
                  "listeners."
         )
+        parser.add_argument(
+            '--allowed-cidr',
+            dest='allowed_cidrs',
+            metavar='<allowed_cidr>',
+            nargs='?',
+            action='append',
+            help="CIDR to allow access to the listener (can be set multiple "
+                 "times)."
+        )
+
         return parser
 
     def take_action(self, parsed_args):
@@ -497,6 +519,11 @@ class UnsetListener(command.Command):
             '--client-crl-container-ref',
             action='store_true',
             help="Clear the client CRL container reference from the listener."
+        )
+        parser.add_argument(
+            '--allowed-cidrs',
+            action='store_true',
+            help="Clear all allowed CIDRs from the listener."
         )
         return parser
 

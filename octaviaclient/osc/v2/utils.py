@@ -216,6 +216,7 @@ def get_listener_attrs(client_manager, parsed_args):
         'client_authentication': ('client_authentication', str),
         'client_crl_container_ref': ('client_crl_container_ref',
                                      _format_str_if_need_treat_unset),
+        'allowed_cidrs': ('allowed_cidrs', list),
     }
 
     _attrs = vars(parsed_args)
@@ -515,6 +516,10 @@ def get_flavorprofile_attrs(client_manager, parsed_args):
 
 def format_list(data):
     return '\n'.join(i['id'] for i in data)
+
+
+def format_list_flat(data):
+    return '\n'.join(i for i in data)
 
 
 def format_hash(data):

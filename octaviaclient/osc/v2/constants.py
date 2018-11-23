@@ -73,7 +73,8 @@ LISTENER_ROWS = (
     'updated_at',
     'client_ca_tls_container_ref',
     'client_authentication',
-    'client_crl_container_ref')
+    'client_crl_container_ref',
+    'allowed_cidrs')
 
 LISTENER_COLUMNS = (
     'id',

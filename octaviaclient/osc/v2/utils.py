@@ -252,7 +252,9 @@ def get_pool_attrs(client_manager, parsed_args):
         ),
         'session_persistence': ('session_persistence', _format_kv),
         'enable': ('admin_state_up', lambda x: True),
-        'disable': ('admin_state_up', lambda x: False)
+        'disable': ('admin_state_up', lambda x: False),
+        'tls_container_ref': ('tls_container_ref',
+                              _format_str_if_need_treat_unset),
     }
 
     _attrs = vars(parsed_args)

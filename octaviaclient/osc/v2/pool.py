@@ -87,6 +87,13 @@ class CreatePool(command.ShowOne):
             default=None,
             help="Disable pool."
         )
+        parser.add_argument(
+            '--tls-container-ref',
+            metavar='<container-ref>',
+            help="The reference to the key manager service secrets container "
+                 "containing the certificate and key for ``tls_enabled``"
+                 "pools to re-encrpt the traffic to backend member servers."
+        )
 
         return parser
 
@@ -231,6 +238,14 @@ class SetPool(command.Command):
             action='store_true',
             default=None,
             help="Disable pool."
+        )
+        parser.add_argument(
+            '--tls-container-ref',
+            metavar='<container-ref>',
+            help="The URI to the key manager service secrets container "
+                 "containing the certificate and key for TERMINATED_TLS "
+                 "pools to re-encrpt the traffic from TERMINATED_TLS "
+                 "listener to backend servers."
         )
 
         return parser

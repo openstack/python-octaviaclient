@@ -252,6 +252,7 @@ AMPHORA_ROWS = (
     'created_at',
     'updated_at',
     'image_id',
+    'compute_flavor',
 )
 
 AMPHORA_COLUMNS = (

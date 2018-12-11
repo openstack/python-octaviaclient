@@ -727,6 +727,31 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    def provider_list(self):
+        """List all providers
+
+        :return:
+            A ``dict`` containing a list of provider
+        """
+        url = const.BASE_PROVIDER_URL
+        response = self.list(path=url)
+
+        return response
+
+    def provider_capability_list(self, provider):
+        """Show the flavor capability of the specified provider.
+
+        :param string provider:
+            The name of the provider to show
+        :return:
+            A ``dict`` containing the capabilicy of provider
+        """
+        url = const.BASE_PROVIDER_FLAVOR_CAPABILITY_URL.format(
+            provider=provider)
+        response = self.list(url)
+
+        return response
+
 
 class OctaviaClientException(Exception):
     """The base exception class for all exceptions this library raises."""

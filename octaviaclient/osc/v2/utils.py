@@ -440,6 +440,15 @@ def get_amphora_attrs(client_manager, parsed_args):
     return _map_attrs(vars(parsed_args), attr_map)
 
 
+def get_provider_attrs(parsed_args):
+    attr_map = {
+        'provider': ('provider_name', str),
+        'description': ('description', str),
+    }
+
+    return _map_attrs(vars(parsed_args), attr_map)
+
+
 def format_list(data):
     return '\n'.join(i['id'] for i in data)
 

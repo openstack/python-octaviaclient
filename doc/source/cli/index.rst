@@ -87,3 +87,10 @@ amphora
 
 .. autoprogram-cliff:: openstack.load_balancer.v2
     :command: loadbalancer amphora *
+
+========
+provider
+========
+
+.. autoprogram-cliff:: openstack.load_balancer.v2
+    :command: loadbalancer provider *

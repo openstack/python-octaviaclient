@@ -163,3 +163,17 @@ CAPABILITY_ATTRS = {
     "name": "some_capabilicy",
     "description": "Description of capabilicy."
 }
+
+FLAVOR_ATTRS = {
+    "id": uuidutils.generate_uuid(),
+    "name": "fv-name-" + uuidutils.generate_uuid(dashed=True),
+    "flavor_profile_id": None,
+    "enabled": True,
+}
+
+FLAVORPROFILE_ATTRS = {
+    "id": uuidutils.generate_uuid(),
+    "name": "fvpf-name-" + uuidutils.generate_uuid(dashed=True),
+    "provider_name": "mock_provider",
+    "flavor_data": '{"mock_key": "mock_value"}',
+}

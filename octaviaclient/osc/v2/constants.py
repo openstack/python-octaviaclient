@@ -274,3 +274,31 @@ PROVIDER_CAPABILICY_COLUMNS = (
     'name',
     'description',
 )
+
+FLAVOR_ROWS = (
+    'id',
+    'name',
+    'flavor_profile_id',
+    'enabled',
+    'description',
+)
+
+FLAVOR_COLUMNS = (
+    'id',
+    'name',
+    'flavor_profile_id',
+    'enabled',
+)
+
+FLAVORPROFILE_ROWS = (
+    'id',
+    'name',
+    'provider_name',
+    'flavor_data'
+)
+
+FLAVORPROFILE_COLUMNS = (
+    'id',
+    'name',
+    'provider_name',
+)

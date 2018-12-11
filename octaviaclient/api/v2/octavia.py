@@ -752,6 +752,145 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    def flavor_list(self, **kwargs):
+        """List all flavors
+
+        :param kwargs:
+            Parameters to filter on
+        :return:
+            A ``dict`` containing a list of flavor
+        """
+        url = const.BASE_FLAVOR_URL
+        response = self.list(path=url, **kwargs)
+
+        return response
+
+    @correct_return_codes
+    def flavor_delete(self, flavor_id):
+        """Delete a flavor
+
+        :param string flavor_id:
+            ID of the flavor to delete
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_FLAVOR_URL.format(uuid=flavor_id)
+        response = self.delete(url)
+
+        return response
+
+    @correct_return_codes
+    def flavor_create(self, **kwargs):
+        """Create a flavor
+
+        :param kwargs:
+            Parameters to create a flavor with (expects json=)
+        :return:
+            A dict of the created flavor's settings
+        """
+        url = const.BASE_FLAVOR_URL
+        response = self.create(url, **kwargs)
+
+        return response
+
+    @correct_return_codes
+    def flavor_set(self, flavor_id, **kwargs):
+        """Update a flavor's settings
+
+        :param string flavor_id:
+            ID of the flavor to update
+        :param kwargs:
+            A dict of arguments to update a flavor
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_FLAVOR_URL.format(uuid=flavor_id)
+        response = self.create(url, method='PUT', **kwargs)
+
+        return response
+
+    def flavor_show(self, flavor_id):
+        """Show a flavor
+
+        :param string flavor_id:
+            ID of the flavor to show
+        :return:
+            A dict of the specified flavor's settings
+        """
+        response = self.find(path=const.BASE_FLAVOR_URL, value=flavor_id)
+
+        return response
+
+    @correct_return_codes
+    def flavorprofile_create(self, **kwargs):
+        """Create a flavor profile
+
+        :param kwargs:
+            Parameters to create a flavor profile with (expects json=)
+        :return:
+            A dict of the created flavor profile's settings
+        """
+        url = const.BASE_FLAVORPROFILE_URL
+        response = self.create(url, **kwargs)
+
+        return response
+
+    def flavorprofile_list(self, **kwargs):
+        """List all flavor profiles
+
+        :param kwargs:
+            Parameters to filter on
+        :return:
+            List of flavor profile
+        """
+        url = const.BASE_FLAVORPROFILE_URL
+        response = self.list(url, **kwargs)
+
+        return response
+
+    def flavorprofile_show(self, flavorprofile_id):
+        """Show a flavor profile
+
+        :param string flavorprofile_id:
+            ID of the flavor profile to show
+        :return:
+            A dict of the specified flavor profile's settings
+        """
+        response = self.find(path=const.BASE_FLAVORPROFILE_URL,
+                             value=flavorprofile_id)
+
+        return response
+
+    @correct_return_codes
+    def flavorprofile_set(self, flavorprofile_id, **kwargs):
+        """Update a flavor profile's settings
+
+        :param string flavorprofile_id:
+            ID of the flavor profile to update
+        :kwargs:
+            A dict of arguments to update the flavor profile
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_FLAVORPROFILE_URL.format(uuid=flavorprofile_id)
+        response = self.create(url, method='PUT', **kwargs)
+
+        return response
+
+    @correct_return_codes
+    def flavorprofile_delete(self, flavorprofile_id):
+        """Delete a flavor profile
+
+        :param string flavorprofile_id:
+            ID of the flavor profile to delete
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_FLAVORPROFILE_URL.format(uuid=flavorprofile_id)
+        response = self.delete(url)
+
+        return response
+
 
 class OctaviaClientException(Exception):
     """The base exception class for all exceptions this library raises."""

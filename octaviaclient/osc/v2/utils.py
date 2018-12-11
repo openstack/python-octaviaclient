@@ -449,6 +449,48 @@ def get_provider_attrs(parsed_args):
     return _map_attrs(vars(parsed_args), attr_map)
 
 
+def get_flavor_attrs(client_manager, parsed_args):
+    attr_map = {
+        'name': ('name', str),
+        'flavor': (
+            'flavor_id',
+            'flavors',
+            client_manager.load_balancer.flavor_list,
+        ),
+        'flavorprofile': (
+            'flavor_profile_id',
+            'flavorprofiles',
+            client_manager.load_balancer.flavorprofile_list,
+        ),
+        'enable': ('enabled', lambda x: True),
+        'disable': ('enabled', lambda x: False),
+        'description': ('description', str),
+    }
+
+    _attrs = vars(parsed_args)
+    attrs = _map_attrs(_attrs, attr_map)
+
+    return attrs
+
+
+def get_flavorprofile_attrs(client_manager, parsed_args):
+    attr_map = {
+        'name': ('name', str),
+        'flavorprofile': (
+            'flavorprofile_id',
+            'flavorprofiles',
+            client_manager.load_balancer.flavorprofile_list,
+        ),
+        'provider': ('provider_name', str),
+        'flavor_data': ('flavor_data', str),
+    }
+
+    _attrs = vars(parsed_args)
+    attrs = _map_attrs(_attrs, attr_map)
+
+    return attrs
+
+
 def format_list(data):
     return '\n'.join(i['id'] for i in data)
 

@@ -37,6 +37,8 @@ FAKE_HM = uuidutils.generate_uuid()
 FAKE_PRJ = uuidutils.generate_uuid()
 FAKE_AMP = uuidutils.generate_uuid()
 FAKE_PROVIDER = 'fake_provider'
+FAKE_FV = uuidutils.generate_uuid()
+FAKE_FVPF = uuidutils.generate_uuid()
 
 
 LIST_LB_RESP = {
@@ -102,6 +104,16 @@ LIST_PROVIDER_RESP = {
          {'name': 'provider2', 'description': 'description of provider2'}]
 }
 
+LIST_FV_RESP = {
+    'flavors': [{'name': 'fv1'},
+                {'name': 'fv2'}]
+}
+
+LIST_FVPF_RESP = {
+    'flavorprofiles': [{'name': 'fvpf1'},
+                       {'name': 'fvpf2'}]
+}
+
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 SINGLE_LB_STATS_RESP = {'bytes_in': '0'}
@@ -134,6 +146,12 @@ SINGLE_PROVIDER_CAPABILITY_RESP = {
     'flavor_capabilities':
     [{'some_capability': 'Capabilicy description'}]
 }
+
+SINGLE_FV_RESP = {'flavor': {'id': FAKE_FV, 'name': 'fv1'}}
+SINGLE_FV_UPDATE = {'flavor': {'enabled': False}}
+
+SINGLE_FVPF_RESP = {'flavorprofile': {'id': FAKE_FVPF, 'name': 'fvpf1'}}
+SINGLE_FVPF_UPDATE = {'flavorprofile': {'provider_name': 'fake_provider'}}
 
 
 class TestOctaviaClient(utils.TestCase):
@@ -933,3 +951,174 @@ class TestLoadBalancer(TestOctaviaClient):
         ret = self.api.provider_capability_list(FAKE_PROVIDER)
         self.assertEqual(
             SINGLE_PROVIDER_CAPABILITY_RESP, ret)
+
+    def test_list_flavor_no_options(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'flavors',
+            json=LIST_FV_RESP,
+            status_code=200,
+        )
+        ret = self.api.flavor_list()
+        self.assertEqual(LIST_FV_RESP, ret)
+
+    def test_show_flavor(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'flavors/' + FAKE_FV,
+            json=SINGLE_FV_RESP,
+            status_code=200
+        )
+        ret = self.api.flavor_show(FAKE_FV)
+        self.assertEqual(SINGLE_FV_RESP['flavor'], ret)
+
+    def test_create_flavor(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_LBAAS_URL + 'flavors',
+            json=SINGLE_FV_RESP,
+            status_code=200
+        )
+        ret = self.api.flavor_create(json=SINGLE_FV_RESP)
+        self.assertEqual(SINGLE_FV_RESP, ret)
+
+    def test_create_flavor_error(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_LBAAS_URL + 'flavors',
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(octavia.OctaviaClientException,
+                               self._error_message,
+                               self.api.flavor_create,
+                               json=SINGLE_FV_RESP)
+
+    def test_set_flavor(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_LBAAS_URL + 'flavors/' + FAKE_FV,
+            json=SINGLE_FV_UPDATE,
+            status_code=200
+        )
+        ret = self.api.flavor_set(FAKE_FV, json=SINGLE_FV_UPDATE)
+        self.assertEqual(SINGLE_FV_UPDATE, ret)
+
+    def test_set_flavor_error(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_LBAAS_URL + 'flavors/' + FAKE_FV,
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(octavia.OctaviaClientException,
+                               self._error_message,
+                               self.api.flavor_set,
+                               FAKE_FV,
+                               json=SINGLE_FV_UPDATE)
+
+    def test_delete_flavor(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_LBAAS_URL + 'flavors/' + FAKE_FV,
+            status_code=200
+        )
+        ret = self.api.flavor_delete(FAKE_FV)
+        self.assertEqual(200, ret.status_code)
+
+    def test_delete_flavor_error(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_LBAAS_URL + 'flavors/' + FAKE_FV,
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(octavia.OctaviaClientException,
+                               self._error_message,
+                               self.api.flavor_delete,
+                               FAKE_FV)
+
+    def test_list_flavorprofiles_no_options(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'flavorprofiles',
+            json=LIST_FVPF_RESP,
+            status_code=200,
+        )
+        ret = self.api.flavorprofile_list()
+        self.assertEqual(LIST_FVPF_RESP, ret)
+
+    def test_show_flavorprofile(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'flavorprofiles/' + FAKE_FVPF,
+            json=SINGLE_FVPF_RESP,
+            status_code=200
+        )
+        ret = self.api.flavorprofile_show(FAKE_FVPF)
+        self.assertEqual(SINGLE_FVPF_RESP['flavorprofile'], ret)
+
+    def test_create_flavorprofile(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_LBAAS_URL + 'flavorprofiles',
+            json=SINGLE_FVPF_RESP,
+            status_code=200
+        )
+        ret = self.api.flavorprofile_create(json=SINGLE_FVPF_RESP)
+        self.assertEqual(SINGLE_FVPF_RESP, ret)
+
+    def test_create_flavorprofile_error(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_LBAAS_URL + 'flavorprofiles',
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(octavia.OctaviaClientException,
+                               self._error_message,
+                               self.api.flavorprofile_create,
+                               json=SINGLE_FVPF_RESP)
+
+    def test_set_flavorprofiles(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_LBAAS_URL + 'flavorprofiles/' + FAKE_FVPF,
+            json=SINGLE_FVPF_UPDATE,
+            status_code=200
+        )
+        ret = self.api.flavorprofile_set(FAKE_FVPF, json=SINGLE_FVPF_UPDATE)
+        self.assertEqual(SINGLE_FVPF_UPDATE, ret)
+
+    def test_set_flavorprofiles_error(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_LBAAS_URL + 'flavorprofiles/' + FAKE_FVPF,
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(octavia.OctaviaClientException,
+                               self._error_message,
+                               self.api.flavorprofile_set,
+                               FAKE_FVPF, json=SINGLE_FVPF_UPDATE)
+
+    def test_delete_flavorprofile(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_LBAAS_URL + 'flavorprofiles/' + FAKE_FVPF,
+            status_code=200
+        )
+        ret = self.api.flavorprofile_delete(FAKE_FVPF)
+        self.assertEqual(200, ret.status_code)
+
+    def test_delete_flavorprofile_error(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_LBAAS_URL + 'flavorprofiles/' + FAKE_FVPF,
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(octavia.OctaviaClientException,
+                               self._error_message,
+                               self.api.flavorprofile_delete,
+                               FAKE_FVPF)

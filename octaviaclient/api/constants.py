@@ -50,3 +50,8 @@ BASE_PROVIDER_URL = BASE_LBAAS_ENDPOINT + "/providers"
 BASE_PROVIDER_FLAVOR_CAPABILITY_URL = (BASE_LBAAS_ENDPOINT +
                                        "/providers/{provider}/"
                                        "flavor_capabilities")
+
+BASE_FLAVOR_URL = BASE_LBAAS_ENDPOINT + "/flavors"
+BASE_SINGLE_FLAVOR_URL = BASE_FLAVOR_URL + "/{uuid}"
+BASE_FLAVORPROFILE_URL = BASE_LBAAS_ENDPOINT + "/flavorprofiles"
+BASE_SINGLE_FLAVORPROFILE_URL = BASE_FLAVORPROFILE_URL + "/{uuid}"

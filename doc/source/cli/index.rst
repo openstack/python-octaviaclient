@@ -94,3 +94,17 @@ provider
 
 .. autoprogram-cliff:: openstack.load_balancer.v2
     :command: loadbalancer provider *
+
+======
+flavor
+======
+
+.. autoprogram-cliff:: openstack.load_balancer.v2
+    :command: loadbalancer flavor *
+
+=============
+flavorprofile
+=============
+
+.. autoprogram-cliff:: openstack.load_balancer.v2
+    :command: loadbalancer flavorprofile *

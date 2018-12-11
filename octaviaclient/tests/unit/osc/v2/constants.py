@@ -149,7 +149,8 @@ POOL_ATTRS = {
     "provisioning_status": "ACTIVE",
     "tls_container_ref": uuidutils.generate_uuid(),
     "ca_tls_container_ref": uuidutils.generate_uuid(),
-    "crl_container_ref": uuidutils.generate_uuid()
+    "crl_container_ref": uuidutils.generate_uuid(),
+    "tls_enabled": True
 }
 
 QUOTA_ATTRS = {

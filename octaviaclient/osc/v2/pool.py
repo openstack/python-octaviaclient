@@ -108,6 +108,19 @@ class CreatePool(command.ShowOne):
                  "containting the CA revocation list file for ``tls_enabled`` "
                  "pools to validate the backend member servers certificates."
         )
+        tls_enable = parser.add_mutually_exclusive_group()
+        tls_enable.add_argument(
+            '--enable-tls',
+            action='store_true',
+            default=None,
+            help="Enable backend member re-encryption."
+        )
+        tls_enable.add_argument(
+            '--disable-tls',
+            action='store_true',
+            default=None,
+            help="Disable backend member re-encryption."
+        )
 
         return parser
 
@@ -124,7 +137,8 @@ class CreatePool(command.ShowOne):
                       'session_persistence': v2_utils.format_hash}
 
         return (rows, (utils.get_dict_properties(
-            data['pool'], rows, formatters=formatters)))
+            data['pool'], rows, formatters=formatters,
+            mixed_case_fields=['enable-tls'])))
 
 
 class DeletePool(command.Command):
@@ -204,7 +218,8 @@ class ShowPool(command.ShowOne):
                       'session_persistence': v2_utils.format_hash}
 
         return (rows, (utils.get_dict_properties(
-            data, rows, formatters=formatters)))
+            data, rows, formatters=formatters,
+            mixed_case_fields=['enable-tls'])))
 
 
 class SetPool(command.Command):
@@ -275,6 +290,19 @@ class SetPool(command.Command):
                  "containting the CA revocation list file for TERMINATED_TLS "
                  "listeners to valid the backend servers certificates in ssl "
                  "traffic."
+        )
+        tls_enable = parser.add_mutually_exclusive_group()
+        tls_enable.add_argument(
+            '--enable-tls',
+            action='store_true',
+            default=None,
+            help="Enable backend associated members re-encryption."
+        )
+        tls_enable.add_argument(
+            '--disable-tls',
+            action='store_true',
+            default=None,
+            help="disable backend associated members re-encryption."
         )
 
         return parser

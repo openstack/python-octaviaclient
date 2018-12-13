@@ -159,7 +159,8 @@ L7POLICY_ROWS = (
     'position',
     'id',
     'operating_status',
-    'name')
+    'name',
+    'redirect_http_code')
 
 L7POLICY_COLUMNS = (
     'id',

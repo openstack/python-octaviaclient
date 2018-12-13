@@ -24,6 +24,7 @@ from octaviaclient.osc.v2 import validate
 
 ACTION_CHOICES = ['REDIRECT_TO_URL', 'REDIRECT_TO_POOL',
                   'REDIRECT_PREFIX', 'REJECT']
+REDIRECT_CODE_CHOICES = [301, 302, 303, 307, 308]
 
 
 class CreateL7Policy(command.ShowOne):
@@ -74,6 +75,14 @@ class CreateL7Policy(command.ShowOne):
             help="Set the URL Prefix to redirect requests to."
         )
 
+        parser.add_argument(
+            '--redirect-http-code',
+            metavar='<redirect_http_code>',
+            choices=REDIRECT_CODE_CHOICES,
+            type=int,
+            help="Set the HTTP response code for REDIRECT_URL or"
+                 "REDIRECT_PREFIX action."
+        )
         parser.add_argument(
             '--position',
             metavar='<position>',
@@ -230,6 +239,14 @@ class SetL7Policy(command.Command):
             '--redirect-prefix',
             metavar='<url>',
             help="Set the URL Prefix to redirect requests to."
+        )
+        parser.add_argument(
+            '--redirect-http-code',
+            metavar='<redirect_http_code>',
+            choices=REDIRECT_CODE_CHOICES,
+            type=int,
+            help="Set the HTTP response code for REDIRECT_URL or"
+                 "REDIRECT_PREFIX action."
         )
         parser.add_argument(
             '--position',

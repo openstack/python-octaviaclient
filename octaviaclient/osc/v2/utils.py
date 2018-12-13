@@ -316,6 +316,7 @@ def get_l7policy_attrs(client_manager, parsed_args):
         'name': ('name', str),
         'description': ('description', str),
         'redirect_url': ('redirect_url', str),
+        'redirect_http_code': ('redirect_http_code', int),
         'redirect_prefix': ('redirect_prefix', str),
         'l7policy': (
             'l7policy_id',

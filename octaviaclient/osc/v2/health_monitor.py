@@ -24,6 +24,7 @@ from octaviaclient.osc.v2 import utils as v2_utils
 
 HTTP_METHODS = ['GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'OPTIONS', 'PATCH',
                 'CONNECT', 'TRACE']
+HTTP_VERSIONS = [1.0, 1.1]
 TYPE_CHOICES = ['PING', 'HTTP', 'TCP', 'HTTPS', 'TLS-HELLO',
                 'UDP-CONNECT']
 
@@ -51,6 +52,12 @@ class CreateHealthMonitor(command.ShowOne):
             help="Set the time in seconds, between sending probes to members."
         )
         parser.add_argument(
+            '--domain-name',
+            metavar='<domain_name>',
+            help=("Set the domain name, which be injected into the HTTP Host "
+                  "Header to the backend server for HTTP health check.")
+        )
+        parser.add_argument(
             '--expected-codes',
             metavar='<codes>',
             help="Set the list of HTTP status codes expected in response from "
@@ -63,6 +70,13 @@ class CreateHealthMonitor(command.ShowOne):
             type=lambda s: s.upper(),  # case insensitive
             help="Set the HTTP method that the health monitor uses for "
                  "requests."
+        )
+        parser.add_argument(
+            '--http-version',
+            metavar='<http_version>',
+            choices=HTTP_VERSIONS,
+            type=float,
+            help="Set the HTTP version."
         )
         parser.add_argument(
             '--timeout',
@@ -232,6 +246,12 @@ class SetHealthMonitor(command.Command):
             help="Set the time in seconds, between sending probes to members."
         )
         parser.add_argument(
+            '--domain-name',
+            metavar='<domain_name>',
+            help=("Set the domain name, which be injected into the HTTP Host "
+                  "Header to the backend server for HTTP health check.")
+        )
+        parser.add_argument(
             '--expected-codes',
             metavar='<codes>',
             help="Set the list of HTTP status codes expected in response from "
@@ -244,6 +264,13 @@ class SetHealthMonitor(command.Command):
             type=lambda s: s.upper(),  # case insensitive
             help="Set the HTTP method that the health monitor uses for "
                  "requests."
+        )
+        parser.add_argument(
+            '--http-version',
+            metavar='<http_version>',
+            choices=HTTP_VERSIONS,
+            type=float,
+            help="Set the HTTP version."
         )
         parser.add_argument(
             '--timeout',

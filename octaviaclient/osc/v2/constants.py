@@ -212,7 +212,9 @@ MONITOR_ROWS = (
     'url_path',
     'type',
     'id',
-    'operating_status'
+    'operating_status',
+    'http_version',
+    'domain_name'
 )
 
 MONITOR_COLUMNS = (

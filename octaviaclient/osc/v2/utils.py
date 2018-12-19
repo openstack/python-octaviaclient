@@ -410,7 +410,9 @@ def get_health_monitor_attrs(client_manager, parsed_args):
         'max_retries_down': ('max_retries_down', int),
         'url_path': ('url_path', str),
         'enable': ('admin_state_up', lambda x: True),
-        'disable': ('admin_state_up', lambda x: False)
+        'disable': ('admin_state_up', lambda x: False),
+        'http_version': ('http_version', float),
+        'domain_name': ('domain_name', str)
     }
 
     _attrs = vars(parsed_args)

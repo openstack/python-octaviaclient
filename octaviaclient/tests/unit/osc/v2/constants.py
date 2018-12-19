@@ -52,6 +52,8 @@ HM_ATTRS = {
     "url_path": "/some/custom/path",
     "type": "HTTP",
     "id": uuidutils.generate_uuid(dashed=True),
+    "http_version": 1.1,
+    "domain_name": "testlab.com"
 }
 
 LISTENER_ATTRS = {

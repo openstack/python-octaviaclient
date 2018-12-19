@@ -109,7 +109,9 @@ class TestHealthMonitorCreate(TestHealthMonitor):
                    '--timeout', str(self._hm.timeout),
                    '--max-retries', str(self._hm.max_retries),
                    '--type', self._hm.type.lower(),
-                   '--http-method', self._hm.http_method.lower()]
+                   '--http-method', self._hm.http_method.lower(),
+                   '--http-version', str(self._hm.http_version),
+                   '--domain-name', self._hm.domain_name]
         verifylist = [
             ('pool', 'mock_pool_id'),
             ('name', self._hm.name),
@@ -118,6 +120,8 @@ class TestHealthMonitorCreate(TestHealthMonitor):
             ('max_retries', self._hm.max_retries),
             ('type', self._hm.type),
             ('http_method', self._hm.http_method),
+            ('http_version', self._hm.http_version),
+            ('domain_name', self._hm.domain_name)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -157,13 +161,19 @@ class TestHealthMonitorSet(TestHealthMonitor):
         self.cmd = health_monitor.SetHealthMonitor(self.app, None)
 
     def test_health_monitor_set(self):
-        arglist = [self._hm.id, '--name', 'new_name']
+        arglist = [self._hm.id, '--name', 'new_name',
+                   '--http-version', str(self._hm.http_version),
+                   '--domain-name', self._hm.domain_name]
         verifylist = [
             ('health_monitor', self._hm.id),
-            ('name', 'new_name')
+            ('name', 'new_name'),
+            ('http_version', self._hm.http_version),
+            ('domain_name', self._hm.domain_name)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.health_monitor_set.assert_called_with(
-            self._hm.id, json={'healthmonitor': {'name': 'new_name'}})
+            self._hm.id, json={'healthmonitor': {
+                'name': 'new_name', 'http_version': self._hm.http_version,
+                'domain_name': self._hm.domain_name}})

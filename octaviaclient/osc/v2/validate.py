@@ -24,6 +24,9 @@ def check_l7policy_attrs(attrs):
     elif attrs['action'] == 'REDIRECT_TO_URL':
         if 'redirect_url' not in attrs:
             msg = 'Missing argument: --redirect-url'
+    elif attrs['action'] == 'REDIRECT_PREFIX':
+        if 'redirect_prefix' not in attrs:
+            msg = 'Missing argument: --redirect-prefix'
     if msg is not None:
         raise exceptions.CommandError(msg)
 

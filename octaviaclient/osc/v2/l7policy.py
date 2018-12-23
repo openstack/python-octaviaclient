@@ -22,7 +22,8 @@ from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
 from octaviaclient.osc.v2 import validate
 
-ACTION_CHOICES = ['REDIRECT_TO_URL', 'REDIRECT_TO_POOL', 'REJECT']
+ACTION_CHOICES = ['REDIRECT_TO_URL', 'REDIRECT_TO_POOL',
+                  'REDIRECT_PREFIX', 'REJECT']
 
 
 class CreateL7Policy(command.ShowOne):
@@ -66,6 +67,11 @@ class CreateL7Policy(command.ShowOne):
             '--redirect-url',
             metavar='<url>',
             help="Set the URL to redirect requests to."
+        )
+        redirect_group.add_argument(
+            '--redirect-prefix',
+            metavar='<url>',
+            help="Set the URL Prefix to redirect requests to."
         )
 
         parser.add_argument(
@@ -220,7 +226,11 @@ class SetL7Policy(command.Command):
             metavar='<url>',
             help="Set the URL to redirect requests to."
         )
-
+        redirect_group.add_argument(
+            '--redirect-prefix',
+            metavar='<url>',
+            help="Set the URL Prefix to redirect requests to."
+        )
         parser.add_argument(
             '--position',
             metavar='<position>',

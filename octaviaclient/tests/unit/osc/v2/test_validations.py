@@ -48,6 +48,19 @@ class TestValidations(utils.TestCommand):
             exceptions.CommandError,
             validate.check_l7policy_attrs, attrs_dict)
 
+        attrs_dict = {
+            "action": "redirect_prefix".upper(),
+            "redirect_prefix": "prefix",
+        }
+        try:
+            validate.check_l7policy_attrs(attrs_dict)
+        except exceptions.CommandError as e:
+            self.fail("%s raised unexpectedly" % e)
+        attrs_dict.pop("redirect_prefix")
+        self.assertRaises(
+            exceptions.CommandError,
+            validate.check_l7policy_attrs, attrs_dict)
+
     def test_check_l7rule_attrs(self):
         for i in ("cookie", "header"):
             attrs_dict = {

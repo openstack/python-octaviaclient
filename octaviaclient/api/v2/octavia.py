@@ -265,7 +265,7 @@ class OctaviaAPI(api.BaseAPI):
         """Create a pool
 
         :param kwargs:
-            Parameters to create a listener with (expects json=)
+            Parameters to create a pool with (expects json=)
         :return:
             A dict of the created pool's settings
         """
@@ -475,7 +475,7 @@ class OctaviaAPI(api.BaseAPI):
         :param kwargs:
             Parameters to filter on
         :return:
-            List of l7policies
+            List of l7rules
         """
         url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
         response = self.list(url, **kwargs)
@@ -503,7 +503,7 @@ class OctaviaAPI(api.BaseAPI):
         """Delete a l7rule
 
         :param string l7rule_id:
-            ID of of listener to delete
+            ID of of l7rule to delete
         :param string l7policy_id:
             ID of the l7policy for this l7rule
         :return:
@@ -611,7 +611,7 @@ class OctaviaAPI(api.BaseAPI):
         :param health_monitor_id:
             ID of the health monitor to update
         :param kwargs:
-            A dict of arguments to update a l7policy
+            A dict of arguments to update a health monitor
         :return:
             Response Code from the API
         """

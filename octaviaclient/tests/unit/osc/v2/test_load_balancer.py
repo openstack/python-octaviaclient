@@ -178,6 +178,24 @@ class TestLoadBalancerList(TestLoadBalancer):
         self.assertEqual(self.columns, columns)
         self.assertEqual(self.datalist, tuple(data))
 
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_list_with_flavor(self, mock_client):
+        mock_client.return_value = {
+            'flavor_id': self._lb.flavor_id,
+        }
+        arglist = [
+            '--flavor', self._lb.flavor_id,
+        ]
+        verify_list = [
+            ('flavor', self._lb.flavor_id),
+
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        columns, data = self.cmd.take_action(parsed_args)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
 
 class TestLoadBalancerDelete(TestLoadBalancer):
 
@@ -225,11 +243,13 @@ class TestLoadBalancerCreate(TestLoadBalancer):
         mock_client.return_value = self.lb_info
         arglist = ['--name', self._lb.name,
                    '--vip-network-id', self._lb.vip_network_id,
-                   '--project', self._lb.project_id]
+                   '--project', self._lb.project_id,
+                   '--flavor', self._lb.flavor_id]
         verifylist = [
             ('name', self._lb.name),
             ('vip_network_id', self._lb.vip_network_id),
-            ('project', self._lb.project_id)
+            ('project', self._lb.project_id),
+            ('flavor', self._lb.flavor_id),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)

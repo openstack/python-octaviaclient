@@ -16,7 +16,7 @@ LOAD_BALANCER_ROWS = (
     'admin_state_up',
     'created_at',
     'description',
-    'flavor',
+    'flavor_id',
     'id',
     'listeners',
     'name',

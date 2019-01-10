@@ -1,0 +1,4 @@
+---
+features:
+  - |
+    Adds the ``flavor`` option to loadbalancer create and loadbalancer list.

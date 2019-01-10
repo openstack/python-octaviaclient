@@ -85,6 +85,7 @@ LOADBALANCER_ATTRS = {
     "provisioning_status": "ACTIVE",
     "operating_status": "ONLINE",
     "provider": "octavia",
+    "flavor_id": uuidutils.generate_uuid(dashed=True),
 }
 
 L7POLICY_ATTRS = {

@@ -113,6 +113,11 @@ class CreateLoadBalancer(command.ShowOne):
             default=None,
             help="Disable load balancer."
         )
+        parser.add_argument(
+            '--flavor',
+            metavar='<flavor>',
+            help="The name or ID of the flavor for the load balancer."
+        )
 
         return parser
 
@@ -259,6 +264,11 @@ class ListLoadBalancer(lister.Lister):
             '--provider',
             metavar='<provider>',
             help="List load balancers according to their provider."
+        )
+        parser.add_argument(
+            '--flavor',
+            metavar='<flavor>',
+            help="List load balancers according to their flavor."
         )
 
         return parser

@@ -161,7 +161,12 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
         'cascade': ('cascade', lambda x: True),
         'provisioning_status': ('provisioning_status', str),
         'operating_status': ('operating_status', str),
-        'provider': ('provider', str)
+        'provider': ('provider', str),
+        'flavor': (
+            'flavor_id',
+            'flavors',
+            client_manager.load_balancer.flavor_list
+        ),
     }
 
     _attrs = vars(parsed_args)

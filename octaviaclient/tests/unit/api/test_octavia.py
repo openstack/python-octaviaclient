@@ -909,6 +909,27 @@ class TestLoadBalancer(TestOctaviaClient):
         ret = self.api.amphora_show(FAKE_AMP)
         self.assertEqual(SINGLB_AMP_RESP['amphora'], ret)
 
+    def test_configure_amphora(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_OCTAVIA_URL + 'amphorae/' + FAKE_AMP + '/config',
+            status_code=202,
+        )
+        ret = self.api.amphora_configure(FAKE_AMP)
+        self.assertEqual(202, ret.status_code)
+
+    def test_configure_amphora_error(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_OCTAVIA_URL + 'amphorae/' + FAKE_AMP + '/config',
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=409,
+        )
+        self.assertRaisesRegex(octavia.OctaviaClientException,
+                               self._error_message,
+                               self.api.amphora_configure,
+                               FAKE_AMP)
+
     def test_failover_amphora(self):
         self.requests_mock.register_uri(
             'PUT',

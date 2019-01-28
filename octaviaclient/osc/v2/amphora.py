@@ -117,6 +117,28 @@ class ShowAmphora(command.ShowOne):
                                                 formatters=formatters))
 
 
+class ConfigureAmphora(command.Command):
+    """Update the amphora agent configuration"""
+
+    def get_parser(self, prog_name):
+        parser = super(ConfigureAmphora, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'amphora_id',
+            metavar='<amphora-id>',
+            help='UUID of the amphora to configure.',
+        )
+
+        return parser
+
+    def take_action(self, parsed_args):
+        attrs = v2_utils.get_amphora_attrs(self.app.client_manager,
+                                           parsed_args)
+
+        self.app.client_manager.load_balancer.amphora_configure(
+            amphora_id=attrs.pop('amphora_id'))
+
+
 class FailoverAmphora(command.Command):
     """Force failover an amphora"""
 

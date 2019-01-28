@@ -116,6 +116,21 @@ class TestAmphoraShow(TestAmphora):
         self.api_mock.amphora_show.assert_called_with(amphora_id=self._amp.id)
 
 
+class TestAmphoraConfigure(TestAmphora):
+    def setUp(self):
+        super(TestAmphoraConfigure, self).setUp()
+        self.cmd = amphora.ConfigureAmphora(self.app, None)
+
+    def test_amphora_configure(self):
+        arglist = [self._amp.id]
+        verify_list = [('amphora_id', self._amp.id)]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.amphora_configure.assert_called_with(
+            amphora_id=self._amp.id)
+
+
 class TestAmphoraFailover(TestAmphora):
     def setUp(self):
         super(TestAmphoraFailover, self).setUp()

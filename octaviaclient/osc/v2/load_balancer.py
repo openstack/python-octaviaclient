@@ -94,6 +94,12 @@ class CreateLoadBalancer(command.ShowOne):
             help="Project for the load balancer (name or ID)."
         )
 
+        parser.add_argument(
+            '--provider',
+            metavar='<provider>',
+            help="Provider name for the load balancer."
+        )
+
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',

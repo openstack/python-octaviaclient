@@ -36,6 +36,7 @@ FAKE_L7RU = uuidutils.generate_uuid()
 FAKE_HM = uuidutils.generate_uuid()
 FAKE_PRJ = uuidutils.generate_uuid()
 FAKE_AMP = uuidutils.generate_uuid()
+FAKE_PROVIDER = 'fake_provider'
 
 
 LIST_LB_RESP = {
@@ -95,6 +96,12 @@ LIST_AMP_RESP = {
          {'id': uuidutils.generate_uuid()}]
 }
 
+LIST_PROVIDER_RESP = {
+    'providers':
+        [{'name': 'provider1', 'description': 'description of provider1'},
+         {'name': 'provider2', 'description': 'description of provider2'}]
+}
+
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 SINGLE_LB_STATS_RESP = {'bytes_in': '0'}
@@ -122,6 +129,11 @@ SINGLE_HM_UPDATE = {'healthmonitor': {'admin_state_up': False}}
 SINGLE_QT_RESP = {'quota': {'pool': -1}}
 SINGLE_QT_UPDATE = {'quota': {'pool': -1}}
 SINGLB_AMP_RESP = {'amphora': {'id': FAKE_AMP}}
+
+SINGLE_PROVIDER_CAPABILITY_RESP = {
+    'flavor_capabilities':
+    [{'some_capability': 'Capabilicy description'}]
+}
 
 
 class TestOctaviaClient(utils.TestCase):
@@ -899,3 +911,25 @@ class TestLoadBalancer(TestOctaviaClient):
                                self._error_message,
                                self.api.amphora_failover,
                                FAKE_AMP)
+
+    def test_list_provider(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'providers',
+            json=LIST_PROVIDER_RESP,
+            status_code=200,
+        )
+        ret = self.api.provider_list()
+        self.assertEqual(LIST_PROVIDER_RESP, ret)
+
+    def test_show_provider_capabilicy(self):
+        self.requests_mock.register_uri(
+            'GET',
+            (FAKE_LBAAS_URL + 'providers/' +
+             FAKE_PROVIDER + '/flavor_capabilities'),
+            json=SINGLE_PROVIDER_CAPABILITY_RESP,
+            status_code=200
+        )
+        ret = self.api.provider_capability_list(FAKE_PROVIDER)
+        self.assertEqual(
+            SINGLE_PROVIDER_CAPABILITY_RESP, ret)

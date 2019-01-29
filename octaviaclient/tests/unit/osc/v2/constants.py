@@ -153,3 +153,13 @@ QUOTA_ATTRS = {
     "pool": None,
     "project_id": uuidutils.generate_uuid(dashed=True),
 }
+
+PROVIDER_ATTRS = {
+    "name": "provider1",
+    "description": "Description of provider1."
+}
+
+CAPABILITY_ATTRS = {
+    "name": "some_capabilicy",
+    "description": "Description of capabilicy."
+}

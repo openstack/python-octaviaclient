@@ -1,0 +1,4 @@
+---
+features:
+  - |
+    Adds client support for loadbalancer provider.

@@ -264,3 +264,13 @@ AMPHORA_COLUMNS = (
     'lb_network_ip',
     'ha_ip',
 )
+
+PROVIDER_COLUMNS = (
+    'name',
+    'description',
+)
+
+PROVIDER_CAPABILICY_COLUMNS = (
+    'name',
+    'description',
+)

@@ -45,3 +45,8 @@ BASE_QUOTA_DEFAULT_URL = BASE_QUOTA_URL + '/defaults'
 BASE_AMPHORA_URL = BASE_OCTAVIA_ENDPOINT + "/amphorae"
 BASE_SINGLE_AMPHORA_URL = BASE_AMPHORA_URL + "/{uuid}"
 BASE_AMPHORA_FAILOVER_URL = BASE_SINGLE_AMPHORA_URL + '/failover'
+
+BASE_PROVIDER_URL = BASE_LBAAS_ENDPOINT + "/providers"
+BASE_PROVIDER_FLAVOR_CAPABILITY_URL = (BASE_LBAAS_ENDPOINT +
+                                       "/providers/{provider}/"
+                                       "flavor_capabilities")

@@ -1,6 +1,7 @@
 [run]
 branch = True
 source = octaviaclient
+omit = octaviaclient/tests/*
 
 [report]
 ignore_errors = True

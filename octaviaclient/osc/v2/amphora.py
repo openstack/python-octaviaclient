@@ -43,7 +43,7 @@ class ListAmphora(lister.Lister):
         role_choices = {'MASTER', 'BACKUP', 'STANDALONE'}
         parser.add_argument(
             '--role',
-            metavar='{' + ','.join(role_choices) + '}',
+            metavar='{' + ','.join(sorted(role_choices)) + '}',
             choices=role_choices,
             type=lambda s: s.upper(),  # case insensitive
             help="Filter by role."
@@ -56,7 +56,7 @@ class ListAmphora(lister.Lister):
         parser.add_argument(
             '--status', '--provisioning-status',
             dest='status',
-            metavar='{' + ','.join(status_choices) + '}',
+            metavar='{' + ','.join(sorted(status_choices)) + '}',
             choices=status_choices,
             type=lambda s: s.upper(),  # case insensitive
             help="Filter by amphora provisioning status."

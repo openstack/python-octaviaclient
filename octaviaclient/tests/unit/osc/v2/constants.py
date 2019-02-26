@@ -72,6 +72,7 @@ LISTENER_ATTRS = {
     "timeout_member_connect": 5000,
     "timeout_member_data": 50000,
     "timeout_tcp_inspect": 0,
+    'client_ca_tls_container_ref': uuidutils.generate_uuid(dashed=True),
 }
 
 LOADBALANCER_ATTRS = {

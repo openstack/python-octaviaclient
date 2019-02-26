@@ -74,6 +74,7 @@ LISTENER_ATTRS = {
     "timeout_tcp_inspect": 0,
     'client_ca_tls_container_ref': uuidutils.generate_uuid(dashed=True),
     'client_authentication': "OPTIONAL",
+    'client_crl_container_ref': uuidutils.generate_uuid(dashed=True),
 }
 
 LOADBALANCER_ATTRS = {

@@ -72,7 +72,8 @@ LISTENER_ROWS = (
     'timeout_tcp_inspect',
     'updated_at',
     'client_ca_tls_container_ref',
-    'client_authentication')
+    'client_authentication',
+    'client_crl_container_ref')
 
 LISTENER_COLUMNS = (
     'id',

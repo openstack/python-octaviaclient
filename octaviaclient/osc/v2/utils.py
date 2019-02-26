@@ -213,6 +213,7 @@ def get_listener_attrs(client_manager, parsed_args):
         'timeout_tcp_inspect': ('timeout_tcp_inspect', int),
         'client_ca_tls_container_ref': ('client_ca_tls_container_ref',
                                         _format_str_if_need_treat_unset),
+        'client_authentication': ('client_authentication', str),
     }
 
     _attrs = vars(parsed_args)

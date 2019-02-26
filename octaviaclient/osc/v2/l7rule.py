@@ -23,7 +23,8 @@ from octaviaclient.osc.v2 import utils as v2_utils
 from octaviaclient.osc.v2 import validate
 
 COMPARE_TYPES = ['REGEX', 'EQUAL_TO', 'CONTAINS', 'ENDS_WITH', 'STARTS_WITH']
-TYPES = ['FILE_TYPE', 'PATH', 'COOKIE', 'HOST_NAME', 'HEADER']
+TYPES = ['FILE_TYPE', 'PATH', 'COOKIE', 'HOST_NAME', 'HEADER',
+         'SSL_CONN_HAS_CERT', 'SSL_VERIFY_RESULT', 'SSL_DN_FIELD']
 
 
 class CreateL7Rule(command.ShowOne):

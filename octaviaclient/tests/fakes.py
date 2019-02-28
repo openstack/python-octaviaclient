@@ -14,9 +14,10 @@
 #
 
 import copy
-import json
 import mock
 import sys
+
+from oslo_serialization import jsonutils
 
 from keystoneauth1 import fixture
 import requests
@@ -242,7 +243,7 @@ class FakeResponse(requests.Response):
         self.status_code = status_code
 
         self.headers.update(headers)
-        self._content = json.dumps(data)
+        self._content = jsonutils.dumps(data)
         if not isinstance(self._content, six.binary_type):
             self._content = self._content.encode()
 

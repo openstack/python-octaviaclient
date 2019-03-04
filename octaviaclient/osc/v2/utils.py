@@ -259,6 +259,9 @@ def get_pool_attrs(client_manager, parsed_args):
                                  _format_str_if_need_treat_unset),
         'crl_container_ref': ('crl_container_ref',
                               _format_str_if_need_treat_unset),
+
+        'enable_tls': ('tls_enabled', lambda x: True),
+        'disable_tls': ('tls_enabled', lambda x: False),
     }
 
     _attrs = vars(parsed_args)

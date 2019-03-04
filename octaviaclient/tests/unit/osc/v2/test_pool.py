@@ -105,6 +105,7 @@ class TestPoolCreate(TestPool):
                    '--name', self._po.name,
                    '--protocol', 'HTTP',
                    '--lb-algorithm', 'ROUND_ROBIN',
+                   '--enable-tls',
                    '--tls-container-ref', self._po.tls_container_ref,
                    '--ca-tls-container-ref', self._po.ca_tls_container_ref,
                    '--crl-container-ref', self._po.crl_container_ref]
@@ -114,6 +115,7 @@ class TestPoolCreate(TestPool):
             ('name', self._po.name),
             ('protocol', 'HTTP'),
             ('lb_algorithm', 'ROUND_ROBIN'),
+            ('enable_tls', self._po.tls_enabled),
             ('tls_container_ref', self._po.tls_container_ref),
             ('ca_tls_container_ref', self._po.ca_tls_container_ref),
             ('crl_container_ref', self._po.crl_container_ref)
@@ -158,7 +160,7 @@ class TestPoolSet(TestPool):
             'test-crl-container-id')
         arglist = [self._po.id, '--name', 'new_name', '--tls-container-ref',
                    new_tls_id, '--ca-tls-container-ref', new_ca_id,
-                   '--crl-container-ref', new_crl_id]
+                   '--crl-container-ref', new_crl_id, '--enable-tls']
         verifylist = [
             ('pool', self._po.id),
             ('name', 'new_name')
@@ -169,4 +171,5 @@ class TestPoolSet(TestPool):
             self._po.id, json={'pool': {'name': 'new_name',
                                         'tls_container_ref': new_tls_id,
                                         'ca_tls_container_ref': new_ca_id,
-                                        'crl_container_ref': new_crl_id}})
+                                        'crl_container_ref': new_crl_id,
+                                        'tls_enabled': True}})

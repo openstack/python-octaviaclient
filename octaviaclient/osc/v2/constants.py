@@ -103,7 +103,8 @@ POOL_ROWS = (
     'updated_at',
     'tls_container_ref',
     'ca_tls_container_ref',
-    'crl_container_ref')
+    'crl_container_ref',
+    'tls_enabled')
 
 POOL_COLUMNS = (
     'id',

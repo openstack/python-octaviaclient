@@ -104,13 +104,15 @@ class TestPoolCreate(TestPool):
         arglist = ['--loadbalancer', 'mock_lb_id',
                    '--name', self._po.name,
                    '--protocol', 'HTTP',
-                   '--lb-algorithm', 'ROUND_ROBIN']
+                   '--lb-algorithm', 'ROUND_ROBIN',
+                   '--tls-container-ref', self._po.tls_container_ref]
 
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
             ('name', self._po.name),
             ('protocol', 'HTTP'),
-            ('lb_algorithm', 'ROUND_ROBIN')
+            ('lb_algorithm', 'ROUND_ROBIN'),
+            ('tls_container_ref', self._po.tls_container_ref)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -147,7 +149,9 @@ class TestPoolSet(TestPool):
         self.cmd = pool.SetPool(self.app, None)
 
     def test_pool_set(self):
-        arglist = [self._po.id, '--name', 'new_name']
+        new_tls_id = 'test-tls-container-id'
+        arglist = [self._po.id, '--name', 'new_name', '--tls-container-ref',
+                   new_tls_id]
         verifylist = [
             ('pool', self._po.id),
             ('name', 'new_name')
@@ -156,4 +160,5 @@ class TestPoolSet(TestPool):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.pool_set.assert_called_with(
-            self._po.id, json={'pool': {'name': 'new_name'}})
+            self._po.id, json={'pool': {'name': 'new_name',
+                                        'tls_container_ref': new_tls_id}})

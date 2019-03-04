@@ -100,7 +100,8 @@ POOL_ROWS = (
     'protocol',
     'provisioning_status',
     'session_persistence',
-    'updated_at')
+    'updated_at',
+    'tls_container_ref')
 
 POOL_COLUMNS = (
     'id',

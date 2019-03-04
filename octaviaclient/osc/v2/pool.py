@@ -94,6 +94,20 @@ class CreatePool(command.ShowOne):
                  "containing the certificate and key for ``tls_enabled``"
                  "pools to re-encrpt the traffic to backend member servers."
         )
+        parser.add_argument(
+            '--ca-tls-container-ref',
+            metavar='<ca_tls_container_ref>',
+            help="The reference to the key manager service secrets container "
+                 "containing the CA certificate for ``tls_enabled`` pools "
+                 "to check the backend member servers certificates"
+        )
+        parser.add_argument(
+            '--crl-container-ref',
+            metavar='<crl_container_ref>',
+            help="The reference to the key manager service secrets container "
+                 "containting the CA revocation list file for ``tls_enabled`` "
+                 "pools to validate the backend member servers certificates."
+        )
 
         return parser
 
@@ -246,6 +260,21 @@ class SetPool(command.Command):
                  "containing the certificate and key for TERMINATED_TLS "
                  "pools to re-encrpt the traffic from TERMINATED_TLS "
                  "listener to backend servers."
+        )
+        parser.add_argument(
+            '--ca-tls-container-ref',
+            metavar='<ca_tls_container_ref>',
+            help="The URI to the key manager service secrets container "
+                 "containing the CA certificate for TERMINATED_TLS listeners "
+                 "to check the backend servers certificates in ssl traffic."
+        )
+        parser.add_argument(
+            '--crl-container-ref',
+            metavar='<crl_container_ref>',
+            help="The URI to the key manager service secrets container "
+                 "containting the CA revocation list file for TERMINATED_TLS "
+                 "listeners to valid the backend servers certificates in ssl "
+                 "traffic."
         )
 
         return parser

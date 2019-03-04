@@ -255,6 +255,10 @@ def get_pool_attrs(client_manager, parsed_args):
         'disable': ('admin_state_up', lambda x: False),
         'tls_container_ref': ('tls_container_ref',
                               _format_str_if_need_treat_unset),
+        'ca_tls_container_ref': ('ca_tls_container_ref',
+                                 _format_str_if_need_treat_unset),
+        'crl_container_ref': ('crl_container_ref',
+                              _format_str_if_need_treat_unset),
     }
 
     _attrs = vars(parsed_args)

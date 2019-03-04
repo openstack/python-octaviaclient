@@ -105,14 +105,18 @@ class TestPoolCreate(TestPool):
                    '--name', self._po.name,
                    '--protocol', 'HTTP',
                    '--lb-algorithm', 'ROUND_ROBIN',
-                   '--tls-container-ref', self._po.tls_container_ref]
+                   '--tls-container-ref', self._po.tls_container_ref,
+                   '--ca-tls-container-ref', self._po.ca_tls_container_ref,
+                   '--crl-container-ref', self._po.crl_container_ref]
 
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
             ('name', self._po.name),
             ('protocol', 'HTTP'),
             ('lb_algorithm', 'ROUND_ROBIN'),
-            ('tls_container_ref', self._po.tls_container_ref)
+            ('tls_container_ref', self._po.tls_container_ref),
+            ('ca_tls_container_ref', self._po.ca_tls_container_ref),
+            ('crl_container_ref', self._po.crl_container_ref)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -149,16 +153,20 @@ class TestPoolSet(TestPool):
         self.cmd = pool.SetPool(self.app, None)
 
     def test_pool_set(self):
-        new_tls_id = 'test-tls-container-id'
+        new_tls_id, new_ca_id, new_crl_id = (
+            'test-tls-container-id', 'test-ca-tls-container-id',
+            'test-crl-container-id')
         arglist = [self._po.id, '--name', 'new_name', '--tls-container-ref',
-                   new_tls_id]
+                   new_tls_id, '--ca-tls-container-ref', new_ca_id,
+                   '--crl-container-ref', new_crl_id]
         verifylist = [
             ('pool', self._po.id),
             ('name', 'new_name')
         ]
-
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.pool_set.assert_called_with(
             self._po.id, json={'pool': {'name': 'new_name',
-                                        'tls_container_ref': new_tls_id}})
+                                        'tls_container_ref': new_tls_id,
+                                        'ca_tls_container_ref': new_ca_id,
+                                        'crl_container_ref': new_crl_id}})

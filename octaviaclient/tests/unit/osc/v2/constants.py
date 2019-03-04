@@ -147,7 +147,9 @@ POOL_ATTRS = {
     "project_id": uuidutils.generate_uuid(dashed=True),
     "protocol": "HTTP",
     "provisioning_status": "ACTIVE",
-    "tls_container_ref": uuidutils.generate_uuid()
+    "tls_container_ref": uuidutils.generate_uuid(),
+    "ca_tls_container_ref": uuidutils.generate_uuid(),
+    "crl_container_ref": uuidutils.generate_uuid()
 }
 
 QUOTA_ATTRS = {

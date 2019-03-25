@@ -1,0 +1,6 @@
+---
+fixes:
+  - |
+    The client will now always ask for a JSON format response from the Octavia
+    API. This resolves a client side bug should certain errors be returned
+    by the API.

@@ -12,6 +12,7 @@
 #
 
 """Octavia API Library"""
+import functools
 
 from osc_lib.api import api
 
@@ -50,6 +51,13 @@ class OctaviaAPI(api.BaseAPI):
         self.endpoint = self.endpoint.rstrip('/')
         self._build_url()
 
+        # Make sure we are always requesting JSON responses
+        JSON_HEADER = {'Accept': 'application/json'}
+        self._create = functools.partial(self.create, headers=JSON_HEADER)
+        self._delete = functools.partial(self.delete, headers=JSON_HEADER)
+        self._find = functools.partial(self.find, headers=JSON_HEADER)
+        self._list = functools.partial(self.list, headers=JSON_HEADER)
+
     def _build_url(self):
         if not self.endpoint.endswith(self._endpoint_suffix):
             self.endpoint += self._endpoint_suffix
@@ -63,7 +71,7 @@ class OctaviaAPI(api.BaseAPI):
             List of load balancers
         """
         url = const.BASE_LOADBALANCER_URL
-        response = self.list(url, **params)
+        response = self._list(url, **params)
 
         return response
 
@@ -75,7 +83,7 @@ class OctaviaAPI(api.BaseAPI):
         :return:
             A dict of the specified load balancer's settings
         """
-        response = self.find(path=const.BASE_LOADBALANCER_URL, value=lb_id)
+        response = self._find(path=const.BASE_LOADBALANCER_URL, value=lb_id)
 
         return response
 
@@ -89,7 +97,7 @@ class OctaviaAPI(api.BaseAPI):
             A dict of the created load balancer's settings
         """
         url = const.BASE_LOADBALANCER_URL
-        response = self.create(url, **params)
+        response = self._create(url, **params)
 
         return response
 
@@ -105,7 +113,7 @@ class OctaviaAPI(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_LB_URL.format(uuid=lb_id)
-        response = self.delete(url, params=params)
+        response = self._delete(url, params=params)
 
         return response
 
@@ -121,7 +129,7 @@ class OctaviaAPI(api.BaseAPI):
             Response Code from API
         """
         url = const.BASE_SINGLE_LB_URL.format(uuid=lb_id)
-        response = self.create(url, method='PUT', **params)
+        response = self._create(url, method='PUT', **params)
 
         return response
 
@@ -134,7 +142,7 @@ class OctaviaAPI(api.BaseAPI):
             A dict of the specified load balancer's statistics
         """
         url = const.BASE_LB_STATS_URL.format(uuid=lb_id)
-        response = self.list(url, **kwargs)
+        response = self._list(url, **kwargs)
 
         return response
 
@@ -147,7 +155,7 @@ class OctaviaAPI(api.BaseAPI):
             A dict of the specified load balancer's status
         """
         url = const.BASE_LOADBALANCER_STATUS_URL.format(uuid=lb_id)
-        response = self.list(url, **kwargs)
+        response = self._list(url, **kwargs)
 
         return response
 
@@ -161,7 +169,7 @@ class OctaviaAPI(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_LOADBALANCER_FAILOVER_URL.format(uuid=lb_id)
-        response = self.create(url, method='PUT')
+        response = self._create(url, method='PUT')
 
         return response
 
@@ -174,7 +182,7 @@ class OctaviaAPI(api.BaseAPI):
             List of listeners
         """
         url = const.BASE_LISTENER_URL
-        response = self.list(url, **kwargs)
+        response = self._list(url, **kwargs)
 
         return response
 
@@ -186,7 +194,7 @@ class OctaviaAPI(api.BaseAPI):
         :return:
             A dict of the specified listener's settings
         """
-        response = self.find(path=const.BASE_LISTENER_URL, value=listener_id)
+        response = self._find(path=const.BASE_LISTENER_URL, value=listener_id)
 
         return response
 
@@ -200,7 +208,7 @@ class OctaviaAPI(api.BaseAPI):
             A dict of the created listener's settings
         """
         url = const.BASE_LISTENER_URL
-        response = self.create(url, **kwargs)
+        response = self._create(url, **kwargs)
 
         return response
 
@@ -214,7 +222,7 @@ class OctaviaAPI(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_LISTENER_URL.format(uuid=listener_id)
-        response = self.delete(url)
+        response = self._delete(url)
 
         return response
 
@@ -230,7 +238,7 @@ class OctaviaAPI(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_LISTENER_URL.format(uuid=listener_id)
-        response = self.create(url, method='PUT', **kwargs)
+        response = self._create(url, method='PUT', **kwargs)
 
         return response
 
@@ -243,7 +251,7 @@ class OctaviaAPI(api.BaseAPI):
             A dict of the specified listener's statistics
         """
         url = const.BASE_LISTENER_STATS_URL.format(uuid=listener_id)
-        response = self.list(url, **kwargs)
+        response = self._list(url, **kwargs)
 
         return response
 
@@ -256,7 +264,7 @@ class OctaviaAPI(api.BaseAPI):
             List of pools
         """
         url = const.BASE_POOL_URL
-        response = self.list(url, **kwargs)
+        response = self._list(url, **kwargs)
 
         return response
 
@@ -270,7 +278,7 @@ class OctaviaAPI(api.BaseAPI):
             A dict of the created pool's settings
         """
         url = const.BASE_POOL_URL
-        response = self.create(url, **kwargs)
+        response = self._create(url, **kwargs)
 
         return response
 
@@ -284,7 +292,7 @@ class OctaviaAPI(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_POOL_URL.format(pool_id=pool_id)
-        response = self.delete(url)
+        response = self._delete(url)
 
         return response
 
@@ -296,7 +304,7 @@ class OctaviaAPI(api.BaseAPI):
         :return:
             Dict of the specified pool's settings
         """
-        response = self.find(path=const.BASE_POOL_URL, value=pool_id)
+        response = self._find(path=const.BASE_POOL_URL, value=pool_id)
 
         return response
 
@@ -312,7 +320,7 @@ class OctaviaAPI(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_POOL_URL.format(pool_id=pool_id)
-        response = self.create(url, method='PUT', **kwargs)
+        response = self._create(url, method='PUT', **kwargs)
 
         return response
 
@@ -327,7 +335,7 @@ class OctaviaAPI(api.BaseAPI):
             Response list members
         """
         url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
-        response = self.list(url, **kwargs)
+        response = self._list(url, **kwargs)
 
         return response
 
@@ -344,7 +352,7 @@ class OctaviaAPI(api.BaseAPI):
             Response of member
         """
         url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
-        response = self.find(path=url, value=member_id)
+        response = self._find(path=url, value=member_id)
 
         return response
 
@@ -360,7 +368,7 @@ class OctaviaAPI(api.BaseAPI):
             A member details on successful creation
         """
         url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
-        response = self.create(url, **kwargs)
+        response = self._create(url, **kwargs)
 
         return response
 
@@ -377,7 +385,7 @@ class OctaviaAPI(api.BaseAPI):
         """
         url = const.BASE_SINGLE_MEMBER_URL.format(pool_id=pool_id,
                                                   member_id=member_id)
-        response = self.delete(url)
+        response = self._delete(url)
 
         return response
 
@@ -396,7 +404,7 @@ class OctaviaAPI(api.BaseAPI):
         """
         url = const.BASE_SINGLE_MEMBER_URL.format(pool_id=pool_id,
                                                   member_id=member_id)
-        response = self.create(url, method='PUT', **kwargs)
+        response = self._create(url, method='PUT', **kwargs)
 
         return response
 
@@ -409,7 +417,7 @@ class OctaviaAPI(api.BaseAPI):
             List of l7policies
         """
         url = const.BASE_L7POLICY_URL
-        response = self.list(url, **kwargs)
+        response = self._list(url, **kwargs)
 
         return response
 
@@ -423,7 +431,7 @@ class OctaviaAPI(api.BaseAPI):
             A dict of the created l7policy's settings
         """
         url = const.BASE_L7POLICY_URL
-        response = self.create(url, **kwargs)
+        response = self._create(url, **kwargs)
 
         return response
 
@@ -437,7 +445,7 @@ class OctaviaAPI(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_L7POLICY_URL.format(policy_uuid=l7policy_id)
-        response = self.delete(url)
+        response = self._delete(url)
 
         return response
 
@@ -449,7 +457,7 @@ class OctaviaAPI(api.BaseAPI):
         :return:
             Dict of the specified l7policy's settings
         """
-        response = self.find(path=const.BASE_L7POLICY_URL, value=l7policy_id)
+        response = self._find(path=const.BASE_L7POLICY_URL, value=l7policy_id)
 
         return response
 
@@ -465,7 +473,7 @@ class OctaviaAPI(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_L7POLICY_URL.format(policy_uuid=l7policy_id)
-        response = self.create(url, method='PUT', **kwargs)
+        response = self._create(url, method='PUT', **kwargs)
 
         return response
 
@@ -478,7 +486,7 @@ class OctaviaAPI(api.BaseAPI):
             List of l7policies
         """
         url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
-        response = self.list(url, **kwargs)
+        response = self._list(url, **kwargs)
 
         return response
 
@@ -494,7 +502,7 @@ class OctaviaAPI(api.BaseAPI):
             A dict of the created l7rule's settings
         """
         url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
-        response = self.create(url, **kwargs)
+        response = self._create(url, **kwargs)
 
         return response
 
@@ -511,7 +519,7 @@ class OctaviaAPI(api.BaseAPI):
         """
         url = const.BASE_SINGLE_L7RULE_URL.format(rule_uuid=l7rule_id,
                                                   policy_uuid=l7policy_id)
-        response = self.delete(url)
+        response = self._delete(url)
 
         return response
 
@@ -526,7 +534,7 @@ class OctaviaAPI(api.BaseAPI):
             Dict of the specified l7rule's settings
         """
         url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
-        response = self.find(path=url, value=l7rule_id)
+        response = self._find(path=url, value=l7rule_id)
 
         return response
 
@@ -545,7 +553,7 @@ class OctaviaAPI(api.BaseAPI):
         """
         url = const.BASE_SINGLE_L7RULE_URL.format(rule_uuid=l7rule_id,
                                                   policy_uuid=l7policy_id)
-        response = self.create(url, method='PUT', **kwargs)
+        response = self._create(url, method='PUT', **kwargs)
 
         return response
 
@@ -558,7 +566,7 @@ class OctaviaAPI(api.BaseAPI):
             A dict containing a list of health monitors
         """
         url = const.BASE_HEALTH_MONITOR_URL
-        response = self.list(url, **kwargs)
+        response = self._list(url, **kwargs)
 
         return response
 
@@ -572,7 +580,7 @@ class OctaviaAPI(api.BaseAPI):
             A dict of the created health monitor's settings
         """
         url = const.BASE_HEALTH_MONITOR_URL
-        response = self.create(url, **kwargs)
+        response = self._create(url, **kwargs)
 
         return response
 
@@ -587,7 +595,7 @@ class OctaviaAPI(api.BaseAPI):
         """
         url = const.BASE_SINGLE_HEALTH_MONITOR_URL.format(
             uuid=health_monitor_id)
-        response = self.delete(url)
+        response = self._delete(url)
 
         return response
 
@@ -600,7 +608,7 @@ class OctaviaAPI(api.BaseAPI):
             Dict of the specified health monitor's settings
         """
         url = const.BASE_HEALTH_MONITOR_URL
-        response = self.find(path=url, value=health_monitor_id)
+        response = self._find(path=url, value=health_monitor_id)
 
         return response
 
@@ -617,7 +625,7 @@ class OctaviaAPI(api.BaseAPI):
         """
         url = const.BASE_SINGLE_HEALTH_MONITOR_URL.format(
             uuid=health_monitor_id)
-        response = self.create(url, method='PUT', **kwargs)
+        response = self._create(url, method='PUT', **kwargs)
 
         return response
 
@@ -630,7 +638,7 @@ class OctaviaAPI(api.BaseAPI):
             A ``dict`` representing a list of quotas for the project
         """
         url = const.BASE_QUOTA_URL
-        response = self.list(url, **params)
+        response = self._list(url, **params)
 
         return response
 
@@ -642,7 +650,7 @@ class OctaviaAPI(api.BaseAPI):
         :return:
             A ``dict`` representing the quota for the project
         """
-        response = self.find(path=const.BASE_QUOTA_URL, value=project_id)
+        response = self._find(path=const.BASE_QUOTA_URL, value=project_id)
 
         return response
 
@@ -656,7 +664,7 @@ class OctaviaAPI(api.BaseAPI):
             ``None``
         """
         url = const.BASE_SINGLE_QUOTA_URL.format(uuid=project_id)
-        response = self.delete(url)
+        response = self._delete(url)
 
         return response
 
@@ -672,7 +680,7 @@ class OctaviaAPI(api.BaseAPI):
             A ``dict`` representing the updated quota
         """
         url = const.BASE_SINGLE_QUOTA_URL.format(uuid=project_id)
-        response = self.create(url, method='PUT', **params)
+        response = self._create(url, method='PUT', **params)
 
         return response
 
@@ -683,7 +691,7 @@ class OctaviaAPI(api.BaseAPI):
             A ``dict`` representing a list of quota defaults
         """
         url = const.BASE_QUOTA_DEFAULT_URL
-        response = self.list(url)
+        response = self._list(url)
 
         return response
 
@@ -696,7 +704,7 @@ class OctaviaAPI(api.BaseAPI):
             A ``dict`` of the specified amphora's attributes
         """
         url = const.BASE_AMPHORA_URL
-        response = self.find(path=url, value=amphora_id)
+        response = self._find(path=url, value=amphora_id)
 
         return response
 
@@ -709,7 +717,7 @@ class OctaviaAPI(api.BaseAPI):
             A ``dict`` containing a list of amphorae
         """
         url = const.BASE_AMPHORA_URL
-        response = self.list(path=url, **kwargs)
+        response = self._list(path=url, **kwargs)
 
         return response
 

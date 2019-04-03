@@ -21,6 +21,9 @@ loadbalancer
     :command: loadbalancer set
 
 .. autoprogram-cliff:: openstack.load_balancer.v2
+    :command: loadbalancer unset
+
+.. autoprogram-cliff:: openstack.load_balancer.v2
     :command: loadbalancer show
 
 .. autoprogram-cliff:: openstack.load_balancer.v2

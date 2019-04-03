@@ -375,6 +375,50 @@ class SetLoadBalancer(command.Command):
             lb_id, json=body)
 
 
+class UnsetLoadBalancer(command.Command):
+    """Clear load balancer settings"""
+
+    def get_parser(self, prog_name):
+        parser = super(UnsetLoadBalancer, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'loadbalancer',
+            metavar='<load_balancer>',
+            help='Name or UUID of the load balancer to update.'
+        )
+        parser.add_argument(
+            '--name',
+            action='store_true',
+            help="Clear the load balancer name."
+        )
+        parser.add_argument(
+            '--description',
+            action='store_true',
+            help="Clear the load balancer description."
+        )
+        parser.add_argument(
+            '--vip-qos-policy-id',
+            action='store_true',
+            help="Clear the load balancer QoS policy.",
+        )
+
+        return parser
+
+    def take_action(self, parsed_args):
+        unset_args = v2_utils.get_unsets(parsed_args)
+        if not len(unset_args):
+            return
+
+        lb_id = v2_utils.get_resource_id(
+            self.app.client_manager.load_balancer.load_balancer_list,
+            'loadbalancers', parsed_args.loadbalancer)
+
+        body = {'loadbalancer': unset_args}
+
+        self.app.client_manager.load_balancer.load_balancer_set(
+            lb_id, json=body)
+
+
 class ShowLoadBalancerStats(command.ShowOne):
     """Shows the current statistics for a load balancer"""
 

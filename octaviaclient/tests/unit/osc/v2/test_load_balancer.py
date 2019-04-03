@@ -476,3 +476,61 @@ class TestLoadBalancerFailover(TestLoadBalancer):
         self.cmd.take_action(parsed_args)
         self.api_mock.load_balancer_failover.assert_called_with(
             lb_id=self._lb.id)
+
+
+class TestLoadBalancerUnset(TestLoadBalancer):
+    PARAMETERS = ('name', 'description', 'vip_qos_policy_id')
+
+    def setUp(self):
+        super(TestLoadBalancerUnset, self).setUp()
+        lb_client = self.app.client_manager
+        lb_client.load_balancer = self.api_mock
+        self.cmd = load_balancer.UnsetLoadBalancer(self.app, None)
+
+    def test_load_balancer_unset_name(self):
+        self._test_load_balancer_unset_param('name')
+
+    def test_load_balancer_unset_description(self):
+        self._test_load_balancer_unset_param('description')
+
+    def test_load_balancer_unset_qos(self):
+        self._test_load_balancer_unset_param('vip_qos_policy_id')
+
+    def _test_load_balancer_unset_param(self, param):
+        self.api_mock.load_balancer_set.reset_mock()
+        ref_body = {'loadbalancer': {param: None}}
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._lb.id, '--%s' % arg_param]
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_set.assert_called_once_with(
+            self._lb.id, json=ref_body)
+
+    def test_load_balancer_unset_all(self):
+        self.api_mock.load_balancer_set.reset_mock()
+        ref_body = {'loadbalancer': {x: None for x in self.PARAMETERS}}
+        arglist = [self._lb.id]
+        for ref_param in self.PARAMETERS:
+            arg_param = (ref_param.replace('_', '-') if '_' in ref_param else
+                         ref_param)
+            arglist.append('--%s' % arg_param)
+        verifylist = list(zip(self.PARAMETERS, [True]*len(self.PARAMETERS)))
+        verifylist = [('loadbalancer', self._lb.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_set.assert_called_once_with(
+            self._lb.id, json=ref_body)
+
+    def test_load_balancer_unset_none(self):
+        self.api_mock.load_balancer_set.reset_mock()
+        arglist = [self._lb.id]
+        verifylist = list(zip(self.PARAMETERS, [False]*len(self.PARAMETERS)))
+        verifylist = [('loadbalancer', self._lb.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_set.assert_not_called()

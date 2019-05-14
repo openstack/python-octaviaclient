@@ -1,3 +1,4 @@
+#   Copyright 2019 Red Hat, Inc. All rights reserved.
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -173,3 +174,70 @@ class TestPoolSet(TestPool):
                                         'ca_tls_container_ref': new_ca_id,
                                         'crl_container_ref': new_crl_id,
                                         'tls_enabled': True}})
+
+
+class TestPoolUnset(TestPool):
+    PARAMETERS = ('name', 'description', 'ca_tls_container_ref',
+                  'crl_container_ref', 'session_persistence',
+                  'tls_container_ref')
+
+    def setUp(self):
+        super(TestPoolUnset, self).setUp()
+        self.cmd = pool.UnsetPool(self.app, None)
+
+    def test_pool_unset_name(self):
+        self._test_pool_unset_param('name')
+
+    def test_pool_unset_description(self):
+        self._test_pool_unset_param('description')
+
+    def test_pool_unset_ca_tls_container_ref(self):
+        self._test_pool_unset_param('ca_tls_container_ref')
+
+    def test_pool_unset_crl_container_ref(self):
+        self._test_pool_unset_param('crl_container_ref')
+
+    def test_pool_unset_session_persistence(self):
+        self._test_pool_unset_param('session_persistence')
+
+    def test_pool_unset_tls_container_ref(self):
+        self._test_pool_unset_param('tls_container_ref')
+
+    def _test_pool_unset_param(self, param):
+        self.api_mock.pool_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._po.id, '--%s' % arg_param]
+        ref_body = {'pool': {param: None}}
+        verifylist = [
+            ('pool', self._po.id),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.pool_set.assert_called_once_with(
+            self._po.id, json=ref_body)
+
+    def test_pool_unset_all(self):
+        self.api_mock.pool_set.reset_mock()
+        ref_body = {'pool': {x: None for x in self.PARAMETERS}}
+        arglist = [self._po.id]
+        for ref_param in self.PARAMETERS:
+            arg_param = (ref_param.replace('_', '-') if '_' in ref_param else
+                         ref_param)
+            arglist.append('--%s' % arg_param)
+        verifylist = list(zip(self.PARAMETERS, [True]*len(self.PARAMETERS)))
+        verifylist = [('pool', self._po.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.pool_set.assert_called_once_with(
+            self._po.id, json=ref_body)
+
+    def test_pool_unset_none(self):
+        self.api_mock.pool_set.reset_mock()
+        arglist = [self._po.id]
+        verifylist = list(zip(self.PARAMETERS, [False]*len(self.PARAMETERS)))
+        verifylist = [('pool', self._po.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.pool_set.assert_not_called()

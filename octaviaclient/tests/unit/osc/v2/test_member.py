@@ -38,6 +38,9 @@ class TestMember(fakes.TestOctaviaClient):
         ]}
         self.api_mock = mock.Mock()
         self.api_mock.member_list.return_value = info_list
+        pool_dict = copy.deepcopy({'pools': [attr_consts.POOL_ATTRS]})
+        pool_dict['pools'][0]['id'] = self._mem.pool_id
+        self.api_mock.pool_list.return_value = pool_dict
 
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
@@ -186,3 +189,64 @@ class TestMemberShow(TestMember):
             member_id=self._mem.id,
             pool_id=self._mem.pool_id
         )
+
+
+class TestMemberUnset(TestMember):
+    PARAMETERS = ('backup', 'monitor_address', 'monitor_port', 'name',
+                  'weight')
+
+    def setUp(self):
+        super(TestMemberUnset, self).setUp()
+        self.cmd = member.UnsetMember(self.app, None)
+
+    def test_member_unset_backup(self):
+        self._test_member_unset_param('backup')
+
+    def test_member_unset_monitor_address(self):
+        self._test_member_unset_param('monitor_address')
+
+    def test_member_unset_monitor_port(self):
+        self._test_member_unset_param('monitor_port')
+
+    def test_member_unset_name(self):
+        self._test_member_unset_param('name')
+
+    def test_member_unset_weight(self):
+        self._test_member_unset_param('weight')
+
+    def _test_member_unset_param(self, param):
+        self.api_mock.member_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._mem.pool_id, self._mem.id, '--%s' % arg_param]
+        ref_body = {'member': {param: None}}
+        verifylist = [('member', self._mem.id)]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.member_set.assert_called_once_with(
+            pool_id=self._mem.pool_id, member_id=self._mem.id, json=ref_body)
+
+    def test_member_unset_all(self):
+        self.api_mock.pool_set.reset_mock()
+        ref_body = {'member': {x: None for x in self.PARAMETERS}}
+        arglist = [self._mem.pool_id, self._mem.id]
+        for ref_param in self.PARAMETERS:
+            arg_param = (ref_param.replace('_', '-') if '_' in ref_param else
+                         ref_param)
+            arglist.append('--%s' % arg_param)
+        verifylist = list(zip(self.PARAMETERS, [True]*len(self.PARAMETERS)))
+        verifylist = [('member', self._mem.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.member_set.assert_called_once_with(
+            member_id=self._mem.id, pool_id=self._mem.pool_id, json=ref_body)
+
+    def test_member_unset_none(self):
+        self.api_mock.pool_set.reset_mock()
+        arglist = [self._mem.pool_id, self._mem.id]
+        verifylist = list(zip(self.PARAMETERS, [False]*len(self.PARAMETERS)))
+        verifylist = [('member', self._mem.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.member_set.assert_not_called()

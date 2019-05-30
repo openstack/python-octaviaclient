@@ -170,3 +170,54 @@ class TestFlavorSet(TestFlavor):
                 'flavor': {
                     'name': 'new_name'
                 }})
+
+
+class TestFlavorUnset(TestFlavor):
+    PARAMETERS = ('description',)
+
+    def setUp(self):
+        super(TestFlavorUnset, self).setUp()
+        self.cmd = flavor.UnsetFlavor(self.app, None)
+
+    def test_hm_unset_description(self):
+        self._test_flavor_unset_param('description')
+
+    def _test_flavor_unset_param(self, param):
+        self.api_mock.flavor_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._flavor.id, '--%s' % arg_param]
+        ref_body = {'flavor': {param: None}}
+        verifylist = [
+            ('flavor', self._flavor.id),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        print(verifylist)
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.flavor_set.assert_called_once_with(
+            self._flavor.id, json=ref_body)
+
+    def test_flavor_unset_all(self):
+        self.api_mock.flavor_set.reset_mock()
+        ref_body = {'flavor': {x: None for x in self.PARAMETERS}}
+        arglist = [self._flavor.id]
+        for ref_param in self.PARAMETERS:
+            arg_param = (ref_param.replace('_', '-') if '_' in ref_param else
+                         ref_param)
+            arglist.append('--%s' % arg_param)
+        verifylist = list(zip(self.PARAMETERS, [True]*len(self.PARAMETERS)))
+        verifylist = [('flavor', self._flavor.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.flavor_set.assert_called_once_with(
+            self._flavor.id, json=ref_body)
+
+    def test_flavor_unset_none(self):
+        self.api_mock.flavor_set.reset_mock()
+        arglist = [self._flavor.id]
+        verifylist = list(zip(self.PARAMETERS, [False]*len(self.PARAMETERS)))
+        verifylist = [('flavor', self._flavor.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.flavor_set.assert_not_called()

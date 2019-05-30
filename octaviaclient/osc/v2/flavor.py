@@ -1,4 +1,6 @@
 # Copyright (c) 2018 China Telecom Corporation
+# Copyright 2019 Red Hat, Inc. All rights reserved.
+#
 # All Rights Reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -210,6 +212,39 @@ class SetFlavor(command.Command):
                                           parsed_args)
         flavor_id = attrs.pop('flavor_id')
         body = {'flavor': attrs}
+
+        self.app.client_manager.load_balancer.flavor_set(
+            flavor_id, json=body)
+
+
+class UnsetFlavor(command.Command):
+    """Clear health monitor settings"""
+
+    def get_parser(self, prog_name):
+        parser = super(UnsetFlavor, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'flavor',
+            metavar='<flavor>',
+            help="Flavor to update (name or ID)."
+        )
+        parser.add_argument(
+            '--description',
+            action='store_true',
+            help="Clear the flavor description."
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        unset_args = v2_utils.get_unsets(parsed_args)
+        if not len(unset_args):
+            return
+
+        flavor_id = v2_utils.get_resource_id(
+            self.app.client_manager.load_balancer.flavor_list,
+            'flavors', parsed_args.flavor)
+
+        body = {'flavor': unset_args}
 
         self.app.client_manager.load_balancer.flavor_set(
             flavor_id, json=body)

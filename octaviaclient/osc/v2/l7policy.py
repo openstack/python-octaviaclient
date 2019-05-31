@@ -1,4 +1,6 @@
 #   Copyright 2017 GoDaddy
+#   Copyright 2019 Red Hat, Inc. All rights reserved.
+#
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -281,3 +283,46 @@ class SetL7Policy(command.Command):
 
         self.app.client_manager.load_balancer.l7policy_set(
             l7policy_id, json=body)
+
+
+class UnsetL7Policy(command.Command):
+    """Clear l7policy settings"""
+
+    def get_parser(self, prog_name):
+        parser = super(UnsetL7Policy, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'l7policy',
+            metavar='<policy>',
+            help="L7policy to update (name or ID)."
+        )
+        parser.add_argument(
+            '--description',
+            action='store_true',
+            help="Clear the l7policy description."
+        )
+        parser.add_argument(
+            '--name',
+            action='store_true',
+            help="Clear the l7policy name."
+        )
+        parser.add_argument(
+            '--redirect-http-code',
+            action='store_true',
+            help="Clear the l7policy redirect HTTP code."
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        unset_args = v2_utils.get_unsets(parsed_args)
+        if not len(unset_args):
+            return
+
+        policy_id = v2_utils.get_resource_id(
+            self.app.client_manager.load_balancer.l7policy_list,
+            'l7policies', parsed_args.l7policy)
+
+        body = {'l7policy': unset_args}
+
+        self.app.client_manager.load_balancer.l7policy_set(
+            policy_id, json=body)

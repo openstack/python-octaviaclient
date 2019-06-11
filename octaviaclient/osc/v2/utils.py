@@ -12,6 +12,9 @@
 #   under the License.
 #
 
+import functools
+import ipaddress
+
 import munch
 from openstackclient.identity import common as identity_common
 from osc_lib import exceptions as osc_exc
@@ -181,6 +184,37 @@ def add_tags_attr_map(attr_map):
     attr_map.update(tags_attr_map)
 
 
+def validate_vip_dict(vip_dict, client_manager):
+    # We have validation in two places -- _map_attrs checks sub-resources, and
+    # later _check_attrs does further api-specific validation. We need both for
+    # additional vips, so we may as well just do both here while we're at it.
+    if 'subnet_id' not in vip_dict:
+        raise osc_exc.CommandError(
+            'Additional VIPs must include a subnet-id.')
+    subnet_id = get_resource_id(client_manager.neutronclient.list_subnets,
+                                'subnets', vip_dict['subnet_id'])
+    vip_dict['subnet_id'] = subnet_id
+    if 'ip_address' in vip_dict:
+        try:
+            ipaddress.ip_address(vip_dict['ip_address'])
+        except ValueError as e:
+            raise osc_exc.CommandError(str(e))
+
+
+def handle_additional_vips(vips, client_manager):
+    additional_vips = []
+    for vip in vips:
+        vip_dict = {}
+        parts = vip.split(',')
+        for part in parts:
+            k, v = part.split('=')
+            vip_dict[k.replace('-', '_')] = v
+        validate_vip_dict(vip_dict, client_manager)
+        additional_vips.append(vip_dict)
+
+    return additional_vips
+
+
 def get_loadbalancer_attrs(client_manager, parsed_args):
     attr_map = {
         'name': ('name', str),
@@ -231,6 +265,11 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
             client_manager.load_balancer.flavor_list
         ),
         'availability_zone': ('availability_zone', str),
+        'additional_vip': (
+            'additional_vips',
+            functools.partial(
+                handle_additional_vips, client_manager=client_manager)
+        ),
     }
     add_tags_attr_map(attr_map)
 

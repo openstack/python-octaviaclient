@@ -97,6 +97,13 @@ LOADBALANCER_ATTRS = {
     "operating_status": "ONLINE",
     "provider": "octavia",
     "flavor_id": uuidutils.generate_uuid(dashed=True),
+    "additional_vips": [{
+        "subnet_id": uuidutils.generate_uuid(dashed=True),
+        "ip_address": "192.0.2.156"
+    }, {
+        "subnet_id": uuidutils.generate_uuid(dashed=True),
+        "ip_address": "192.0.2.179"
+    }],
     "tags": ["foo", "bar"]
 }
 

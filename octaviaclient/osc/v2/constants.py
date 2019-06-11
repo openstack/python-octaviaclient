@@ -33,6 +33,7 @@ LOAD_BALANCER_ROWS = (
     'vip_qos_policy_id',
     'vip_subnet_id',
     'tags',
+    'additional_vips',
 )
 
 LOAD_BALANCER_COLUMNS = (

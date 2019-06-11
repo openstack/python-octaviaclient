@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    It is now possible to create a loadbalancer with more than one VIP by
+    passing ``--additional-vip subnet-id=<name-or-uuid>[,ip-address=<ip>]`` to
+    the create command.
+    Additional VIPs will also appear in the ``show`` details of a loadbalancer.

@@ -37,7 +37,6 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'python-octaviaclient'
 copyright = u'2016, OpenStack Foundation'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
@@ -65,15 +64,15 @@ html_theme_options = {
 }
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = '%sdoc' % project
+htmlhelp_basename = 'python-octaviaclientdoc'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass
 # [howto/manual]).
 latex_documents = [
     ('index',
-     '%s.tex' % project,
-     u'%s Documentation' % project,
+     'python-octaviaclient.tex',
+     u'python-octaviaclient Documentation',
      u'OpenStack Foundation', 'manual'),
 ]
 
@@ -84,6 +83,5 @@ latex_documents = [
 repository_name = 'openstack/python-octaviaclient'
 bug_project = '911'
 bug_tag = 'doc'
-html_last_updated_fmt = '%Y-%m-%d %H:%M'
 
 autoprogram_cliff_application = 'openstack'

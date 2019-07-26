@@ -538,3 +538,8 @@ def _format_str_if_need_treat_unset(data):
     if data.lower() in ('none', 'null', 'void'):
         return None
     return str(data)
+
+
+def get_unsets(parsed_args):
+    return {arg: None for arg, value in vars(parsed_args).items() if
+            value is True}

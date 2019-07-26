@@ -414,6 +414,107 @@ class SetListener(command.Command):
             listener_id, json=body)
 
 
+class UnsetListener(command.Command):
+    """Clear listener settings"""
+
+    def get_parser(self, prog_name):
+        parser = super(UnsetListener, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'listener',
+            metavar="<listener>",
+            help="Listener to modify (name or ID)."
+        )
+        parser.add_argument(
+            '--name',
+            action='store_true',
+            help="Clear the listener name."
+        )
+        parser.add_argument(
+            '--description',
+            action='store_true',
+            help="Clear the description of this listener."
+        )
+        parser.add_argument(
+            '--connection-limit',
+            action='store_true',
+            help="Reset the connection limit to the API default."
+        )
+        parser.add_argument(
+            '--default-pool',
+            dest='default_pool_id',
+            action='store_true',
+            help="Clear the default pool from the listener."
+        )
+        parser.add_argument(
+            '--default-tls-container-ref',
+            action='store_true',
+            help="Remove the default TLS container reference from the "
+                 "listener."
+        )
+        parser.add_argument(
+            '--sni-container-refs',
+            action='store_true',
+            help="Remove the TLS SNI container references from the listener."
+        )
+        parser.add_argument(
+            '--insert-headers',
+            action='store_true',
+            help="Clear the insert headers from the listener."
+        )
+        parser.add_argument(
+            '--timeout-client-data',
+            action='store_true',
+            help="Reset the client data timeout to the API default."
+        )
+        parser.add_argument(
+            '--timeout-member-connect',
+            action='store_true',
+            help="Reset the member connect timeout to the API default."
+        )
+        parser.add_argument(
+            '--timeout-member-data',
+            action='store_true',
+            help="Reset the member data timeout to the API default."
+        )
+        parser.add_argument(
+            '--timeout-tcp-inspect',
+            action='store_true',
+            help="Reset the TCP inspection timeout to the API default."
+        )
+        parser.add_argument(
+            '--client-ca-tls-container-ref',
+            action='store_true',
+            help="Clear the client CA TLS container reference from the "
+                 "listener."
+        )
+        parser.add_argument(
+            '--client-authentication',
+            action='store_true',
+            help="Reset the client authentication setting to the API default."
+        )
+        parser.add_argument(
+            '--client-crl-container-ref',
+            action='store_true',
+            help="Clear the client CRL container reference from the listener."
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        unset_args = v2_utils.get_unsets(parsed_args)
+        if not len(unset_args):
+            return
+
+        listener_id = v2_utils.get_resource_id(
+            self.app.client_manager.load_balancer.listener_list,
+            'listeners', parsed_args.listener)
+
+        body = {'listener': unset_args}
+
+        self.app.client_manager.load_balancer.listener_set(
+            listener_id, json=body)
+
+
 class ShowListenerStats(command.ShowOne):
     """Shows the current statistics for a listener."""
 

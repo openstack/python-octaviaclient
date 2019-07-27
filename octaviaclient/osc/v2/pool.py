@@ -1,4 +1,5 @@
 #   Copyright 2017 GoDaddy
+#   Copyright 2019 Red Hat, Inc. All rights reserved.
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -312,6 +313,66 @@ class SetPool(command.Command):
         pool_id = attrs.pop('pool_id')
 
         body = {'pool': attrs}
+
+        self.app.client_manager.load_balancer.pool_set(
+            pool_id, json=body)
+
+
+class UnsetPool(command.Command):
+    """Clear pool settings"""
+
+    def get_parser(self, prog_name):
+        parser = super(UnsetPool, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'pool',
+            metavar="<pool>",
+            help="Pool to modify (name or ID)."
+        )
+        parser.add_argument(
+            '--name',
+            action='store_true',
+            help="Clear the pool name."
+        )
+        parser.add_argument(
+            '--description',
+            action='store_true',
+            help="Clear the description of this pool."
+        )
+        parser.add_argument(
+            '--ca-tls-container-ref',
+            action='store_true',
+            help="Clear the certificate authority certificate reference on "
+                 "this pool."
+        )
+        parser.add_argument(
+            '--crl-container-ref',
+            action='store_true',
+            help="Clear the certificate revocation list reference on "
+                 "this pool."
+        )
+        parser.add_argument(
+            '--session-persistence',
+            action='store_true',
+            help="Disables session persistence on the pool."
+        )
+        parser.add_argument(
+            '--tls-container-ref',
+            action='store_true',
+            help="Clear the certificate reference for this pool."
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        unset_args = v2_utils.get_unsets(parsed_args)
+        if not len(unset_args):
+            return
+
+        pool_id = v2_utils.get_resource_id(
+            self.app.client_manager.load_balancer.pool_list,
+            'pools', parsed_args.pool)
+
+        body = {'pool': unset_args}
 
         self.app.client_manager.load_balancer.pool_set(
             pool_id, json=body)

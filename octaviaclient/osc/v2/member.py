@@ -1,3 +1,5 @@
+#   Copyright 2019 Red Hat, Inc. All rights reserved.
+#
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -301,3 +303,66 @@ class DeleteMember(command.Command):
             pool_id=pool_id,
             member_id=id
         )
+
+
+class UnsetMember(command.Command):
+    """Clear member settings"""
+
+    def get_parser(self, prog_name):
+        parser = super(UnsetMember, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'pool',
+            metavar='<pool>',
+            help="Pool that the member to update belongs to (name or ID)."
+        )
+        parser.add_argument(
+            'member',
+            metavar="<member>",
+            help="Member to modify (name or ID)."
+        )
+        parser.add_argument(
+            '--backup',
+            action='store_true',
+            help="Clear the backup member flag."
+        )
+        parser.add_argument(
+            '--monitor-address',
+            action='store_true',
+            help="Clear the member monitor address."
+        )
+        parser.add_argument(
+            '--monitor-port',
+            action='store_true',
+            help="Clear the member monitor port."
+        )
+        parser.add_argument(
+            '--name',
+            action='store_true',
+            help="Clear the member name."
+        )
+        parser.add_argument(
+            '--weight',
+            action='store_true',
+            help="Reset the member weight to the API default."
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        unset_args = v2_utils.get_unsets(parsed_args)
+        if not len(unset_args):
+            return
+
+        pool_id = v2_utils.get_resource_id(
+            self.app.client_manager.load_balancer.pool_list,
+            'pools', parsed_args.pool)
+
+        member_dict = {'pool_id': pool_id, 'member_id': parsed_args.member}
+        member_id = v2_utils.get_resource_id(
+            self.app.client_manager.load_balancer.member_list,
+            'members', member_dict)
+
+        body = {'member': unset_args}
+
+        self.app.client_manager.load_balancer.member_set(
+            pool_id=pool_id, member_id=member_id, json=body)

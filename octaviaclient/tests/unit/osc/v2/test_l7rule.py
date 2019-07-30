@@ -1,3 +1,5 @@
+#   Copyright 2019 Red Hat, Inc. All rights reserved.
+#
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -185,3 +187,56 @@ class TestL7RuleSet(TestL7Rule):
             l7rule_id=self._l7ru.id,
             l7policy_id=self._l7po.id,
             json={'rule': {'admin_state_up': False}})
+
+
+class TestL7RuleUnset(TestL7Rule):
+    PARAMETERS = ('invert', 'key')
+
+    def setUp(self):
+        super(TestL7RuleUnset, self).setUp()
+        self.cmd = l7rule.UnsetL7Rule(self.app, None)
+
+    def test_l7rule_unset_invert(self):
+        self._test_l7rule_unset_param('invert')
+
+    def test_l7rule_unset_key(self):
+        self._test_l7rule_unset_param('key')
+
+    def _test_l7rule_unset_param(self, param):
+        self.api_mock.l7rule_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._l7po.id, self._l7ru.id, '--%s' % arg_param]
+        ref_body = {'rule': {param: None}}
+        verifylist = [
+            ('l7rule_id', self._l7ru.id),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7rule_set.assert_called_once_with(
+            l7policy_id=self._l7po.id, l7rule_id=self._l7ru.id, json=ref_body)
+
+    def test_l7rule_unset_all(self):
+        self.api_mock.l7rule_set.reset_mock()
+        ref_body = {'rule': {x: None for x in self.PARAMETERS}}
+        arglist = [self._l7po.id, self._l7ru.id]
+        for ref_param in self.PARAMETERS:
+            arg_param = (ref_param.replace('_', '-') if '_' in ref_param else
+                         ref_param)
+            arglist.append('--%s' % arg_param)
+        verifylist = list(zip(self.PARAMETERS, [True]*len(self.PARAMETERS)))
+        verifylist = [('l7rule_id', self._l7ru.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7rule_set.assert_called_once_with(
+            l7policy_id=self._l7po.id, l7rule_id=self._l7ru.id, json=ref_body)
+
+    def test_l7rule_unset_none(self):
+        self.api_mock.l7rule_set.reset_mock()
+        arglist = [self._l7po.id, self._l7ru.id]
+        verifylist = list(zip(self.PARAMETERS, [False]*len(self.PARAMETERS)))
+        verifylist = [('l7rule_id', self._l7ru.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7rule_set.assert_not_called()

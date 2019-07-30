@@ -1,4 +1,6 @@
 #   Copyright 2017 GoDaddy
+#   Copyright 2019 Red Hat, Inc. All rights reserved.
+#
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -321,9 +323,73 @@ class SetHealthMonitor(command.Command):
         attrs = v2_utils.get_health_monitor_attrs(self.app.client_manager,
                                                   parsed_args)
 
-        listener_id = attrs.pop('health_monitor_id')
+        hm_id = attrs.pop('health_monitor_id')
 
         body = {'healthmonitor': attrs}
 
         self.app.client_manager.load_balancer.health_monitor_set(
-            listener_id, json=body)
+            hm_id, json=body)
+
+
+class UnsetHealthMonitor(command.Command):
+    """Clear health monitor settings"""
+
+    def get_parser(self, prog_name):
+        parser = super(UnsetHealthMonitor, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'health_monitor',
+            metavar='<health_monitor>',
+            help="Health monitor to update (name or ID)."
+        )
+        parser.add_argument(
+            '--domain-name',
+            action='store_true',
+            help="Clear the health monitor domain name."
+        )
+        parser.add_argument(
+            '--expected-codes',
+            action='store_true',
+            help="Reset the health monitor expected codes to the API default."
+        )
+        parser.add_argument(
+            '--http-method',
+            action='store_true',
+            help="Reset the health monitor HTTP method to the API default."
+        )
+        parser.add_argument(
+            '--http-version',
+            action='store_true',
+            help="Reset the health monitor HTTP version to the API default."
+        )
+        parser.add_argument(
+            '--max-retries-down',
+            action='store_true',
+            help="Reset the health monitor max retries down to the API "
+                 "default."
+        )
+        parser.add_argument(
+            '--name',
+            action='store_true',
+            help="Clear the health monitor name."
+        )
+        parser.add_argument(
+            '--url-path',
+            action='store_true',
+            help="Clear the health monitor URL path."
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        unset_args = v2_utils.get_unsets(parsed_args)
+        if not len(unset_args):
+            return
+
+        hm_id = v2_utils.get_resource_id(
+            self.app.client_manager.load_balancer.health_monitor_list,
+            'healthmonitors', parsed_args.health_monitor)
+
+        body = {'healthmonitor': unset_args}
+
+        self.app.client_manager.load_balancer.health_monitor_set(
+            hm_id, json=body)

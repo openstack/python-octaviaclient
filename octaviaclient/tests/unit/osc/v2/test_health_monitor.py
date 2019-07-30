@@ -1,3 +1,5 @@
+#   Copyright 2019 Red Hat, Inc. All rights reserved.
+#
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -177,3 +179,72 @@ class TestHealthMonitorSet(TestHealthMonitor):
             self._hm.id, json={'healthmonitor': {
                 'name': 'new_name', 'http_version': self._hm.http_version,
                 'domain_name': self._hm.domain_name}})
+
+
+class TestHealthMonitorUnset(TestHealthMonitor):
+    PARAMETERS = ('name', 'domain_name', 'expected_codes', 'http_method',
+                  'http_version', 'max_retries_down', 'url_path')
+
+    def setUp(self):
+        super(TestHealthMonitorUnset, self).setUp()
+        self.cmd = health_monitor.UnsetHealthMonitor(self.app, None)
+
+    def test_hm_unset_domain_name(self):
+        self._test_hm_unset_param('domain_name')
+
+    def test_hm_unset_expected_codes(self):
+        self._test_hm_unset_param('expected_codes')
+
+    def test_hm_unset_http_method(self):
+        self._test_hm_unset_param('http_method')
+
+    def test_hm_unset_http_version(self):
+        self._test_hm_unset_param('http_version')
+
+    def test_hm_unset_max_retries_down(self):
+        self._test_hm_unset_param('max_retries_down')
+
+    def test_hm_unset_name(self):
+        self._test_hm_unset_param('name')
+
+    def test_hm_unset_url_path(self):
+        self._test_hm_unset_param('url_path')
+
+    def _test_hm_unset_param(self, param):
+        self.api_mock.health_monitor_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._hm.id, '--%s' % arg_param]
+        ref_body = {'healthmonitor': {param: None}}
+        verifylist = [
+            ('health_monitor', self._hm.id),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.health_monitor_set.assert_called_once_with(
+            self._hm.id, json=ref_body)
+
+    def test_hm_unset_all(self):
+        self.api_mock.health_monitor_set.reset_mock()
+        ref_body = {'healthmonitor': {x: None for x in self.PARAMETERS}}
+        arglist = [self._hm.id]
+        for ref_param in self.PARAMETERS:
+            arg_param = (ref_param.replace('_', '-') if '_' in ref_param else
+                         ref_param)
+            arglist.append('--%s' % arg_param)
+        verifylist = list(zip(self.PARAMETERS, [True]*len(self.PARAMETERS)))
+        verifylist = [('health_monitor', self._hm.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.health_monitor_set.assert_called_once_with(
+            self._hm.id, json=ref_body)
+
+    def test_hm_unset_none(self):
+        self.api_mock.health_monitor_set.reset_mock()
+        arglist = [self._hm.id]
+        verifylist = list(zip(self.PARAMETERS, [False]*len(self.PARAMETERS)))
+        verifylist = [('health_monitor', self._hm.id)] + verifylist
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.health_monitor_set.assert_not_called()

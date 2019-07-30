@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    The loadbalancer commands now have unset actions. These will either clear
+    the field back to None or it will reset the value to the API default
+    value.

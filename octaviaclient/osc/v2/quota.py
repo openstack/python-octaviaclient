@@ -1,3 +1,5 @@
+#   Copyright 2019 Red Hat, Inc. All rights reserved.
+#
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain
 #   a copy of the License at
@@ -183,3 +185,56 @@ class ResetQuota(command.Command):
 
         self.app.client_manager.load_balancer.quota_reset(
             project_id=project_id)
+
+
+class UnsetQuota(command.Command):
+    """Clear quota settings"""
+
+    def get_parser(self, prog_name):
+        parser = super(UnsetQuota, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'project',
+            metavar='<project>',
+            help="Name or UUID of the project."
+        )
+        parser.add_argument(
+            '--loadbalancer',
+            action='store_true',
+            help="Reset the load balancer quota to the default."
+        )
+        parser.add_argument(
+            '--listener',
+            action='store_true',
+            help="Reset the listener quota to the default."
+        )
+        parser.add_argument(
+            '--pool',
+            action='store_true',
+            help="Reset the pool quota to the default."
+        )
+        parser.add_argument(
+            '--member',
+            action='store_true',
+            help="Reset the member quota to the default."
+        )
+        parser.add_argument(
+            '--healthmonitor',
+            action='store_true',
+            help="Reset the health monitor quota to the default."
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        unset_args = v2_utils.get_unsets(parsed_args)
+        if not len(unset_args):
+            return
+
+        project_id = v2_utils.get_resource_id(
+            self.app.client_manager.identity,
+            'project', parsed_args.project)
+
+        body = {'quota': unset_args}
+
+        self.app.client_manager.load_balancer.quota_set(
+            project_id, json=body)

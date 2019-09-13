@@ -892,7 +892,7 @@ class TestLoadBalancer(TestOctaviaClient):
     def test_list_amphora_no_options(self):
         self.requests_mock.register_uri(
             'GET',
-            FAKE_OCTAVIA_URL + 'amphorae?/' + FAKE_LB,
+            FAKE_OCTAVIA_URL + 'amphorae?',
             json=LIST_AMP_RESP,
             status_code=200,
         )

@@ -1,4 +1,3 @@
-========================
 Team and repository tags
 ========================
 
@@ -7,7 +6,6 @@ Team and repository tags
 
 .. Change things from this point on
 
-====================
 python-octaviaclient
 ====================
 

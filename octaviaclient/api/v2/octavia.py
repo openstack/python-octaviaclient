@@ -15,6 +15,7 @@
 import functools
 
 from osc_lib.api import api
+from osc_lib import exceptions as osc_exc
 
 from octaviaclient.api import constants as const
 
@@ -29,14 +30,25 @@ def correct_return_codes(func):
         try:
             response = func(*args, **kwargs)
         except Exception as e:
-            if not hasattr(e, 'response'):
-                raise
-            raise OctaviaClientException(
-                code=e.response.status_code,
-                message=e.response.json().get(
+            if hasattr(e, 'response'):
+                code = e.response.status_code
+                message = e.response.json().get(
                     'faultstring',
-                    _status_dict.get(e.response.status_code, 'Unknown Error')),
-                request_id=e.request_id)
+                    _status_dict.get(e.response.status_code, 'Unknown Error'))
+                request_id = e.request_id
+            elif (isinstance(e, osc_exc.ClientException)
+                    and e.code != e.http_status):
+                # cover https://review.opendev.org/675328 case
+                code = e.http_status
+                message = e.code
+                request_id = "n/a"
+            else:
+                raise
+
+            raise OctaviaClientException(
+                code=code,
+                message=message,
+                request_id=request_id)
         return response
     return wrapper
 
@@ -75,6 +87,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def load_balancer_show(self, lb_id):
         """Show a load balancer
 
@@ -186,6 +199,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def listener_show(self, listener_id):
         """Show a listener
 
@@ -296,6 +310,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def pool_show(self, pool_id):
         """Show a pool's settings
 
@@ -339,6 +354,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def member_show(self, pool_id, member_id):
         """Showing a member details of a pool
 
@@ -449,6 +465,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def l7policy_show(self, l7policy_id):
         """Show a l7policy's settings
 
@@ -523,6 +540,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def l7rule_show(self, l7rule_id, l7policy_id):
         """Show a l7rule's settings
 
@@ -599,6 +617,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def health_monitor_show(self, health_monitor_id):
         """Show a health monitor's settings
 
@@ -642,6 +661,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def quota_show(self, project_id):
         """Show a quota
 
@@ -695,6 +715,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def amphora_show(self, amphora_id):
         """Show an amphora
 
@@ -831,6 +852,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def flavor_show(self, flavor_id):
         """Show a flavor
 

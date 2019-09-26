@@ -153,12 +153,21 @@ class ListL7Policy(lister.Lister):
     def get_parser(self, prog_name):
         parser = super(ListL7Policy, self).get_parser(prog_name)
 
+        parser.add_argument(
+            '--listener',
+            help="List l7policies that applied to the given listener "
+                 "(name or ID)."
+        )
+
         return parser
 
     def take_action(self, parsed_args):
         columns = const.L7POLICY_COLUMNS
 
-        data = self.app.client_manager.load_balancer.l7policy_list()
+        attrs = v2_utils.get_l7policy_attrs(self.app.client_manager,
+                                            parsed_args)
+
+        data = self.app.client_manager.load_balancer.l7policy_list(**attrs)
         formatters = {'rules': v2_utils.format_list}
 
         return (columns,

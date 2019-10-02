@@ -6,8 +6,10 @@
 Python Octavia Client
 =====================
 
-The Python Octavia Client (python-octaviaclient) is a command-line client for
-the OpenStack Load Balancing service.
+.. only:: html
+
+   The Python Octavia Client (python-octaviaclient) is a command-line client
+   for the OpenStack Load Balancing service.
 
 Getting Started
 ---------------
@@ -28,8 +30,10 @@ Usage
    cli/index
    reference/index
 
-Indices and tables
-------------------
+.. only:: html
 
-* :ref:`genindex`
-* :ref:`search`
+   Indices and tables
+   ------------------
+
+   * :ref:`genindex`
+   * :ref:`search`

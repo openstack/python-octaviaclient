@@ -93,7 +93,7 @@ class CreatePool(command.ShowOne):
             '--tls-container-ref',
             metavar='<container-ref>',
             help="The reference to the key manager service secrets container "
-                 "containing the certificate and key for ``tls_enabled``"
+                 "containing the certificate and key for ``tls_enabled`` "
                  "pools to re-encrpt the traffic to backend member servers."
         )
         parser.add_argument(

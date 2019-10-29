@@ -132,6 +132,11 @@ class CreateHealthMonitor(command.ShowOne):
             default=None,
             help="Disable health monitor."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -142,6 +147,20 @@ class CreateHealthMonitor(command.ShowOne):
         body = {"healthmonitor": attrs}
         data = self.app.client_manager.load_balancer.health_monitor_create(
             json=body)
+
+        if parsed_args.wait:
+            pool = self.app.client_manager.load_balancer.pool_show(
+                data['healthmonitor']['pools'][0]['id'])
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=pool['loadbalancers'][0]['id']
+            )
+            data = {
+                'healthmonitor': (
+                    self.app.client_manager.load_balancer.health_monitor_show(
+                        data['healthmonitor']['id']))
+            }
 
         formatters = {'pools': v2_utils.format_list}
 
@@ -162,6 +181,11 @@ class DeleteHealthMonitor(command.Command):
             metavar='<health_monitor>',
             help="Health monitor to delete (name or ID)."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -173,6 +197,13 @@ class DeleteHealthMonitor(command.Command):
 
         self.app.client_manager.load_balancer.health_monitor_delete(
             health_monitor_id=health_monitor_id)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_delete(
+                status_f=(self.app.client_manager.load_balancer.
+                          health_monitor_show),
+                res_id=health_monitor_id
+            )
 
 
 class ListHealthMonitor(lister.Lister):
@@ -316,6 +347,11 @@ class SetHealthMonitor(command.Command):
             default=None,
             help="Disable health monitor."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -329,6 +365,13 @@ class SetHealthMonitor(command.Command):
 
         self.app.client_manager.load_balancer.health_monitor_set(
             hm_id, json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          health_monitor_show),
+                res_id=hm_id
+            )
 
 
 class UnsetHealthMonitor(command.Command):
@@ -378,6 +421,11 @@ class UnsetHealthMonitor(command.Command):
             action='store_true',
             help="Clear the health monitor URL path."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
         return parser
 
     def take_action(self, parsed_args):
@@ -393,3 +441,10 @@ class UnsetHealthMonitor(command.Command):
 
         self.app.client_manager.load_balancer.health_monitor_set(
             hm_id, json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          health_monitor_show),
+                res_id=hm_id
+            )

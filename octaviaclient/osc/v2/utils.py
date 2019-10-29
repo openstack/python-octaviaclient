@@ -12,9 +12,13 @@
 #   under the License.
 #
 
-from osc_lib import exceptions
-
+import munch
 from openstackclient.identity import common as identity_common
+from osc_lib import exceptions as osc_exc
+from osc_lib import utils
+
+from octaviaclient.api import exceptions
+from octaviaclient.osc.v2 import constants
 
 
 def _map_attrs(args, source_attr_map):
@@ -95,7 +99,7 @@ def get_resource_id(resource, resource_name, name):
                 msg = ("{0} {1} found with name or ID of {2}. Please try "
                        "again with UUID".format(len(names), resource_name,
                                                 name))
-                raise exceptions.CommandError(msg)
+                raise osc_exc.CommandError(msg)
             else:
                 return names[0].get('id')
         elif resource_name == 'l7rules':
@@ -110,12 +114,12 @@ def get_resource_id(resource, resource_name, name):
                 msg = ("{0} {1} found with name or ID of {2}. Please try "
                        "again with UUID".format(len(names), resource_name,
                                                 name))
-                raise exceptions.CommandError(msg)
+                raise osc_exc.CommandError(msg)
             else:
                 return names[0].get('id')
     except IndexError:
         msg = "Unable to locate {0} in {1}".format(name, resource_name)
-        raise exceptions.CommandError(msg)
+        raise osc_exc.CommandError(msg)
 
 
 def get_loadbalancer_attrs(client_manager, parsed_args):
@@ -547,4 +551,39 @@ def _format_str_if_need_treat_unset(data):
 
 def get_unsets(parsed_args):
     return {arg: None for arg, value in vars(parsed_args).items() if
-            value is True}
+            value is True and arg != 'wait'}
+
+
+def wait_for_active(status_f, res_id):
+    success = utils.wait_for_status(
+        status_f=lambda x: munch.Munch(status_f(x)),
+        res_id=res_id,
+        status_field=constants.PROVISIONING_STATUS,
+        sleep_time=3
+    )
+    if not success:
+        raise exceptions.OctaviaClientException(
+            code="n/a",
+            message="The resource did not successfully reach ACTIVE status.")
+
+
+def wait_for_delete(status_f, res_id):
+    class Getter(object):
+        @staticmethod
+        def get(id):
+            return munch.Munch(status_f(id))
+
+    try:
+        success = utils.wait_for_delete(
+            manager=Getter,
+            res_id=res_id,
+            status_field=constants.PROVISIONING_STATUS,
+            sleep_time=3
+        )
+        if not success:
+            raise exceptions.OctaviaClientException(
+                code="n/a",
+                message="The resource could not be successfully deleted.")
+    except exceptions.OctaviaClientException as e:
+        if e.code != 404:
+            raise

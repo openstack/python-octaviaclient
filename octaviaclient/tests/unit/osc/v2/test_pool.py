@@ -77,6 +77,24 @@ class TestPoolDelete(TestPool):
         self.api_mock.pool_delete.assert_called_with(
             pool_id=self._po.id)
 
+    @mock.patch('osc_lib.utils.wait_for_delete')
+    def test_pool_delete_wait(self, mock_wait):
+        arglist = [self._po.id, '--wait']
+        verifylist = [
+            ('pool', self._po.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.pool_delete.assert_called_with(
+            pool_id=self._po.id)
+        mock_wait.assert_called_once_with(
+            manager=mock.ANY,
+            res_id=self._po.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
     def test_listener_delete_failure(self):
         arglist = ['unknown_pool']
         verifylist = [
@@ -127,6 +145,36 @@ class TestPoolCreate(TestPool):
         self.api_mock.pool_create.assert_called_with(
             json={'pool': self.pool_info})
 
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('octaviaclient.osc.v2.utils.get_pool_attrs')
+    def test_pool_create_wait(self, mock_attrs, mock_wait):
+        self.pool_info['loadbalancers'] = [{'id': 'mock_lb_id'}]
+        mock_attrs.return_value = self.pool_info
+        self.api_mock.pool_show.return_value = self.pool_info
+        arglist = ['--loadbalancer', 'mock_lb_id',
+                   '--name', self._po.name,
+                   '--protocol', 'HTTP',
+                   '--lb-algorithm', 'ROUND_ROBIN',
+                   '--wait']
+
+        verifylist = [
+            ('loadbalancer', 'mock_lb_id'),
+            ('name', self._po.name),
+            ('protocol', 'HTTP'),
+            ('lb_algorithm', 'ROUND_ROBIN'),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.pool_create.assert_called_with(
+            json={'pool': self.pool_info})
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id='mock_lb_id',
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestPoolShow(TestPool):
 
@@ -175,6 +223,24 @@ class TestPoolSet(TestPool):
                                         'crl_container_ref': new_crl_id,
                                         'tls_enabled': True}})
 
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def test_pool_set_wait(self, mock_wait):
+        arglist = [self._po.id, '--name', 'new_name', '--wait']
+        verifylist = [
+            ('pool', self._po.id),
+            ('name', 'new_name'),
+            ('wait', True),
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.pool_set.assert_called_with(
+            self._po.id, json={'pool': {'name': 'new_name'}})
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._po.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestPoolUnset(TestPool):
     PARAMETERS = ('name', 'description', 'ca_tls_container_ref',
@@ -187,6 +253,9 @@ class TestPoolUnset(TestPool):
 
     def test_pool_unset_name(self):
         self._test_pool_unset_param('name')
+
+    def test_pool_unset_name_wait(self):
+        self._test_pool_unset_param_wait('name')
 
     def test_pool_unset_description(self):
         self._test_pool_unset_param('description')
@@ -217,6 +286,28 @@ class TestPoolUnset(TestPool):
         self.cmd.take_action(parsed_args)
         self.api_mock.pool_set.assert_called_once_with(
             self._po.id, json=ref_body)
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def _test_pool_unset_param_wait(self, param, mock_wait):
+        self.api_mock.pool_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._po.id, '--%s' % arg_param, '--wait']
+        ref_body = {'pool': {param: None}}
+        verifylist = [
+            ('pool', self._po.id),
+            ('wait', True),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.pool_set.assert_called_once_with(
+            self._po.id, json=ref_body)
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._po.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
     def test_pool_unset_all(self):
         self.api_mock.pool_set.reset_mock()

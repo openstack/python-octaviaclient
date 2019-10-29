@@ -115,6 +115,44 @@ class TestCreateMember(TestMember):
                            'admin_state_up': True,
                            'backup': False}})
 
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
+    def test_member_create_wait(self, mock_attrs, mock_wait):
+        mock_attrs.return_value = {
+            'ip_address': '192.0.2.122',
+            'protocol_port': self._mem.protocol_port,
+            'weight': self._mem.weight,
+            'admin_state_up': True,
+            'pool_id': self._mem.pool_id,
+            'backup': False}
+        self.api_mock.pool_show.return_value = {
+            'loadbalancers': [{'id': 'mock_lb_id'}]}
+        self.api_mock.member_show.return_value = self.mem_info
+        arglist = ['pool_id', '--address', '192.0.2.122',
+                   '--protocol-port', '80',
+                   '--weight', '1', '--enable', '--disable-backup', '--wait']
+        verifylist = [
+            ('address', '192.0.2.122'),
+            ('protocol_port', 80),
+            ('weight', 1),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.member_create.assert_called_with(
+            pool_id=self._mem.pool_id, json={
+                'member': {'ip_address': '192.0.2.122',
+                           'protocol_port': self._mem.protocol_port,
+                           'weight': self._mem.weight,
+                           'admin_state_up': True,
+                           'backup': False}})
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id='mock_lb_id',
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestMemberDelete(TestMember):
 
@@ -124,15 +162,44 @@ class TestMemberDelete(TestMember):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
     def test_member_delete(self, mock_attrs):
-        mock_attrs.return_value = {'pool_id': 'test_pool_id',
-                                   'member_id': 'test_mem_id'}
-        arglist = ['test_pool_id', 'test_mem_id']
-        verifylist = []
+        mock_attrs.return_value = {'pool_id': self._mem.pool_id,
+                                   'member_id': self._mem.id}
+        arglist = [self._mem.pool_id, self._mem.id]
+        verifylist = [
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id),
+        ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.member_delete.assert_called_with(
-            pool_id='test_pool_id', member_id='test_mem_id')
+            pool_id=self._mem.pool_id, member_id=self._mem.id)
+
+    @mock.patch('functools.partial')
+    @mock.patch('osc_lib.utils.wait_for_delete')
+    @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
+    def test_member_delete_wait(self, mock_attrs, mock_wait, mock_partial):
+        mock_attrs.return_value = {'pool_id': self._mem.pool_id,
+                                   'member_id': self._mem.id}
+        arglist = [self._mem.pool_id, self._mem.id, '--wait']
+        verifylist = [
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.member_delete.assert_called_with(
+            pool_id=self._mem.pool_id, member_id=self._mem.id)
+        mock_partial.assert_called_once_with(
+            self.api_mock.member_show, self._mem.pool_id
+        )
+        mock_wait.assert_called_once_with(
+            manager=mock.ANY,
+            res_id=self._mem.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
 
 class TestMemberSet(TestMember):
@@ -143,24 +210,55 @@ class TestMemberSet(TestMember):
 
     @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
     def test_member_set(self, mock_attrs):
-        mock_attrs.return_value = {'pool_id': 'test_pool_id',
-                                   'member_id': 'test_mem_id',
+        mock_attrs.return_value = {'pool_id': self._mem.pool_id,
+                                   'member_id': self._mem.id,
                                    'name': 'new_name',
                                    'backup': True}
-        arglist = ['test_pool_id', 'test_mem_id', '--name',
+        arglist = [self._mem.pool_id, self._mem.id, '--name',
                    'new_name', '--enable-backup']
         verifylist = [
-            ('pool', 'test_pool_id'),
-            ('member', 'test_mem_id'),
-            ('name', 'new_name')
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id),
+            ('name', 'new_name'),
+            ('enable_backup', True),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.member_set.assert_called_with(
-            pool_id='test_pool_id', member_id='test_mem_id',
+            pool_id=self._mem.pool_id, member_id=self._mem.id,
             json={'member': {'name': 'new_name',
                              'backup': True}})
+
+    @mock.patch('functools.partial')
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
+    def test_member_set_wait(self, mock_attrs, mock_wait, mock_partial):
+        mock_attrs.return_value = {'pool_id': self._mem.pool_id,
+                                   'member_id': self._mem.id,
+                                   'name': 'new_name'}
+        arglist = [self._mem.pool_id, self._mem.id, '--name',
+                   'new_name', '--wait']
+        verifylist = [
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id),
+            ('name', 'new_name'),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.member_set.assert_called_with(
+            pool_id=self._mem.pool_id, member_id=self._mem.id,
+            json={'member': {'name': 'new_name'}})
+        mock_partial.assert_called_once_with(
+            self.api_mock.member_show, self._mem.pool_id
+        )
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._mem.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
 
 class TestMemberShow(TestMember):
@@ -211,6 +309,9 @@ class TestMemberUnset(TestMember):
     def test_member_unset_name(self):
         self._test_member_unset_param('name')
 
+    def test_member_unset_name_wait(self):
+        self._test_member_unset_param_wait('name')
+
     def test_member_unset_weight(self):
         self._test_member_unset_param('weight')
 
@@ -219,13 +320,44 @@ class TestMemberUnset(TestMember):
         arg_param = param.replace('_', '-') if '_' in param else param
         arglist = [self._mem.pool_id, self._mem.id, '--%s' % arg_param]
         ref_body = {'member': {param: None}}
-        verifylist = [('member', self._mem.id)]
+        verifylist = [
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id),
+        ]
         for ref_param in self.PARAMETERS:
             verifylist.append((ref_param, param == ref_param))
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.member_set.assert_called_once_with(
             pool_id=self._mem.pool_id, member_id=self._mem.id, json=ref_body)
+
+    @mock.patch('functools.partial')
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def _test_member_unset_param_wait(self, param, mock_wait, mock_partial):
+        self.api_mock.member_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._mem.pool_id, self._mem.id, '--%s' % arg_param,
+                   '--wait']
+        ref_body = {'member': {param: None}}
+        verifylist = [
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id),
+            ('wait', True),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.member_set.assert_called_once_with(
+            pool_id=self._mem.pool_id, member_id=self._mem.id, json=ref_body)
+        mock_partial.assert_called_once_with(
+            self.api_mock.member_show, self._mem.pool_id
+        )
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._mem.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
     def test_member_unset_all(self):
         self.api_mock.pool_set.reset_mock()

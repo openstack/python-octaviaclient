@@ -18,6 +18,7 @@ from osc_lib.api import api
 from osc_lib import exceptions as osc_exc
 
 from octaviaclient.api import constants as const
+from octaviaclient.api import exceptions
 
 
 def correct_return_codes(func):
@@ -45,7 +46,7 @@ def correct_return_codes(func):
             else:
                 raise
 
-            raise OctaviaClientException(
+            raise exceptions.OctaviaClientException(
                 code=code,
                 message=message,
                 request_id=request_id)
@@ -934,17 +935,3 @@ class OctaviaAPI(api.BaseAPI):
         response = self._delete(url)
 
         return response
-
-
-class OctaviaClientException(Exception):
-    """The base exception class for all exceptions this library raises."""
-
-    def __init__(self, code, message=None, request_id=None):
-        self.code = code
-        self.message = message or self.__class__.message
-        self.request_id = request_id
-
-    def __str__(self):
-        return "%s (HTTP %s) (Request-ID: %s)" % (self.message,
-                                                  self.code,
-                                                  self.request_id)

@@ -118,6 +118,11 @@ class CreateLoadBalancer(command.ShowOne):
             metavar='<flavor>',
             help="The name or ID of the flavor for the load balancer."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -130,6 +135,18 @@ class CreateLoadBalancer(command.ShowOne):
 
         data = self.app.client_manager.load_balancer.load_balancer_create(
             json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=data['loadbalancer']['id']
+            )
+            data = {
+                'loadbalancer': (
+                    self.app.client_manager.load_balancer.load_balancer_show(
+                        data['loadbalancer']['id']))
+            }
 
         formatters = {
             'listeners': v2_utils.format_list,
@@ -160,6 +177,11 @@ class DeleteLoadBalancer(command.Command):
             help="Cascade the delete to all child elements of the load "
                  "balancer."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -170,6 +192,13 @@ class DeleteLoadBalancer(command.Command):
 
         self.app.client_manager.load_balancer.load_balancer_delete(
             lb_id=lb_id, **attrs)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_delete(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=lb_id
+            )
 
 
 class FailoverLoadBalancer(command.Command):
@@ -183,14 +212,27 @@ class FailoverLoadBalancer(command.Command):
             metavar='<load_balancer>',
             help="Name or UUID of the load balancer."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
     def take_action(self, parsed_args):
         attrs = v2_utils.get_loadbalancer_attrs(self.app.client_manager,
                                                 parsed_args)
+        lb_id = attrs.pop('loadbalancer_id')
         self.app.client_manager.load_balancer.load_balancer_failover(
-            lb_id=attrs.pop('loadbalancer_id'))
+            lb_id=lb_id)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=lb_id
+            )
 
 
 class ListLoadBalancer(lister.Lister):
@@ -362,6 +404,11 @@ class SetLoadBalancer(command.Command):
             default=None,
             help="Disable load balancer."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -373,6 +420,13 @@ class SetLoadBalancer(command.Command):
 
         self.app.client_manager.load_balancer.load_balancer_set(
             lb_id, json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=lb_id
+            )
 
 
 class UnsetLoadBalancer(command.Command):
@@ -401,6 +455,11 @@ class UnsetLoadBalancer(command.Command):
             action='store_true',
             help="Clear the load balancer QoS policy.",
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -417,6 +476,13 @@ class UnsetLoadBalancer(command.Command):
 
         self.app.client_manager.load_balancer.load_balancer_set(
             lb_id, json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=lb_id
+            )
 
 
 class ShowLoadBalancerStats(command.ShowOne):

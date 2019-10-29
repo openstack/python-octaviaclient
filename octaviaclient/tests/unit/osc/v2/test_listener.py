@@ -86,6 +86,24 @@ class TestListenerDelete(TestListener):
         self.api_mock.listener_delete.assert_called_with(
             listener_id=self._listener.id)
 
+    @mock.patch('osc_lib.utils.wait_for_delete')
+    def test_listener_delete_wait(self, mock_wait):
+        arglist = [self._listener.id, '--wait']
+        verifylist = [
+            ('listener', self._listener.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.listener_delete.assert_called_with(
+            listener_id=self._listener.id)
+        mock_wait.assert_called_once_with(
+            manager=mock.ANY,
+            res_id=self._listener.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
     def test_listener_delete_failure(self):
         arglist = ['unknown_lb']
         verifylist = [
@@ -126,6 +144,35 @@ class TestListenerCreate(TestListener):
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_create.assert_called_with(
             json={'listener': self.listener_info})
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('octaviaclient.osc.v2.utils.get_listener_attrs')
+    def test_listener_create_wait(self, mock_client, mock_wait):
+        self.listener_info['loadbalancers'] = [{'id': 'mock_lb_id'}]
+        mock_client.return_value = self.listener_info
+        self.api_mock.listener_show.return_value = self.listener_info
+        arglist = ['mock_lb_id',
+                   '--name', self._listener.name,
+                   '--protocol', 'HTTP',
+                   '--protocol-port', '80',
+                   '--wait']
+        verifylist = [
+            ('loadbalancer', 'mock_lb_id'),
+            ('name', self._listener.name),
+            ('protocol', 'HTTP'),
+            ('protocol_port', '80'),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.listener_create.assert_called_with(
+            json={'listener': self.listener_info})
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self.listener_info['loadbalancers'][0]['id'],
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
     @mock.patch('octaviaclient.osc.v2.utils.get_listener_attrs')
     def test_tls_listener_create(self, mock_client):
@@ -271,6 +318,25 @@ class TestListenerSet(TestListener):
                     'allowed_cidrs': self._listener.allowed_cidrs,
                 }})
 
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def test_listener_set_wait(self, mock_wait):
+        arglist = [self._listener.id, '--name', 'new_name', '--wait']
+        verifylist = [
+            ('listener', self._listener.id),
+            ('name', 'new_name'),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.listener_set.assert_called_with(
+            self._listener.id, json={'listener': {'name': 'new_name'}})
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._listener.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestListenerStatsShow(TestListener):
 
@@ -310,6 +376,9 @@ class TestListenerUnset(TestListener):
 
     def test_listener_unset_name(self):
         self._test_listener_unset_param('name')
+
+    def test_listener_unset_name_wait(self):
+        self._test_listener_unset_param_wait('name')
 
     def test_listener_unset_description(self):
         self._test_listener_unset_param('description')
@@ -370,6 +439,31 @@ class TestListenerUnset(TestListener):
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_set.assert_called_once_with(
             self._listener.id, json=ref_body)
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def _test_listener_unset_param_wait(self, param, mock_wait):
+        self.api_mock.listener_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._listener.id, '--%s' % arg_param, '--wait']
+        # Handle the special rename case of default_pool rename
+        if param == 'default_pool':
+            param = 'default_pool_id'
+        ref_body = {'listener': {param: None}}
+        verifylist = [
+            ('listener', self._listener.id),
+            ('wait', True),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.listener_set.assert_called_once_with(
+            self._listener.id, json=ref_body)
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._listener.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
     def test_listener_unset_all(self):
         self.api_mock.listener_set.reset_mock()

@@ -15,6 +15,7 @@ import copy
 import itertools
 import mock
 
+import munch
 from osc_lib import exceptions
 from oslo_utils import uuidutils
 
@@ -214,6 +215,24 @@ class TestLoadBalancerDelete(TestLoadBalancer):
         self.api_mock.load_balancer_delete.assert_called_with(
             lb_id=self._lb.id)
 
+    @mock.patch('osc_lib.utils.wait_for_delete')
+    def test_load_balancer_delete_wait(self, mock_wait):
+        arglist = [self._lb.id, '--wait']
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_delete.assert_called_with(
+            lb_id=self._lb.id)
+        mock_wait.assert_called_once_with(
+            manager=mock.ANY,
+            res_id=self.lb_info['id'],
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
     def test_load_balancer_delete_failure(self):
         arglist = ['unknown_lb']
         verifylist = [
@@ -256,6 +275,34 @@ class TestLoadBalancerCreate(TestLoadBalancer):
         self.cmd.take_action(parsed_args)
         self.api_mock.load_balancer_create.assert_called_with(
             json={'loadbalancer': self.lb_info})
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_create_wait(self, mock_client, mock_wait):
+        mock_client.return_value = self.lb_info
+        self.api_mock.load_balancer_show.return_value = self.lb_info
+        arglist = ['--name', self._lb.name,
+                   '--vip-network-id', self._lb.vip_network_id,
+                   '--project', self._lb.project_id,
+                   '--flavor', self._lb.flavor_id,
+                   '--wait']
+        verifylist = [
+            ('name', self._lb.name),
+            ('vip_network_id', self._lb.vip_network_id),
+            ('project', self._lb.project_id),
+            ('flavor', self._lb.flavor_id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_create.assert_called_with(
+            json={'loadbalancer': self.lb_info})
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self.lb_info['id'],
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
     @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
     def test_load_balancer_create_with_qos_policy(self, mock_client):
@@ -322,6 +369,8 @@ class TestLoadBalancerCreate(TestLoadBalancer):
                 # subtract comb's keys from attrs_list
                 filtered_attrs = {k: v for k, v in attrs_list.items() if (
                     k not in comb)}
+                # Add the 'wait' attribute, which isn't part of an LB directly
+                filtered_attrs['wait'] = False
                 mock_client.return_value = filtered_attrs
                 if not any(k in filtered_attrs for k in args) or all(
                     k in filtered_attrs for k in ("vip_network_id",
@@ -333,7 +382,7 @@ class TestLoadBalancerCreate(TestLoadBalancer):
                         filtered_attrs)
                 else:
                     try:
-                        self.cmd.take_action(filtered_attrs)
+                        self.cmd.take_action(munch.Munch(filtered_attrs))
                     except exceptions.CommandError as e:
                         self.fail("%s raised unexpectedly" % e)
 
@@ -392,6 +441,39 @@ class TestLoadBalancerSet(TestLoadBalancer):
                     'vip_qos_policy_id': qos_policy_id,
                 }
             })
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_set_wait(self, mock_attrs, mock_wait):
+        qos_policy_id = uuidutils.generate_uuid()
+        mock_attrs.return_value = {
+            'loadbalancer_id': self._lb.id,
+            'name': 'new_name',
+            'vip_qos_policy_id': qos_policy_id,
+        }
+        arglist = [self._lb.id, '--name', 'new_name',
+                   '--vip-qos-policy-id', qos_policy_id, '--wait']
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('name', 'new_name'),
+            ('vip_qos_policy_id', qos_policy_id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_set.assert_called_with(
+            self._lb.id, json={
+                'loadbalancer': {
+                    'name': 'new_name',
+                    'vip_qos_policy_id': qos_policy_id,
+                }
+            })
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self.lb_info['id'],
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
     @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
     def test_load_balancer_remove_qos_policy(self, mock_attrs):
@@ -477,6 +559,24 @@ class TestLoadBalancerFailover(TestLoadBalancer):
         self.api_mock.load_balancer_failover.assert_called_with(
             lb_id=self._lb.id)
 
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def test_load_balancer_failover_wait(self, mock_wait):
+        arglist = [self._lb.id, '--wait']
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_failover.assert_called_with(
+            lb_id=self._lb.id)
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._lb.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestLoadBalancerUnset(TestLoadBalancer):
     PARAMETERS = ('name', 'description', 'vip_qos_policy_id')
@@ -489,6 +589,9 @@ class TestLoadBalancerUnset(TestLoadBalancer):
 
     def test_load_balancer_unset_name(self):
         self._test_load_balancer_unset_param('name')
+
+    def test_load_balancer_unset_name_wait(self):
+        self._test_load_balancer_unset_param_wait('name')
 
     def test_load_balancer_unset_description(self):
         self._test_load_balancer_unset_param('description')
@@ -510,6 +613,28 @@ class TestLoadBalancerUnset(TestLoadBalancer):
         self.cmd.take_action(parsed_args)
         self.api_mock.load_balancer_set.assert_called_once_with(
             self._lb.id, json=ref_body)
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def _test_load_balancer_unset_param_wait(self, param, mock_wait):
+        self.api_mock.load_balancer_set.reset_mock()
+        ref_body = {'loadbalancer': {param: None}}
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._lb.id, '--%s' % arg_param, '--wait']
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('wait', True),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_set.assert_called_once_with(
+            self._lb.id, json=ref_body)
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self.lb_info['id'],
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
     def test_load_balancer_unset_all(self):
         self.api_mock.load_balancer_set.reset_mock()

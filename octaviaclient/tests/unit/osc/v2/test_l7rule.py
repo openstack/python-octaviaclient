@@ -89,6 +89,36 @@ class TestL7RuleDelete(TestL7Rule):
             l7policy_id=self._l7po.id
         )
 
+    @mock.patch('functools.partial')
+    @mock.patch('osc_lib.utils.wait_for_delete')
+    @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
+    def test_l7rule_delete_wait(self, mock_attrs, mock_wait, mock_partial):
+        mock_attrs.return_value = {
+            'l7policy_id': self._l7po.id,
+            'l7rule_id': self._l7ru.id,
+        }
+        arglist = [self._l7po.id, self._l7ru.id, '--wait']
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('l7rule', self._l7ru.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7rule_delete.assert_called_with(
+            l7rule_id=self._l7ru.id,
+            l7policy_id=self._l7po.id
+        )
+        mock_partial.assert_called_once_with(
+            self.api_mock.l7rule_show, self._l7po.id
+        )
+        mock_wait.assert_called_once_with(
+            manager=mock.ANY,
+            res_id=self._l7ru.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestL7RuleCreate(TestL7Rule):
 
@@ -130,6 +160,49 @@ class TestL7RuleCreate(TestL7Rule):
                 'value': '.example.com',
                 'type': 'HOST_NAME'}
             })
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
+    def test_l7rule_create_wait(self, mock_attrs, mock_wait):
+        mock_attrs.return_value = {
+            'l7policy_id': self._l7po.id,
+            'compare-type': 'ENDS_WITH',
+            'value': '.example.com',
+            'type': 'HOST_NAME'
+        }
+        self.api_mock.l7policy_show.return_value = {
+            'listener_id': 'mock_listener_id'}
+        self.api_mock.listener_show.return_value = {
+            'loadbalancers': [{'id': 'mock_lb_id'}]}
+        self.api_mock.l7rule_show.return_value = self.l7rule_info
+        arglist = [self._l7po.id,
+                   '--compare-type', 'ENDS_WITH',
+                   '--value', '.example.com',
+                   '--type', 'HOST_NAME'.lower(),
+                   '--wait']
+
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('compare_type', 'ENDS_WITH'),
+            ('value', '.example.com'),
+            ('type', 'HOST_NAME'),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7rule_create.assert_called_with(
+            l7policy_id=self._l7po.id,
+            json={'rule': {
+                'compare-type': 'ENDS_WITH',
+                'value': '.example.com',
+                'type': 'HOST_NAME'}
+            })
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id='mock_lb_id',
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
 
 class TestL7RuleShow(TestL7Rule):
@@ -188,6 +261,43 @@ class TestL7RuleSet(TestL7Rule):
             l7policy_id=self._l7po.id,
             json={'rule': {'admin_state_up': False}})
 
+    @mock.patch('functools.partial')
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
+    def test_l7rule_set_wait(self, mock_attrs, mock_wait, mock_partial):
+        mock_attrs.return_value = {
+            'admin_state_up': False,
+            'l7policy_id': self._l7po.id,
+            'l7rule_id': self._l7ru.id
+        }
+        arglist = [
+            self._l7po.id,
+            self._l7ru.id,
+            '--disable',
+            '--wait',
+        ]
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('l7rule', self._l7ru.id),
+            ('disable', True),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7rule_set.assert_called_with(
+            l7rule_id=self._l7ru.id,
+            l7policy_id=self._l7po.id,
+            json={'rule': {'admin_state_up': False}})
+        mock_partial.assert_called_once_with(
+            self.api_mock.l7rule_show, self._l7po.id
+        )
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._l7ru.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestL7RuleUnset(TestL7Rule):
     PARAMETERS = ('invert', 'key')
@@ -198,6 +308,9 @@ class TestL7RuleUnset(TestL7Rule):
 
     def test_l7rule_unset_invert(self):
         self._test_l7rule_unset_param('invert')
+
+    def test_l7rule_unset_invert_wait(self):
+        self._test_l7rule_unset_param_wait('invert')
 
     def test_l7rule_unset_key(self):
         self._test_l7rule_unset_param('key')
@@ -216,6 +329,33 @@ class TestL7RuleUnset(TestL7Rule):
         self.cmd.take_action(parsed_args)
         self.api_mock.l7rule_set.assert_called_once_with(
             l7policy_id=self._l7po.id, l7rule_id=self._l7ru.id, json=ref_body)
+
+    @mock.patch('functools.partial')
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def _test_l7rule_unset_param_wait(self, param, mock_wait, mock_partial):
+        self.api_mock.l7rule_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._l7po.id, self._l7ru.id, '--%s' % arg_param, '--wait']
+        ref_body = {'rule': {param: None}}
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('l7rule_id', self._l7ru.id),
+            ('wait', True),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7rule_set.assert_called_once_with(
+            l7policy_id=self._l7po.id, l7rule_id=self._l7ru.id, json=ref_body)
+        mock_partial.assert_called_once_with(
+            self.api_mock.l7rule_show, self._l7po.id
+        )
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._l7ru.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
     def test_l7rule_unset_all(self):
         self.api_mock.l7rule_set.reset_mock()

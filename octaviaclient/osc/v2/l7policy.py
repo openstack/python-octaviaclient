@@ -104,6 +104,11 @@ class CreateL7Policy(command.ShowOne):
             default=None,
             help="Disable l7policy."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -116,6 +121,20 @@ class CreateL7Policy(command.ShowOne):
 
         data = self.app.client_manager.load_balancer.l7policy_create(
             json=body)
+
+        if parsed_args.wait:
+            listener = self.app.client_manager.load_balancer.listener_show(
+                data['l7policy']['listener_id'])
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=listener['loadbalancers'][0]['id']
+            )
+            data = {
+                'l7policy': (
+                    self.app.client_manager.load_balancer.l7policy_show(
+                        data['l7policy']['id']))
+            }
 
         formatters = {'rules': v2_utils.format_list}
 
@@ -134,6 +153,11 @@ class DeleteL7Policy(command.Command):
             metavar="<policy>",
             help="l7policy to delete (name or ID)."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -145,6 +169,13 @@ class DeleteL7Policy(command.Command):
 
         self.app.client_manager.load_balancer.l7policy_delete(
             l7policy_id=l7policy_id)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_delete(
+                status_f=(self.app.client_manager.load_balancer.
+                          l7policy_show),
+                res_id=l7policy_id
+            )
 
 
 class ListL7Policy(lister.Lister):
@@ -278,6 +309,11 @@ class SetL7Policy(command.Command):
             default=None,
             help="Disable l7policy."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -292,6 +328,13 @@ class SetL7Policy(command.Command):
 
         self.app.client_manager.load_balancer.l7policy_set(
             l7policy_id, json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          l7policy_show),
+                res_id=l7policy_id
+            )
 
 
 class UnsetL7Policy(command.Command):
@@ -320,6 +363,11 @@ class UnsetL7Policy(command.Command):
             action='store_true',
             help="Clear the l7policy redirect HTTP code."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
         return parser
 
     def take_action(self, parsed_args):
@@ -335,3 +383,10 @@ class UnsetL7Policy(command.Command):
 
         self.app.client_manager.load_balancer.l7policy_set(
             policy_id, json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          l7policy_show),
+                res_id=policy_id
+            )

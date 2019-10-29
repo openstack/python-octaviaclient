@@ -166,6 +166,11 @@ class CreateListener(command.ShowOne):
             help="CIDR to allow access to the listener (can be set multiple "
                  "times)."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -176,6 +181,19 @@ class CreateListener(command.ShowOne):
         body = {"listener": attrs}
         data = self.app.client_manager.load_balancer.listener_create(
             json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=data['listener']['loadbalancers'][0]['id']
+            )
+            data = {
+                'listener': (
+                    self.app.client_manager.load_balancer.listener_show(
+                        data['listener']['id']))
+            }
+
         formatters = {'loadbalancers': v2_utils.format_list,
                       'pools': v2_utils.format_list,
                       'l7policies': v2_utils.format_list,
@@ -199,6 +217,11 @@ class DeleteListener(command.Command):
             metavar="<listener>",
             help="Listener to delete (name or ID)"
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -210,6 +233,12 @@ class DeleteListener(command.Command):
 
         self.app.client_manager.load_balancer.listener_delete(
             listener_id=listener_id)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_delete(
+                status_f=self.app.client_manager.load_balancer.listener_show,
+                res_id=listener_id
+            )
 
 
 class ListListener(lister.Lister):
@@ -421,6 +450,11 @@ class SetListener(command.Command):
             help="CIDR to allow access to the listener (can be set multiple "
                  "times)."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -434,6 +468,12 @@ class SetListener(command.Command):
 
         self.app.client_manager.load_balancer.listener_set(
             listener_id, json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=self.app.client_manager.load_balancer.listener_show,
+                res_id=listener_id
+            )
 
 
 class UnsetListener(command.Command):
@@ -525,6 +565,11 @@ class UnsetListener(command.Command):
             action='store_true',
             help="Clear all allowed CIDRs from the listener."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
         return parser
 
     def take_action(self, parsed_args):
@@ -540,6 +585,12 @@ class UnsetListener(command.Command):
 
         self.app.client_manager.load_balancer.listener_set(
             listener_id, json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=self.app.client_manager.load_balancer.listener_show,
+                res_id=listener_id
+            )
 
 
 class ShowListenerStats(command.ShowOne):

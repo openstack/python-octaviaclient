@@ -19,7 +19,9 @@
 
 from cliff import lister
 from osc_lib.command import command
+from osc_lib import exceptions
 from osc_lib import utils
+from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
@@ -162,13 +164,21 @@ class ShowFlavor(command.ShowOne):
 
     def take_action(self, parsed_args):
         rows = const.FLAVOR_ROWS
-        attrs = v2_utils.get_flavor_attrs(self.app.client_manager,
-                                          parsed_args)
-        flavor_id = attrs.pop('flavor_id')
+        data = None
+        if uuidutils.is_uuid_like(parsed_args.flavor):
+            try:
+                data = self.app.client_manager.load_balancer.flavor_show(
+                    flavor_id=parsed_args.flavor)
+            except exceptions.NotFound:
+                pass
+        if data is None:
+            attrs = v2_utils.get_flavor_attrs(self.app.client_manager,
+                                              parsed_args)
+            flavor_id = attrs.pop('flavor_id')
 
-        data = self.app.client_manager.load_balancer.flavor_show(
-            flavor_id=flavor_id
-        )
+            data = self.app.client_manager.load_balancer.flavor_show(
+                flavor_id=flavor_id
+            )
         formatters = {'flavorprofiles': v2_utils.format_list}
 
         return (rows, (utils.get_dict_properties(

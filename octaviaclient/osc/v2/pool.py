@@ -17,7 +17,9 @@
 
 from cliff import lister
 from osc_lib.command import command
+from osc_lib import exceptions
 from osc_lib import utils
+from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
@@ -207,13 +209,21 @@ class ShowPool(command.ShowOne):
 
     def take_action(self, parsed_args):
         rows = const.POOL_ROWS
+        data = None
+        if uuidutils.is_uuid_like(parsed_args.pool):
+            try:
+                data = self.app.client_manager.load_balancer.pool_show(
+                    pool_id=parsed_args.pool)
+            except exceptions.NotFound:
+                pass
+        if data is None:
+            attrs = v2_utils.get_pool_attrs(self.app.client_manager,
+                                            parsed_args)
+            pool_id = attrs.pop('pool_id')
 
-        attrs = v2_utils.get_pool_attrs(self.app.client_manager, parsed_args)
-        pool_id = attrs.pop('pool_id')
-
-        data = self.app.client_manager.load_balancer.pool_show(
-            pool_id=pool_id,
-        )
+            data = self.app.client_manager.load_balancer.pool_show(
+                pool_id=pool_id,
+            )
         formatters = {'loadbalancers': v2_utils.format_list,
                       'members': v2_utils.format_list,
                       'listeners': v2_utils.format_list,

@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    If ID of resource is passed to resource show command - call is done
+    directly using passed UUID. If name of resource is in UUID format - list of
+    resources will be still executed to get correct resource ID.

@@ -20,6 +20,7 @@ from cliff import lister
 from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils
+from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
@@ -66,13 +67,21 @@ class ShowQuota(command.ShowOne):
 
     def take_action(self, parsed_args):
         rows = const.QUOTA_ROWS
-        attrs = v2_utils.get_quota_attrs(self.app.client_manager,
-                                         parsed_args)
-        project_id = attrs.pop('project_id')
+        data = None
+        if uuidutils.is_uuid_like(parsed_args.project):
+            try:
+                data = self.app.client_manager.load_balancer.quota_show(
+                    project_id=parsed_args.project)
+            except exceptions.NotFound:
+                pass
+        if data is None:
+            attrs = v2_utils.get_quota_attrs(self.app.client_manager,
+                                             parsed_args)
+            project_id = attrs.pop('project_id')
 
-        data = self.app.client_manager.load_balancer.quota_show(
-            project_id=project_id
-        )
+            data = self.app.client_manager.load_balancer.quota_show(
+                project_id=project_id
+            )
 
         return (rows, (utils.get_dict_properties(data, rows)))
 

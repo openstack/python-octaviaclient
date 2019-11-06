@@ -100,11 +100,9 @@ class ShowAmphora(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        attrs = v2_utils.get_amphora_attrs(self.app.client_manager,
-                                           parsed_args)
 
         data = self.app.client_manager.load_balancer.amphora_show(
-            amphora_id=attrs.pop('amphora_id'),
+            amphora_id=parsed_args.amphora_id,
         )
 
         rows = const.AMPHORA_ROWS

@@ -19,7 +19,9 @@
 
 from cliff import lister
 from osc_lib.command import command
+from osc_lib import exceptions
 from osc_lib import utils
+from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
@@ -212,14 +214,23 @@ class ShowHealthMonitor(command.ShowOne):
 
     def take_action(self, parsed_args):
         rows = const.MONITOR_ROWS
-        attrs = v2_utils.get_health_monitor_attrs(self.app.client_manager,
-                                                  parsed_args)
+        data = None
+        if uuidutils.is_uuid_like(parsed_args.health_monitor):
+            try:
+                data = (
+                    self.app.client_manager.load_balancer.health_monitor_show(
+                        health_monitor_id=parsed_args.health_monitor))
+            except exceptions.NotFound:
+                pass
+        if data is None:
+            attrs = v2_utils.get_health_monitor_attrs(self.app.client_manager,
+                                                      parsed_args)
 
-        health_monitor_id = attrs.pop('health_monitor_id')
+            health_monitor_id = attrs.pop('health_monitor_id')
 
-        data = self.app.client_manager.load_balancer.health_monitor_show(
-            health_monitor_id=health_monitor_id,
-        )
+            data = self.app.client_manager.load_balancer.health_monitor_show(
+                health_monitor_id=health_monitor_id,
+            )
         formatters = {'pools': v2_utils.format_list}
 
         return (rows,

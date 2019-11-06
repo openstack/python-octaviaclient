@@ -18,6 +18,7 @@ from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils
 from oslo_serialization import jsonutils
+from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
@@ -304,13 +305,23 @@ class ShowLoadBalancer(command.ShowOne):
 
     def take_action(self, parsed_args):
         rows = const.LOAD_BALANCER_ROWS
-        attrs = v2_utils.get_loadbalancer_attrs(self.app.client_manager,
-                                                parsed_args)
-        lb_id = attrs.pop('loadbalancer_id')
+        data = None
 
-        data = self.app.client_manager.load_balancer.load_balancer_show(
-            lb_id=lb_id
-        )
+        if uuidutils.is_uuid_like(parsed_args.loadbalancer):
+            try:
+                data = (
+                    self.app.client_manager.load_balancer.load_balancer_show(
+                        lb_id=parsed_args.loadbalancer))
+            except exceptions.NotFound:
+                pass
+
+        if data is None:
+            attrs = v2_utils.get_loadbalancer_attrs(
+                self.app.client_manager, parsed_args)
+            lb_id = attrs.pop('loadbalancer_id')
+
+            data = self.app.client_manager.load_balancer.load_balancer_show(
+                lb_id=lb_id)
 
         formatters = {
             'listeners': v2_utils.format_list,

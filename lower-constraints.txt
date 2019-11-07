@@ -49,7 +49,6 @@ python-subunit==1.0.0
 requests==2.14.2
 requests-mock==1.1.0
 rfc3986==0.3.1
-six==1.10.0
 stestr==2.0.0
 testscenarios==0.4
 testtools==2.2.0

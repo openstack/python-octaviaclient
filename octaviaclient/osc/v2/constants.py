@@ -14,6 +14,7 @@
 
 LOAD_BALANCER_ROWS = (
     'admin_state_up',
+    'availability_zone',
     'created_at',
     'description',
     'flavor_id',
@@ -281,7 +282,8 @@ PROVIDER_COLUMNS = (
     'description',
 )
 
-PROVIDER_CAPABILICY_COLUMNS = (
+PROVIDER_CAPABILITY_COLUMNS = (
+    'type',
     'name',
     'description',
 )
@@ -309,6 +311,32 @@ FLAVORPROFILE_ROWS = (
 )
 
 FLAVORPROFILE_COLUMNS = (
+    'id',
+    'name',
+    'provider_name',
+)
+
+AVAILABILITYZONE_ROWS = (
+    'name',
+    'availability_zone_profile_id',
+    'enabled',
+    'description',
+)
+
+AVAILABILITYZONE_COLUMNS = (
+    'name',
+    'availability_zone_profile_id',
+    'enabled',
+)
+
+AVAILABILITYZONEPROFILE_ROWS = (
+    'id',
+    'name',
+    'provider_name',
+    'availability_zone_data'
+)
+
+AVAILABILITYZONEPROFILE_COLUMNS = (
     'id',
     'name',
     'provider_name',

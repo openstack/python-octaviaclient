@@ -101,6 +101,13 @@ class CreateLoadBalancer(command.ShowOne):
             help="Provider name for the load balancer."
         )
 
+        parser.add_argument(
+            '--availability-zone',
+            metavar='<availability_zone>',
+            default=None,
+            help="Availability zone for the load balancer."
+        )
+
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',
@@ -312,6 +319,11 @@ class ListLoadBalancer(lister.Lister):
             '--flavor',
             metavar='<flavor>',
             help="List load balancers according to their flavor."
+        )
+        parser.add_argument(
+            '--availability-zone',
+            metavar='<availability_zone>',
+            help="List load balancers according to their availability zone."
         )
 
         return parser

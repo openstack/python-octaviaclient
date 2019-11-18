@@ -62,8 +62,14 @@ class TestProviderCapability(fakes.TestOctaviaClient):
         super(TestProviderCapability, self).setUp()
 
         self.api_mock = mock.Mock()
-        self.api_mock.provider_capability_list.return_value = copy.deepcopy(
-            {'flavor_capabilities': [attr_consts.CAPABILITY_ATTRS]})
+        self.api_mock.provider_flavor_capability_list.return_value = (
+            copy.deepcopy(
+                {'flavor_capabilities': [attr_consts.CAPABILITY_ATTRS]}))
+        (self.api_mock.provider_availability_zone_capability_list.
+         return_value) = (
+            copy.deepcopy(
+                {'availability_zone_capabilities': [
+                    attr_consts.CAPABILITY_ATTRS]}))
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
@@ -75,15 +81,61 @@ class TestProviderCapabilityShow(TestProviderCapability):
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 
-        self.cmd = provider.ListProviderFlavorCapability(self.app, None)
+        self.cmd = provider.ListProviderCapability(self.app, None)
 
-    def test_provider_capability_list(self):
+    def test_provider_capability_list_flavor(self):
+        arglist = ['--flavor', 'provider1']
+        verifylist = [
+            ('provider', 'provider1'),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        result = self.cmd.take_action(parsed_args)
+        capabilities = list(result[1])
+        self.api_mock.provider_flavor_capability_list.assert_called_with(
+            provider='provider1')
+        (self.api_mock.provider_availability_zone_capability_list.
+            assert_not_called())
+        self.assertIn(
+            tuple(['flavor'] + list(attr_consts.CAPABILITY_ATTRS.values())),
+            capabilities)
+
+    def test_provider_capability_list_availability_zone(self):
+        arglist = ['--availability-zone', 'provider1']
+        verifylist = [
+            ('provider', 'provider1'),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        result = self.cmd.take_action(parsed_args)
+        capabilities = list(result[1])
+        self.api_mock.provider_flavor_capability_list.assert_not_called()
+        (self.api_mock.provider_availability_zone_capability_list.
+            assert_called_with(provider='provider1'))
+        self.assertIn(
+            tuple(
+                ['availability_zone'] +
+                list(attr_consts.CAPABILITY_ATTRS.values())),
+            capabilities)
+
+    def test_provider_capability_list_all(self):
         arglist = ['provider1']
         verifylist = [
             ('provider', 'provider1'),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
-        self.cmd.take_action(parsed_args)
-        self.api_mock.provider_capability_list.assert_called_with(
+        result = self.cmd.take_action(parsed_args)
+        capabilities = list(result[1])
+        self.api_mock.provider_flavor_capability_list.assert_called_with(
             provider='provider1')
+        (self.api_mock.provider_availability_zone_capability_list.
+            assert_called_with(provider='provider1'))
+        self.assertIn(
+            tuple(['flavor'] + list(attr_consts.CAPABILITY_ATTRS.values())),
+            capabilities)
+        self.assertIn(
+            tuple(
+                ['availability_zone'] +
+                list(attr_consts.CAPABILITY_ATTRS.values())),
+            capabilities)

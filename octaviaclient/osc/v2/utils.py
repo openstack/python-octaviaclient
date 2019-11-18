@@ -80,6 +80,11 @@ def get_resource_id(resource, resource_name, name):
             if name.lower() in ('none', 'null', 'void'):
                 return None
 
+        primary_key = 'id'
+        # Availability-zones don't have an id value
+        if resource_name == 'availability_zones':
+            primary_key = 'name'
+
         # Projects can be non-uuid so we need to account for this
         if resource_name == 'project':
             if name != 'non-uuid':
@@ -116,7 +121,8 @@ def get_resource_id(resource, resource_name, name):
                                                 name))
                 raise osc_exc.CommandError(msg)
             else:
-                return names[0].get('id')
+                return names[0].get(primary_key)
+
     except IndexError:
         msg = "Unable to locate {0} in {1}".format(name, resource_name)
         raise osc_exc.CommandError(msg)
@@ -171,6 +177,8 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
             'flavors',
             client_manager.load_balancer.flavor_list
         ),
+        'availability_zone': ('availability_zone', str),
+
     }
 
     _attrs = vars(parsed_args)
@@ -471,6 +479,8 @@ def get_provider_attrs(parsed_args):
     attr_map = {
         'provider': ('provider_name', str),
         'description': ('description', str),
+        'flavor': ('flavor', bool),
+        'availability_zone': ('availability_zone', bool),
     }
 
     return _map_attrs(vars(parsed_args), attr_map)
@@ -510,6 +520,48 @@ def get_flavorprofile_attrs(client_manager, parsed_args):
         ),
         'provider': ('provider_name', str),
         'flavor_data': ('flavor_data', str),
+    }
+
+    _attrs = vars(parsed_args)
+    attrs = _map_attrs(_attrs, attr_map)
+
+    return attrs
+
+
+def get_availabilityzone_attrs(client_manager, parsed_args):
+    attr_map = {
+        'name': ('name', str),
+        'availabilityzone': (
+            'availabilityzone_name',
+            'availability_zones',
+            client_manager.load_balancer.availabilityzone_list,
+        ),
+        'availabilityzoneprofile': (
+            'availability_zone_profile_id',
+            'availability_zone_profiles',
+            client_manager.load_balancer.availabilityzoneprofile_list,
+        ),
+        'enable': ('enabled', lambda x: True),
+        'disable': ('enabled', lambda x: False),
+        'description': ('description', str),
+    }
+
+    _attrs = vars(parsed_args)
+    attrs = _map_attrs(_attrs, attr_map)
+
+    return attrs
+
+
+def get_availabilityzoneprofile_attrs(client_manager, parsed_args):
+    attr_map = {
+        'name': ('name', str),
+        'availabilityzoneprofile': (
+            'availability_zone_profile_id',
+            'availability_zone_profiles',
+            client_manager.load_balancer.availabilityzoneprofile_list,
+        ),
+        'provider': ('provider_name', str),
+        'availability_zone_data': ('availability_zone_data', str),
     }
 
     _attrs = vars(parsed_args)

@@ -111,3 +111,17 @@ flavorprofile
 
 .. autoprogram-cliff:: openstack.load_balancer.v2
     :command: loadbalancer flavorprofile *
+
+================
+availabilityzone
+================
+
+.. autoprogram-cliff:: openstack.load_balancer.v2
+    :command: loadbalancer availabilityzone *
+
+=======================
+availabilityzoneprofile
+=======================
+
+.. autoprogram-cliff:: openstack.load_balancer.v2
+    :command: loadbalancer availabilityzoneprofile *

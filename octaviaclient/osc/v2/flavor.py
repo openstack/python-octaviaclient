@@ -228,7 +228,7 @@ class SetFlavor(command.Command):
 
 
 class UnsetFlavor(command.Command):
-    """Clear health monitor settings"""
+    """Clear flavor settings"""
 
     def get_parser(self, prog_name):
         parser = super(UnsetFlavor, self).get_parser(prog_name)

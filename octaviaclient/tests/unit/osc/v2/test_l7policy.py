@@ -95,6 +95,24 @@ class TestL7PolicyDelete(TestL7Policy):
         self.api_mock.l7policy_delete.assert_called_with(
             l7policy_id=self._l7po.id)
 
+    @mock.patch('osc_lib.utils.wait_for_delete')
+    def test_l7policy_delete_wait(self, mock_wait):
+        arglist = [self._l7po.id, '--wait']
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7policy_delete.assert_called_with(
+            l7policy_id=self._l7po.id)
+        mock_wait.assert_called_once_with(
+            manager=mock.ANY,
+            res_id=self._l7po.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
     def test_l7policy_delete_failure(self):
         arglist = ['unknown_policy']
         verifylist = [
@@ -147,6 +165,47 @@ class TestL7PolicyCreate(TestL7Policy):
                 'redirect_pool_id': self._l7po.redirect_pool_id
             }})
 
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('octaviaclient.osc.v2.utils.get_l7policy_attrs')
+    def test_l7policy_create_wait(self, mock_attrs, mock_wait):
+        mock_attrs.return_value = {
+            'listener_id': self._l7po.listener_id,
+            'name': self._l7po.name,
+            'action': 'REDIRECT_TO_POOL',
+            'redirect_pool_id': self._l7po.redirect_pool_id
+        }
+        self.api_mock.listener_show.return_value = {
+            'loadbalancers': [{'id': 'mock_lb_id'}]}
+        self.api_mock.l7policy_show.return_value = self.l7po_info
+        arglist = ['mock_li_id',
+                   '--name', self._l7po.name,
+                   '--action', 'REDIRECT_TO_POOL'.lower(),
+                   '--redirect-pool', self._l7po.redirect_pool_id,
+                   '--wait']
+
+        verifylist = [
+            ('listener', 'mock_li_id'),
+            ('name', self._l7po.name),
+            ('action', 'REDIRECT_TO_POOL'),
+            ('redirect_pool', self._l7po.redirect_pool_id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7policy_create.assert_called_with(
+            json={'l7policy': {
+                'listener_id': self._l7po.listener_id,
+                'name': self._l7po.name,
+                'action': 'REDIRECT_TO_POOL',
+                'redirect_pool_id': self._l7po.redirect_pool_id
+            }})
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id='mock_lb_id',
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestL7PolicyShow(TestL7Policy):
 
@@ -191,6 +250,25 @@ class TestL7PolicySet(TestL7Policy):
         self.api_mock.l7policy_set.assert_called_with(
             self._l7po.id, json={'l7policy': {'name': 'new_name'}})
 
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def test_l7policy_set_wait(self, mock_wait):
+        arglist = [self._l7po.id, '--name', 'new_name', '--wait']
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('name', 'new_name'),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7policy_set.assert_called_with(
+            self._l7po.id, json={'l7policy': {'name': 'new_name'}})
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._l7po.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestL7PolicyUnset(TestL7Policy):
     PARAMETERS = ('name', 'description', 'redirect_http_code')
@@ -204,6 +282,9 @@ class TestL7PolicyUnset(TestL7Policy):
 
     def test_l7policy_unset_name(self):
         self._test_l7policy_unset_param('name')
+
+    def test_l7policy_unset_name_wait(self):
+        self._test_l7policy_unset_param_wait('name')
 
     def test_l7policy_unset_redirect_http_code(self):
         self._test_l7policy_unset_param('redirect_http_code')
@@ -222,6 +303,28 @@ class TestL7PolicyUnset(TestL7Policy):
         self.cmd.take_action(parsed_args)
         self.api_mock.l7policy_set.assert_called_once_with(
             self._l7po.id, json=ref_body)
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def _test_l7policy_unset_param_wait(self, param, mock_wait):
+        self.api_mock.l7policy_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._l7po.id, '--%s' % arg_param, '--wait']
+        ref_body = {'l7policy': {param: None}}
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('wait', True),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7policy_set.assert_called_once_with(
+            self._l7po.id, json=ref_body)
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._l7po.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
     def test_l7policy_unset_all(self):
         self.api_mock.l7policy_set.reset_mock()

@@ -16,6 +16,8 @@
 
 """L7rule action implementation"""
 
+import functools
+
 from cliff import lister
 from osc_lib.command import command
 from osc_lib import exceptions
@@ -87,6 +89,11 @@ class CreateL7Rule(command.ShowOne):
             default=None,
             help="Disable l7rule."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -102,6 +109,22 @@ class CreateL7Rule(command.ShowOne):
             l7policy_id=l7policy_id,
             json=body
         )
+
+        if parsed_args.wait:
+            l7policy = self.app.client_manager.load_balancer.l7policy_show(
+                l7policy_id)
+            listener = self.app.client_manager.load_balancer.listener_show(
+                l7policy['listener_id'])
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=listener['loadbalancers'][0]['id']
+            )
+            data = {
+                'rule': (
+                    self.app.client_manager.load_balancer.l7rule_show(
+                        l7policy_id, data['rule']['id']))
+            }
 
         return (rows, (utils.get_dict_properties(
             data['rule'], rows, formatters={})))
@@ -123,6 +146,11 @@ class DeleteL7Rule(command.Command):
             metavar="<rule_id>",
             help="l7rule to delete."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -133,6 +161,16 @@ class DeleteL7Rule(command.Command):
             l7rule_id=attrs['l7rule_id'],
             l7policy_id=attrs['l7policy_id']
         )
+
+        if parsed_args.wait:
+            l7rule_show = functools.partial(
+                self.app.client_manager.load_balancer.l7rule_show,
+                attrs['l7policy_id']
+            )
+            v2_utils.wait_for_delete(
+                status_f=l7rule_show,
+                res_id=attrs['l7rule_id']
+            )
 
 
 class ListL7Rule(lister.Lister):
@@ -263,6 +301,11 @@ class SetL7Rule(command.Command):
             default=None,
             help="Disable l7rule."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -280,6 +323,16 @@ class SetL7Rule(command.Command):
             l7policy_id=l7policy_id,
             json=body
         )
+
+        if parsed_args.wait:
+            l7rule_show = functools.partial(
+                self.app.client_manager.load_balancer.l7rule_show,
+                l7policy_id
+            )
+            v2_utils.wait_for_active(
+                status_f=l7rule_show,
+                res_id=l7rule_id
+            )
 
 
 class UnsetL7Rule(command.Command):
@@ -308,6 +361,11 @@ class UnsetL7Rule(command.Command):
             action='store_true',
             help="Clear the l7rule key."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
         return parser
 
     def take_action(self, parsed_args):
@@ -323,3 +381,13 @@ class UnsetL7Rule(command.Command):
 
         self.app.client_manager.load_balancer.l7rule_set(
             l7policy_id=policy_id, l7rule_id=parsed_args.l7rule_id, json=body)
+
+        if parsed_args.wait:
+            l7rule_show = functools.partial(
+                self.app.client_manager.load_balancer.l7rule_show,
+                policy_id
+            )
+            v2_utils.wait_for_active(
+                status_f=l7rule_show,
+                res_id=parsed_args.l7rule_id
+            )

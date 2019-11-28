@@ -126,15 +126,32 @@ class ConfigureAmphora(command.Command):
             metavar='<amphora-id>',
             help='UUID of the amphora to configure.',
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
     def take_action(self, parsed_args):
         attrs = v2_utils.get_amphora_attrs(self.app.client_manager,
                                            parsed_args)
-
+        amp_id = attrs.pop('amphora_id')
         self.app.client_manager.load_balancer.amphora_configure(
-            amphora_id=attrs.pop('amphora_id'))
+            amphora_id=amp_id)
+
+        if parsed_args.wait:
+            amphora = self.app.client_manager.load_balancer.amphora_show(
+                amp_id)
+            lb_id = amphora.get('loadbalancer_id')
+            # TODO(rm_work): No status change if the amp isn't linked to an LB?
+            if lb_id:
+                v2_utils.wait_for_active(
+                    status_f=(self.app.client_manager.load_balancer.
+                              load_balancer_show),
+                    res_id=lb_id
+                )
 
 
 class FailoverAmphora(command.Command):
@@ -148,12 +165,33 @@ class FailoverAmphora(command.Command):
             metavar='<amphora-id>',
             help='UUID of the amphora.',
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
     def take_action(self, parsed_args):
         attrs = v2_utils.get_amphora_attrs(self.app.client_manager,
                                            parsed_args)
-
+        amp_id = attrs.pop('amphora_id')
+        amphora = self.app.client_manager.load_balancer.amphora_show(amp_id)
         self.app.client_manager.load_balancer.amphora_failover(
-            amphora_id=attrs.pop('amphora_id'))
+            amphora_id=amp_id)
+
+        if parsed_args.wait:
+            lb_id = amphora.get('loadbalancer_id')
+            if lb_id:
+                v2_utils.wait_for_active(
+                    status_f=(self.app.client_manager.load_balancer.
+                              load_balancer_show),
+                    res_id=lb_id
+                )
+            else:
+                v2_utils.wait_for_delete(
+                    status_f=(self.app.client_manager.load_balancer.
+                              amphora_show),
+                    res_id=amp_id
+                )

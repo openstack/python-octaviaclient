@@ -313,3 +313,5 @@ FLAVORPROFILE_COLUMNS = (
     'name',
     'provider_name',
 )
+
+PROVISIONING_STATUS = 'provisioning_status'

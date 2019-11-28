@@ -15,6 +15,7 @@
 
 """Member action implementation"""
 
+import functools
 
 from cliff import lister
 from osc_lib.command import command
@@ -184,6 +185,11 @@ class CreateMember(command.ShowOne):
             default=None,
             help="Disable member"
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -197,6 +203,19 @@ class CreateMember(command.ShowOne):
             pool_id=pool_id,
             json=body
         )
+
+        if parsed_args.wait:
+            pool = self.app.client_manager.load_balancer.pool_show(pool_id)
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=pool['loadbalancers'][0]['id']
+            )
+            data = {
+                'member': (
+                    self.app.client_manager.load_balancer.member_show(
+                        pool_id, data['member']['id']))
+            }
 
         return (rows,
                 (utils.get_dict_properties(
@@ -270,6 +289,11 @@ class SetMember(command.Command):
             action='store_true',
             default=None,
             help="Set the admin_state_up to False")
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -284,6 +308,16 @@ class SetMember(command.Command):
             member_id=member_id,
             json=post_data
         )
+
+        if parsed_args.wait:
+            member_show = functools.partial(
+                self.app.client_manager.load_balancer.member_show,
+                pool_id
+            )
+            v2_utils.wait_for_active(
+                status_f=member_show,
+                res_id=member_id
+            )
 
 
 class DeleteMember(command.Command):
@@ -303,6 +337,11 @@ class DeleteMember(command.Command):
             metavar='<member>',
             help="Name or ID of the member to be deleted."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -315,6 +354,16 @@ class DeleteMember(command.Command):
             pool_id=pool_id,
             member_id=id
         )
+
+        if parsed_args.wait:
+            member_show = functools.partial(
+                self.app.client_manager.load_balancer.member_show,
+                pool_id
+            )
+            v2_utils.wait_for_delete(
+                status_f=member_show,
+                res_id=id
+            )
 
 
 class UnsetMember(command.Command):
@@ -358,6 +407,11 @@ class UnsetMember(command.Command):
             action='store_true',
             help="Reset the member weight to the API default."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
         return parser
 
     def take_action(self, parsed_args):
@@ -378,3 +432,13 @@ class UnsetMember(command.Command):
 
         self.app.client_manager.load_balancer.member_set(
             pool_id=pool_id, member_id=member_id, json=body)
+
+        if parsed_args.wait:
+            member_show = functools.partial(
+                self.app.client_manager.load_balancer.member_show,
+                pool_id
+            )
+            v2_utils.wait_for_active(
+                status_f=member_show,
+                res_id=member_id
+            )

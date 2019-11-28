@@ -38,9 +38,7 @@ class TestAmphora(fakes.TestOctaviaClient):
         ]}
         self.api_mock = mock.Mock()
         self.api_mock.amphora_list.return_value = info_list
-        self.api_mock.amphora_show.return_value = {
-            "amphora": info_list['amphorae'][0],
-        }
+        self.api_mock.amphora_show.return_value = info_list['amphorae'][0]
 
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
@@ -130,6 +128,34 @@ class TestAmphoraConfigure(TestAmphora):
         self.api_mock.amphora_configure.assert_called_with(
             amphora_id=self._amp.id)
 
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def test_amphora_configure_linked_wait(self, mock_wait):
+        arglist = [self._amp.id, '--wait']
+        verify_list = [('amphora_id', self._amp.id)]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.amphora_configure.assert_called_with(
+            amphora_id=self._amp.id)
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._amp.loadbalancer_id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def test_amphora_configure_unlinked_wait(self, mock_wait):
+        self.api_mock.amphora_show.return_value.pop('loadbalancer_id')
+        arglist = [self._amp.id, '--wait']
+        verify_list = [('amphora_id', self._amp.id)]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.amphora_configure.assert_called_with(
+            amphora_id=self._amp.id)
+        # TODO(rm_work): No wait expected if the amp isn't linked to an LB?
+        mock_wait.assert_not_called()
+
 
 class TestAmphoraFailover(TestAmphora):
     def setUp(self):
@@ -144,3 +170,46 @@ class TestAmphoraFailover(TestAmphora):
         self.cmd.take_action(parsed_args)
         self.api_mock.amphora_failover.assert_called_with(
             amphora_id=self._amp.id)
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('osc_lib.utils.wait_for_delete')
+    def test_amphora_failover_linked_wait(self, mock_wait_delete,
+                                          mock_wait_active):
+        arglist = [self._amp.id, '--wait']
+        verify_list = [
+            ('amphora_id', self._amp.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.amphora_failover.assert_called_with(
+            amphora_id=self._amp.id)
+        mock_wait_active.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._amp.loadbalancer_id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+        mock_wait_delete.assert_not_called()
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('osc_lib.utils.wait_for_delete')
+    def test_amphora_failover_unlinked_wait(self, mock_wait_delete,
+                                            mock_wait_active):
+        self.api_mock.amphora_show.return_value.pop('loadbalancer_id')
+        arglist = [self._amp.id, '--wait']
+        verify_list = [
+            ('amphora_id', self._amp.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.amphora_failover.assert_called_with(
+            amphora_id=self._amp.id)
+        mock_wait_active.assert_not_called()
+        mock_wait_delete.assert_called_once_with(
+            manager=mock.ANY,
+            res_id=self._amp.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')

@@ -19,6 +19,7 @@ from requests_mock.contrib import fixture
 
 from osc_lib.tests import utils
 
+from octaviaclient.api import exceptions
 from octaviaclient.api.v2 import octavia
 
 FAKE_ACCOUNT = 'q12we34r'
@@ -204,7 +205,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.load_balancer_create,
                                json=SINGLE_LB_RESP)
@@ -226,7 +227,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.load_balancer_set,
                                FAKE_LB,
@@ -248,7 +249,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=409,
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.load_balancer_failover,
                                FAKE_LB)
@@ -269,7 +270,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.load_balancer_delete,
                                FAKE_LB)
@@ -331,7 +332,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.listener_create,
                                json=SINGLE_LI_RESP)
@@ -353,7 +354,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.listener_set,
                                FAKE_LI, json=SINGLE_LI_UPDATE)
@@ -374,7 +375,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.listener_delete,
                                FAKE_LI)
@@ -426,7 +427,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.pool_create,
                                json=SINGLE_PO_RESP)
@@ -448,7 +449,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.pool_set,
                                FAKE_PO, json=SINGLE_PO_UPDATE)
@@ -469,7 +470,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.pool_delete,
                                FAKE_PO)
@@ -511,7 +512,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.member_create,
                                json=SINGLE_ME_RESP, pool_id=FAKE_PO)
@@ -534,7 +535,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.member_set,
                                pool_id=FAKE_PO, member_id=FAKE_ME,
@@ -556,7 +557,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.member_delete,
                                pool_id=FAKE_PO, member_id=FAKE_ME)
@@ -598,7 +599,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.l7policy_create,
                                json=SINGLE_L7PO_RESP)
@@ -620,7 +621,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.l7policy_set,
                                FAKE_L7PO, json=SINGLE_L7PO_UPDATE)
@@ -641,7 +642,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.l7policy_delete,
                                FAKE_L7PO)
@@ -683,7 +684,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.l7rule_create,
                                FAKE_L7PO, json=SINGLE_L7RU_RESP)
@@ -709,7 +710,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.l7rule_set,
                                l7rule_id=FAKE_L7RU,
@@ -735,7 +736,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.l7rule_delete,
                                l7rule_id=FAKE_L7RU,
@@ -778,7 +779,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.health_monitor_create,
                                json=SINGLE_HM_RESP)
@@ -800,7 +801,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.health_monitor_set,
                                FAKE_HM, json=SINGLE_HM_UPDATE)
@@ -821,7 +822,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.health_monitor_delete,
                                FAKE_HM)
@@ -863,7 +864,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.quota_set,
                                FAKE_PRJ, json=SINGLE_QT_UPDATE)
@@ -884,7 +885,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.quota_reset,
                                FAKE_PRJ)
@@ -925,7 +926,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=409,
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.amphora_configure,
                                FAKE_AMP)
@@ -946,7 +947,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=409,
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.amphora_failover,
                                FAKE_AMP)
@@ -1010,7 +1011,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.flavor_create,
                                json=SINGLE_FV_RESP)
@@ -1032,7 +1033,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.flavor_set,
                                FAKE_FV,
@@ -1054,7 +1055,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.flavor_delete,
                                FAKE_FV)
@@ -1096,7 +1097,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.flavorprofile_create,
                                json=SINGLE_FVPF_RESP)
@@ -1118,7 +1119,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.flavorprofile_set,
                                FAKE_FVPF, json=SINGLE_FVPF_UPDATE)
@@ -1139,7 +1140,7 @@ class TestLoadBalancer(TestOctaviaClient):
             text='{"faultstring": "%s"}' % self._error_message,
             status_code=400
         )
-        self.assertRaisesRegex(octavia.OctaviaClientException,
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
                                self._error_message,
                                self.api.flavorprofile_delete,
                                FAKE_FVPF)

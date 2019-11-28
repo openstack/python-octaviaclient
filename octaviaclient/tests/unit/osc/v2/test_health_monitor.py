@@ -79,6 +79,24 @@ class TestHealthMonitorDelete(TestHealthMonitor):
         self.api_mock.health_monitor_delete.assert_called_with(
             health_monitor_id=self._hm.id)
 
+    @mock.patch('osc_lib.utils.wait_for_delete')
+    def test_health_monitor_delete_wait(self, mock_wait):
+        arglist = [self._hm.id, '--wait']
+        verifylist = [
+            ('health_monitor', self._hm.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.health_monitor_delete.assert_called_with(
+            health_monitor_id=self._hm.id)
+        mock_wait.assert_called_once_with(
+            manager=mock.ANY,
+            res_id=self._hm.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
     def test_health_monitor_delete_failure(self):
         arglist = ['unknown_hm']
         verifylist = [
@@ -131,6 +149,47 @@ class TestHealthMonitorCreate(TestHealthMonitor):
         self.api_mock.health_monitor_create.assert_called_with(
             json={'healthmonitor': self.hm_info})
 
+    @mock.patch('osc_lib.utils.wait_for_status')
+    @mock.patch('octaviaclient.osc.v2.utils.get_health_monitor_attrs')
+    def test_health_monitor_create_wait(self, mock_client, mock_wait):
+        self.hm_info['pools'] = [{'id': 'mock_pool_id'}]
+        mock_client.return_value = self.hm_info
+        self.api_mock.pool_show.return_value = {
+            'loadbalancers': [{'id': 'mock_lb_id'}]}
+        self.api_mock.health_monitor_show.return_value = self.hm_info
+        arglist = ['mock_pool_id',
+                   '--name', self._hm.name,
+                   '--delay', str(self._hm.delay),
+                   '--timeout', str(self._hm.timeout),
+                   '--max-retries', str(self._hm.max_retries),
+                   '--type', self._hm.type.lower(),
+                   '--http-method', self._hm.http_method.lower(),
+                   '--http-version', str(self._hm.http_version),
+                   '--domain-name', self._hm.domain_name,
+                   '--wait']
+        verifylist = [
+            ('pool', 'mock_pool_id'),
+            ('name', self._hm.name),
+            ('delay', str(self._hm.delay)),
+            ('timeout', str(self._hm.timeout)),
+            ('max_retries', self._hm.max_retries),
+            ('type', self._hm.type),
+            ('http_method', self._hm.http_method),
+            ('http_version', self._hm.http_version),
+            ('domain_name', self._hm.domain_name),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.health_monitor_create.assert_called_with(
+            json={'healthmonitor': self.hm_info})
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id='mock_lb_id',
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestHealthMonitorShow(TestHealthMonitor):
 
@@ -180,6 +239,25 @@ class TestHealthMonitorSet(TestHealthMonitor):
                 'name': 'new_name', 'http_version': self._hm.http_version,
                 'domain_name': self._hm.domain_name}})
 
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def test_health_monitor_set_wait(self, mock_wait):
+        arglist = [self._hm.id, '--name', 'new_name', '--wait']
+        verifylist = [
+            ('health_monitor', self._hm.id),
+            ('name', 'new_name'),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.health_monitor_set.assert_called_with(
+            self._hm.id, json={'healthmonitor': {'name': 'new_name'}})
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._hm.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
+
 
 class TestHealthMonitorUnset(TestHealthMonitor):
     PARAMETERS = ('name', 'domain_name', 'expected_codes', 'http_method',
@@ -207,6 +285,9 @@ class TestHealthMonitorUnset(TestHealthMonitor):
     def test_hm_unset_name(self):
         self._test_hm_unset_param('name')
 
+    def test_hm_unset_name_wait(self):
+        self._test_hm_unset_param_wait('name')
+
     def test_hm_unset_url_path(self):
         self._test_hm_unset_param('url_path')
 
@@ -224,6 +305,28 @@ class TestHealthMonitorUnset(TestHealthMonitor):
         self.cmd.take_action(parsed_args)
         self.api_mock.health_monitor_set.assert_called_once_with(
             self._hm.id, json=ref_body)
+
+    @mock.patch('osc_lib.utils.wait_for_status')
+    def _test_hm_unset_param_wait(self, param, mock_wait):
+        self.api_mock.health_monitor_set.reset_mock()
+        arg_param = param.replace('_', '-') if '_' in param else param
+        arglist = [self._hm.id, '--%s' % arg_param, '--wait']
+        ref_body = {'healthmonitor': {param: None}}
+        verifylist = [
+            ('health_monitor', self._hm.id),
+            ('wait', True),
+        ]
+        for ref_param in self.PARAMETERS:
+            verifylist.append((ref_param, param == ref_param))
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.health_monitor_set.assert_called_once_with(
+            self._hm.id, json=ref_body)
+        mock_wait.assert_called_once_with(
+            status_f=mock.ANY,
+            res_id=self._hm.id,
+            sleep_time=mock.ANY,
+            status_field='provisioning_status')
 
     def test_hm_unset_all(self):
         self.api_mock.health_monitor_set.reset_mock()

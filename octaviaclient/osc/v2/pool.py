@@ -125,6 +125,11 @@ class CreatePool(command.ShowOne):
             default=None,
             help="Disable backend member re-encryption."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -135,6 +140,19 @@ class CreatePool(command.ShowOne):
         body = {"pool": attrs}
         data = self.app.client_manager.load_balancer.pool_create(
             json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=(self.app.client_manager.load_balancer.
+                          load_balancer_show),
+                res_id=data['pool']['loadbalancers'][0]['id']
+            )
+            data = {
+                'pool': (
+                    self.app.client_manager.load_balancer.pool_show(
+                        data['pool']['id']))
+            }
+
         formatters = {'loadbalancers': v2_utils.format_list,
                       'members': v2_utils.format_list,
                       'listeners': v2_utils.format_list,
@@ -156,6 +174,11 @@ class DeletePool(command.Command):
             metavar="<pool>",
             help="Pool to delete (name or ID)."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -164,6 +187,12 @@ class DeletePool(command.Command):
         pool_id = attrs.pop('pool_id')
         self.app.client_manager.load_balancer.pool_delete(
             pool_id=pool_id)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_delete(
+                status_f=self.app.client_manager.load_balancer.pool_show,
+                res_id=pool_id
+            )
 
 
 class ListPool(lister.Lister):
@@ -316,6 +345,11 @@ class SetPool(command.Command):
             default=None,
             help="disable backend associated members re-encryption."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
 
         return parser
 
@@ -327,6 +361,12 @@ class SetPool(command.Command):
 
         self.app.client_manager.load_balancer.pool_set(
             pool_id, json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=self.app.client_manager.load_balancer.pool_show,
+                res_id=pool_id
+            )
 
 
 class UnsetPool(command.Command):
@@ -372,6 +412,11 @@ class UnsetPool(command.Command):
             action='store_true',
             help="Clear the certificate reference for this pool."
         )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
         return parser
 
     def take_action(self, parsed_args):
@@ -387,3 +432,9 @@ class UnsetPool(command.Command):
 
         self.app.client_manager.load_balancer.pool_set(
             pool_id, json=body)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_active(
+                status_f=self.app.client_manager.load_balancer.pool_show,
+                res_id=pool_id
+            )

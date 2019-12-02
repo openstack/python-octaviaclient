@@ -155,6 +155,12 @@ SINGLE_FVPF_RESP = {'flavorprofile': {'id': FAKE_FVPF, 'name': 'fvpf1'}}
 SINGLE_FVPF_UPDATE = {'flavorprofile': {'provider_name': 'fake_provider'}}
 
 
+class TestAPI(utils.TestCase):
+    def test_client_exception(self):
+        self.assertIs(octavia.OctaviaClientException,
+                      exceptions.OctaviaClientException)
+
+
 class TestOctaviaClient(utils.TestCase):
 
     def setUp(self):

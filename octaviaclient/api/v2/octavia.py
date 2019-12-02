@@ -20,6 +20,8 @@ from osc_lib import exceptions as osc_exc
 from octaviaclient.api import constants as const
 from octaviaclient.api import exceptions
 
+OctaviaClientException = exceptions.OctaviaClientException
+
 
 def correct_return_codes(func):
     _status_dict = {400: 'Bad Request', 401: 'Unauthorized',
@@ -46,7 +48,7 @@ def correct_return_codes(func):
             else:
                 raise
 
-            raise exceptions.OctaviaClientException(
+            raise OctaviaClientException(
                 code=code,
                 message=message,
                 request_id=request_id)

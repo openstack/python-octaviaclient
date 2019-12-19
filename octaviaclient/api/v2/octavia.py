@@ -784,15 +784,29 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
-    def provider_capability_list(self, provider):
-        """Show the flavor capability of the specified provider.
+    def provider_flavor_capability_list(self, provider):
+        """Show the flavor capabilities of the specified provider.
 
         :param string provider:
             The name of the provider to show
         :return:
-            A ``dict`` containing the capabilicy of provider
+            A ``dict`` containing the capabilities of the provider
         """
         url = const.BASE_PROVIDER_FLAVOR_CAPABILITY_URL.format(
+            provider=provider)
+        response = self._list(url)
+
+        return response
+
+    def provider_availability_zone_capability_list(self, provider):
+        """Show the availability zone capabilities of the specified provider.
+
+        :param string provider:
+            The name of the provider to show
+        :return:
+            A ``dict`` containing the capabilities of the provider
+        """
+        url = const.BASE_PROVIDER_AVAILABILITY_ZONE_CAPABILITY_URL.format(
             provider=provider)
         response = self._list(url)
 
@@ -934,6 +948,153 @@ class OctaviaAPI(api.BaseAPI):
             Response Code from the API
         """
         url = const.BASE_SINGLE_FLAVORPROFILE_URL.format(uuid=flavorprofile_id)
+        response = self._delete(url)
+
+        return response
+
+    def availabilityzone_list(self, **kwargs):
+        """List all availabilityzones
+
+        :param kwargs:
+            Parameters to filter on
+        :return:
+            A ``dict`` containing a list of availabilityzone
+        """
+        url = const.BASE_AVAILABILITYZONE_URL
+        response = self._list(path=url, **kwargs)
+
+        return response
+
+    @correct_return_codes
+    def availabilityzone_delete(self, availabilityzone_name):
+        """Delete a availabilityzone
+
+        :param string availabilityzone_name:
+            Name of the availabilityzone to delete
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_AVAILABILITYZONE_URL.format(
+            name=availabilityzone_name)
+        response = self._delete(url)
+
+        return response
+
+    @correct_return_codes
+    def availabilityzone_create(self, **kwargs):
+        """Create a availabilityzone
+
+        :param kwargs:
+            Parameters to create a availabilityzone with (expects json=)
+        :return:
+            A dict of the created availabilityzone's settings
+        """
+        url = const.BASE_AVAILABILITYZONE_URL
+        response = self._create(url, **kwargs)
+
+        return response
+
+    @correct_return_codes
+    def availabilityzone_set(self, availabilityzone_name, **kwargs):
+        """Update a availabilityzone's settings
+
+        :param string availabilityzone_name:
+            Name of the availabilityzone to update
+        :param kwargs:
+            A dict of arguments to update a availabilityzone
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_AVAILABILITYZONE_URL.format(
+            name=availabilityzone_name)
+        response = self._create(url, method='PUT', **kwargs)
+
+        return response
+
+    @correct_return_codes
+    def availabilityzone_show(self, availabilityzone_name):
+        """Show a availabilityzone
+
+        :param string availabilityzone_name:
+            Name of the availabilityzone to show
+        :return:
+            A dict of the specified availabilityzone's settings
+        """
+        response = self._find(path=const.BASE_AVAILABILITYZONE_URL,
+                              value=availabilityzone_name)
+
+        return response
+
+    @correct_return_codes
+    def availabilityzoneprofile_create(self, **kwargs):
+        """Create a availabilityzone profile
+
+        :param kwargs:
+            Parameters to create a availabilityzone profile with
+            (expects json=)
+        :return:
+            A dict of the created availabilityzone profile's settings
+        """
+        url = const.BASE_AVAILABILITYZONEPROFILE_URL
+        response = self._create(url, **kwargs)
+
+        return response
+
+    def availabilityzoneprofile_list(self, **kwargs):
+        """List all availabilityzone profiles
+
+        :param kwargs:
+            Parameters to filter on
+        :return:
+            List of availabilityzone profile
+        """
+        url = const.BASE_AVAILABILITYZONEPROFILE_URL
+        response = self._list(url, **kwargs)
+
+        return response
+
+    def availabilityzoneprofile_show(self, availabilityzoneprofile_id):
+        """Show a availabilityzone profile
+
+        :param string availabilityzoneprofile_id:
+            ID of the availabilityzone profile to show
+        :return:
+            A dict of the specified availabilityzone profile's settings
+        """
+        response = self._find(path=const.BASE_AVAILABILITYZONEPROFILE_URL,
+                              value=availabilityzoneprofile_id)
+
+        return response
+
+    @correct_return_codes
+    def availabilityzoneprofile_set(self, availabilityzoneprofile_id,
+                                    **kwargs):
+        """Update a availabilityzone profile's settings
+
+        :param string availabilityzoneprofile_id:
+            ID of the availabilityzone profile to update
+        :kwargs:
+            A dict of arguments to update the availabilityzone profile
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_AVAILABILITYZONEPROFILE_URL.format(
+            uuid=availabilityzoneprofile_id)
+        response = self._create(url, method='PUT', **kwargs)
+
+        return response
+
+    @correct_return_codes
+    def availabilityzoneprofile_delete(self, availabilityzoneprofile_id):
+        """Delete a availabilityzone profile
+
+        :param string availabilityzoneprofile_id:
+            ID of the availabilityzone profile to delete
+        :return:
+            Response Code from the API
+        """
+        url = const.BASE_SINGLE_AVAILABILITYZONEPROFILE_URL.format(
+            uuid=availabilityzoneprofile_id)
         response = self._delete(url)
 
         return response

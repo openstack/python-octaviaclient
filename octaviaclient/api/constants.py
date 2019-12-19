@@ -48,11 +48,21 @@ BASE_AMPHORA_CONFIGURE_URL = BASE_SINGLE_AMPHORA_URL + '/config'
 BASE_AMPHORA_FAILOVER_URL = BASE_SINGLE_AMPHORA_URL + '/failover'
 
 BASE_PROVIDER_URL = BASE_LBAAS_ENDPOINT + "/providers"
-BASE_PROVIDER_FLAVOR_CAPABILITY_URL = (BASE_LBAAS_ENDPOINT +
-                                       "/providers/{provider}/"
-                                       "flavor_capabilities")
+BASE_PROVIDER_FLAVOR_CAPABILITY_URL = (
+    BASE_LBAAS_ENDPOINT + "/providers/{provider}/flavor_capabilities")
+BASE_PROVIDER_AVAILABILITY_ZONE_CAPABILITY_URL = (
+    BASE_LBAAS_ENDPOINT + "/providers/{provider}"
+                          "/availability_zone_capabilities"
+)
 
 BASE_FLAVOR_URL = BASE_LBAAS_ENDPOINT + "/flavors"
 BASE_SINGLE_FLAVOR_URL = BASE_FLAVOR_URL + "/{uuid}"
 BASE_FLAVORPROFILE_URL = BASE_LBAAS_ENDPOINT + "/flavorprofiles"
 BASE_SINGLE_FLAVORPROFILE_URL = BASE_FLAVORPROFILE_URL + "/{uuid}"
+
+BASE_AVAILABILITYZONE_URL = BASE_LBAAS_ENDPOINT + "/availabilityzones"
+BASE_SINGLE_AVAILABILITYZONE_URL = BASE_AVAILABILITYZONE_URL + "/{name}"
+BASE_AVAILABILITYZONEPROFILE_URL = (BASE_LBAAS_ENDPOINT +
+                                    "/availabilityzoneprofiles")
+BASE_SINGLE_AVAILABILITYZONEPROFILE_URL = (BASE_AVAILABILITYZONEPROFILE_URL +
+                                           "/{uuid}")

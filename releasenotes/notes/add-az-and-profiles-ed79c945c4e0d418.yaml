@@ -1,0 +1,9 @@
+---
+features:
+  - |
+    Added management of availability zone and availability zone profiles.
+    Creating a load balanacer now takes an optional availability-zone argument.
+
+    Provider capability list now displays capabilities for both AZ and flavor,
+    and includes an extra column ``type``. It can be filtered by passing
+    ``--flavor`` or ``--availability-zone``.

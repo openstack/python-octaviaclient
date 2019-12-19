@@ -171,8 +171,8 @@ PROVIDER_ATTRS = {
 }
 
 CAPABILITY_ATTRS = {
-    "name": "some_capabilicy",
-    "description": "Description of capabilicy."
+    "name": "some_capability",
+    "description": "Description of capability."
 }
 
 FLAVOR_ATTRS = {
@@ -187,4 +187,18 @@ FLAVORPROFILE_ATTRS = {
     "name": "fvpf-name-" + uuidutils.generate_uuid(dashed=True),
     "provider_name": "mock_provider",
     "flavor_data": '{"mock_key": "mock_value"}',
+}
+
+AVAILABILITY_ZONE_ATTRS = {
+    "name": "az-name-" + uuidutils.generate_uuid(dashed=True),
+    "availability_zone_profile_id": None,
+    "enabled": True,
+    "description": "Description of AZ",
+}
+
+AVAILABILITY_ZONE_PROFILE_ATTRS = {
+    "id": uuidutils.generate_uuid(),
+    "name": "azpf-name-" + uuidutils.generate_uuid(dashed=True),
+    "provider_name": "mock_provider",
+    "availabilityzone_data": '{"mock_key": "mock_value"}',
 }

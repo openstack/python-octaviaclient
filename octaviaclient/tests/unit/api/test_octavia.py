@@ -40,6 +40,8 @@ FAKE_AMP = uuidutils.generate_uuid()
 FAKE_PROVIDER = 'fake_provider'
 FAKE_FV = uuidutils.generate_uuid()
 FAKE_FVPF = uuidutils.generate_uuid()
+FAKE_AZ = 'fake_az'
+FAKE_AZPF = uuidutils.generate_uuid()
 
 
 LIST_LB_RESP = {
@@ -115,6 +117,16 @@ LIST_FVPF_RESP = {
                        {'name': 'fvpf2'}]
 }
 
+LIST_AZ_RESP = {
+    'availability_zones': [{'name': 'az1'},
+                           {'name': 'az2'}]
+}
+
+LIST_AZPF_RESP = {
+    'availability_zone_profiles': [{'name': 'azpf1'},
+                                   {'name': 'azpf2'}]
+}
+
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 SINGLE_LB_STATS_RESP = {'bytes_in': '0'}
@@ -153,6 +165,14 @@ SINGLE_FV_UPDATE = {'flavor': {'enabled': False}}
 
 SINGLE_FVPF_RESP = {'flavorprofile': {'id': FAKE_FVPF, 'name': 'fvpf1'}}
 SINGLE_FVPF_UPDATE = {'flavorprofile': {'provider_name': 'fake_provider'}}
+
+SINGLE_AZ_RESP = {'availability_zone': {'name': FAKE_AZ}}
+SINGLE_AZ_UPDATE = {'availability_zone': {'enabled': False}}
+
+SINGLE_AZPF_RESP = {'availability_zone_profile': {'id': FAKE_AZPF,
+                                                  'name': 'azpf1'}}
+SINGLE_AZPF_UPDATE = {'availability_zone_profile': {
+    'provider_name': 'fake_provider'}}
 
 
 class TestAPI(utils.TestCase):
@@ -968,7 +988,7 @@ class TestLoadBalancer(TestOctaviaClient):
         ret = self.api.provider_list()
         self.assertEqual(LIST_PROVIDER_RESP, ret)
 
-    def test_show_provider_capabilicy(self):
+    def test_show_provider_capability(self):
         self.requests_mock.register_uri(
             'GET',
             (FAKE_LBAAS_URL + 'providers/' +
@@ -976,7 +996,7 @@ class TestLoadBalancer(TestOctaviaClient):
             json=SINGLE_PROVIDER_CAPABILITY_RESP,
             status_code=200
         )
-        ret = self.api.provider_capability_list(FAKE_PROVIDER)
+        ret = self.api.provider_flavor_capability_list(FAKE_PROVIDER)
         self.assertEqual(
             SINGLE_PROVIDER_CAPABILITY_RESP, ret)
 
@@ -1150,3 +1170,175 @@ class TestLoadBalancer(TestOctaviaClient):
                                self._error_message,
                                self.api.flavorprofile_delete,
                                FAKE_FVPF)
+
+    def test_list_availabilityzone_no_options(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'availabilityzones',
+            json=LIST_AZ_RESP,
+            status_code=200,
+        )
+        ret = self.api.availabilityzone_list()
+        self.assertEqual(LIST_AZ_RESP, ret)
+
+    def test_show_availabilityzone(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'availabilityzones/' + FAKE_AZ,
+            json=SINGLE_AZ_RESP,
+            status_code=200
+        )
+        ret = self.api.availabilityzone_show(FAKE_AZ)
+        self.assertEqual(SINGLE_AZ_RESP['availability_zone'], ret)
+
+    def test_create_availabilityzone(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_LBAAS_URL + 'availabilityzones',
+            json=SINGLE_AZ_RESP,
+            status_code=200
+        )
+        ret = self.api.availabilityzone_create(json=SINGLE_AZ_RESP)
+        self.assertEqual(SINGLE_AZ_RESP, ret)
+
+    def test_create_availabilityzone_error(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_LBAAS_URL + 'availabilityzones',
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
+                               self._error_message,
+                               self.api.availabilityzone_create,
+                               json=SINGLE_AZ_RESP)
+
+    def test_set_availabilityzone(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_LBAAS_URL + 'availabilityzones/' + FAKE_AZ,
+            json=SINGLE_AZ_UPDATE,
+            status_code=200
+        )
+        ret = self.api.availabilityzone_set(FAKE_AZ, json=SINGLE_AZ_UPDATE)
+        self.assertEqual(SINGLE_AZ_UPDATE, ret)
+
+    def test_set_availabilityzone_error(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_LBAAS_URL + 'availabilityzones/' + FAKE_AZ,
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
+                               self._error_message,
+                               self.api.availabilityzone_set,
+                               FAKE_AZ,
+                               json=SINGLE_AZ_UPDATE)
+
+    def test_delete_availabilityzone(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_LBAAS_URL + 'availabilityzones/' + FAKE_AZ,
+            status_code=200
+        )
+        ret = self.api.availabilityzone_delete(FAKE_AZ)
+        self.assertEqual(200, ret.status_code)
+
+    def test_delete_availabilityzone_error(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_LBAAS_URL + 'availabilityzones/' + FAKE_AZ,
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
+                               self._error_message,
+                               self.api.availabilityzone_delete,
+                               FAKE_AZ)
+
+    def test_list_availabilityzoneprofiles_no_options(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'availabilityzoneprofiles',
+            json=LIST_AZPF_RESP,
+            status_code=200,
+        )
+        ret = self.api.availabilityzoneprofile_list()
+        self.assertEqual(LIST_AZPF_RESP, ret)
+
+    def test_show_availabilityzoneprofile(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'availabilityzoneprofiles/' + FAKE_AZPF,
+            json=SINGLE_AZPF_RESP,
+            status_code=200
+        )
+        ret = self.api.availabilityzoneprofile_show(FAKE_AZPF)
+        self.assertEqual(SINGLE_AZPF_RESP['availability_zone_profile'], ret)
+
+    def test_create_availabilityzoneprofile(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_LBAAS_URL + 'availabilityzoneprofiles',
+            json=SINGLE_AZPF_RESP,
+            status_code=200
+        )
+        ret = self.api.availabilityzoneprofile_create(json=SINGLE_AZPF_RESP)
+        self.assertEqual(SINGLE_AZPF_RESP, ret)
+
+    def test_create_availabilityzoneprofile_error(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_LBAAS_URL + 'availabilityzoneprofiles',
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
+                               self._error_message,
+                               self.api.availabilityzoneprofile_create,
+                               json=SINGLE_AZPF_RESP)
+
+    def test_set_availabilityzoneprofiles(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_LBAAS_URL + 'availabilityzoneprofiles/' + FAKE_AZPF,
+            json=SINGLE_AZPF_UPDATE,
+            status_code=200
+        )
+        ret = self.api.availabilityzoneprofile_set(FAKE_AZPF,
+                                                   json=SINGLE_AZPF_UPDATE)
+        self.assertEqual(SINGLE_AZPF_UPDATE, ret)
+
+    def test_set_availabilityzoneprofiles_error(self):
+        self.requests_mock.register_uri(
+            'PUT',
+            FAKE_LBAAS_URL + 'availabilityzoneprofiles/' + FAKE_AZPF,
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
+                               self._error_message,
+                               self.api.availabilityzoneprofile_set,
+                               FAKE_AZPF, json=SINGLE_AZPF_UPDATE)
+
+    def test_delete_availabilityzoneprofile(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_LBAAS_URL + 'availabilityzoneprofiles/' + FAKE_AZPF,
+            status_code=200
+        )
+        ret = self.api.availabilityzoneprofile_delete(FAKE_AZPF)
+        self.assertEqual(200, ret.status_code)
+
+    def test_delete_availabilityzoneprofile_error(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_LBAAS_URL + 'availabilityzoneprofiles/' + FAKE_AZPF,
+            text='{"faultstring": "%s"}' % self._error_message,
+            status_code=400
+        )
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
+                               self._error_message,
+                               self.api.availabilityzoneprofile_delete,
+                               FAKE_AZPF)

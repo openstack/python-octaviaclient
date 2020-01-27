@@ -21,6 +21,7 @@ from osc_lib import utils
 
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
+from octaviaclient.osc.v2 import validate
 
 PROTOCOL_CHOICES = ['TCP', 'HTTP', 'HTTPS', 'TERMINATED_HTTPS', 'UDP']
 CLIENT_AUTH_CHOICES = ['NONE', 'OPTIONAL', 'MANDATORY']
@@ -93,6 +94,7 @@ class CreateListener(command.ShowOne):
             '--protocol-port',
             metavar='<port>',
             required=True,
+            type=int,
             help="Set the protocol port number for the listener."
         )
         parser.add_argument(
@@ -173,6 +175,9 @@ class CreateListener(command.ShowOne):
         rows = const.LISTENER_ROWS
         attrs = v2_utils.get_listener_attrs(self.app.client_manager,
                                             parsed_args)
+
+        validate.check_listener_attrs(attrs)
+
         body = {"listener": attrs}
         data = self.app.client_manager.load_balancer.listener_create(
             json=body)

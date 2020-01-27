@@ -22,6 +22,7 @@ from osc_lib import utils
 
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
+from octaviaclient.osc.v2 import validate
 
 
 class ListMember(lister.Lister):
@@ -120,7 +121,6 @@ class CreateMember(command.ShowOne):
             '--weight',
             metavar='<weight>',
             type=int,
-            choices=range(0, 256),
             help="The weight of a member determines the portion of requests "
                  "or connections it services compared to the other members of "
                  "the pool."
@@ -140,7 +140,6 @@ class CreateMember(command.ShowOne):
             '--protocol-port',
             metavar='<protocol_port>',
             type=int,
-            choices=range(1, 65535),
             help="The protocol port number the backend member server is "
                  "listening on.",
             required=True
@@ -149,7 +148,6 @@ class CreateMember(command.ShowOne):
             '--monitor-port',
             metavar='<monitor_port>',
             type=int,
-            choices=range(1, 65535),
             help="An alternate protocol port used for health monitoring a "
                  "backend member.",
         )
@@ -178,6 +176,9 @@ class CreateMember(command.ShowOne):
     def take_action(self, parsed_args):
         rows = const.MEMBER_ROWS
         attrs = v2_utils.get_member_attrs(self.app.client_manager, parsed_args)
+
+        validate.check_member_attrs(attrs)
+
         pool_id = attrs.pop('pool_id')
 
         body = {"member": attrs}
@@ -229,14 +230,12 @@ class SetMember(command.Command):
             '--weight',
             metavar='<weight>',
             type=int,
-            choices=range(0, 256),
             help="Set the weight of member in the pool"
         )
         parser.add_argument(
             '--monitor-port',
             metavar='<monitor_port>',
             type=int,
-            choices=range(1, 65535),
             help="An alternate protocol port used for health monitoring a "
                  "backend member",
         )
@@ -263,6 +262,9 @@ class SetMember(command.Command):
 
     def take_action(self, parsed_args):
         attrs = v2_utils.get_member_attrs(self.app.client_manager, parsed_args)
+
+        validate.check_member_attrs(attrs)
+
         pool_id = attrs.pop('pool_id')
         member_id = attrs.pop('member_id')
         post_data = {"member": attrs}

@@ -343,3 +343,11 @@ AVAILABILITYZONEPROFILE_COLUMNS = (
 )
 
 PROVISIONING_STATUS = 'provisioning_status'
+
+# TCP/UDP port min/max
+MIN_PORT_NUMBER = 1
+MAX_PORT_NUMBER = 65535
+
+# Member weight min/max
+MIN_WEIGHT = 0
+MAX_WEIGHT = 256

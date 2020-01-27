@@ -119,7 +119,7 @@ class TestListenerCreate(TestListener):
             ('loadbalancer', 'mock_lb_id'),
             ('name', self._listener.name),
             ('protocol', 'HTTP'),
-            ('protocol_port', '80')
+            ('protocol_port', 80)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -143,7 +143,7 @@ class TestListenerCreate(TestListener):
             ('loadbalancer', 'mock_lb_id'),
             ('name', self._listener.name),
             ('protocol', 'TERMINATED_HTTPS'),
-            ('protocol_port', '443'),
+            ('protocol_port', 443),
             ('sni_container_refs', self._listener.sni_container_refs),
             ('default_tls_container_ref',
              self._listener.default_tls_container_ref)
@@ -169,7 +169,7 @@ class TestListenerCreate(TestListener):
             ('loadbalancer', 'mock_lb_id'),
             ('name', self._listener.name),
             ('protocol', 'HTTP'),
-            ('protocol_port', '80'),
+            ('protocol_port', 80),
             ('timeout_client_data', 123),
             ('timeout_member_connect', 234),
             ('timeout_member_data', 345),

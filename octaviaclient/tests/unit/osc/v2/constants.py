@@ -30,6 +30,7 @@ AMPHORA_ATTRS = {
     "vrrp_id": 1,
     "vrrp_priority": 200,
     "cached_zone": "zone2",
+    "image_id": uuidutils.generate_uuid(dashed=True),
 }
 
 HM_ATTRS = {

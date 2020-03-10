@@ -236,6 +236,17 @@ class TestLoadBalancer(TestOctaviaClient):
                                self.api.load_balancer_create,
                                json=SINGLE_LB_RESP)
 
+    def test_create_load_balancer_503_error(self):
+        self.requests_mock.register_uri(
+            'POST',
+            FAKE_LBAAS_URL + 'loadbalancers',
+            status_code=503
+        )
+        self.assertRaisesRegex(exceptions.OctaviaClientException,
+                               'Service Unavailable',
+                               self.api.load_balancer_create,
+                               json=SINGLE_LB_RESP)
+
     def test_set_load_balancer(self):
         self.requests_mock.register_uri(
             'PUT',

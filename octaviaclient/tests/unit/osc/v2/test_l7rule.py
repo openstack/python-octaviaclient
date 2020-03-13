@@ -12,9 +12,8 @@
 #   License for the specific language governing permissions and limitations
 #   under the License.
 #
-
 import copy
-import mock
+from unittest import mock
 
 from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import l7rule

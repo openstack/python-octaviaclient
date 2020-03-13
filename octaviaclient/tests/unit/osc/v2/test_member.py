@@ -10,10 +10,8 @@
 #   License for the specific language governing permissions and limitations
 #   under the License.
 #
-
-
 import copy
-import mock
+from unittest import mock
 
 import osc_lib.tests.utils as osc_test_utils
 

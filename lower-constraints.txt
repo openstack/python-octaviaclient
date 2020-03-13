@@ -1,16 +1,19 @@
 asn1crypto==0.23.0
 Babel==2.3.4
+bandit==1.4.0
 cffi==1.7.0
 cliff==2.8.0
 coverage==4.0
 cryptography==2.1
 decorator==3.4.0
 deprecation==1.0
+doc8==0.6.0
 dogpile.cache==0.6.2
 extras==1.0.0
 fixtures==3.0.0
 flake8==2.5.5
-hacking==0.12.0
+flake8-import-order==0.12
+hacking==1.1.0
 idna==2.6
 jmespath==0.9.0
 jsonpatch==1.16
@@ -34,6 +37,7 @@ pep8==1.5.7
 positional==1.2.1
 pycparser==2.18
 pyflakes==0.8.1
+pylint==1.9.2
 pyOpenSSL==17.1.0
 pyperclip==1.5.27
 python-cinderclient==3.3.0
@@ -45,7 +49,7 @@ python-novaclient==9.1.0
 python-openstackclient==3.12.0
 python-subunit==1.0.0
 requests==2.14.2
-requests-mock==1.1.0
+requests-mock==1.2.0
 rfc3986==0.3.1
 stestr==2.0.0
 testscenarios==0.4

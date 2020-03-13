@@ -93,35 +93,31 @@ def get_resource_id(resource, resource_name, name):
                     name
                 ).id
                 return project_id
-            else:
-                return 'non-uuid'
-        elif resource_name == 'members':
+            return 'non-uuid'
+        if resource_name == 'members':
             names = [re for re in resource(name['pool_id'])['members']
-                     if re.get('id') == name['member_id']
-                     or re.get('name') == name['member_id']]
+                     if re.get('id') == name['member_id'] or
+                     re.get('name') == name['member_id']]
             name = name['member_id']
             if len(names) > 1:
                 msg = ("{0} {1} found with name or ID of {2}. Please try "
                        "again with UUID".format(len(names), resource_name,
                                                 name))
                 raise osc_exc.CommandError(msg)
-            else:
-                return names[0].get('id')
-        elif resource_name == 'l7rules':
+            return names[0].get('id')
+        if resource_name == 'l7rules':
             names = [re for re in resource(name['l7policy_id'])['rules']
                      if re.get('id') == name['l7rule_id']]
             name = name['l7rule_id']
             return names[0].get('id')
-        else:
-            names = [re for re in resource()[resource_name]
-                     if re.get('name') == name or re.get('id') == name]
-            if len(names) > 1:
-                msg = ("{0} {1} found with name or ID of {2}. Please try "
-                       "again with UUID".format(len(names), resource_name,
-                                                name))
-                raise osc_exc.CommandError(msg)
-            else:
-                return names[0].get(primary_key)
+        names = [re for re in resource()[resource_name]
+                 if re.get('name') == name or re.get('id') == name]
+        if len(names) > 1:
+            msg = ("{0} {1} found with name or ID of {2}. Please try "
+                   "again with UUID".format(len(names), resource_name,
+                                            name))
+            raise osc_exc.CommandError(msg)
+        return names[0].get(primary_key)
 
     except IndexError:
         msg = "Unable to locate {0} in {1}".format(name, resource_name)
@@ -581,8 +577,7 @@ def format_list_flat(data):
 def format_hash(data):
     if data:
         return '\n'.join('{}={}'.format(k, v) for k, v in data.items())
-    else:
-        return None
+    return None
 
 
 def _format_kv(data):

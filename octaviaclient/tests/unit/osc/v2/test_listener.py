@@ -475,7 +475,7 @@ class TestListenerUnset(TestListener):
             arg_param = (ref_param.replace('_', '-') if '_' in ref_param else
                          ref_param)
             arglist.append('--%s' % arg_param)
-        verifylist = list(zip(self.PARAMETERS, [True]*len(self.PARAMETERS)))
+        verifylist = list(zip(self.PARAMETERS, [True] * len(self.PARAMETERS)))
         verifylist = [('listener', self._listener.id)] + verifylist
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
@@ -485,7 +485,7 @@ class TestListenerUnset(TestListener):
     def test_listener_unset_none(self):
         self.api_mock.listener_set.reset_mock()
         arglist = [self._listener.id]
-        verifylist = list(zip(self.PARAMETERS, [False]*len(self.PARAMETERS)))
+        verifylist = list(zip(self.PARAMETERS, [False] * len(self.PARAMETERS)))
         verifylist = [('listener', self._listener.id)] + verifylist
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)

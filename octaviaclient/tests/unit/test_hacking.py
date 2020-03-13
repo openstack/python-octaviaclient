@@ -233,4 +233,4 @@ class HackingTestCase(base.BaseTestCase):
         return check_fns
 
     def test_factory(self):
-        self.assertTrue(len(self._get_factory_checks(checks.factory)) > 0)
+        self.assertGreater(len(self._get_factory_checks(checks.factory)), 0)

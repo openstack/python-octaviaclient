@@ -44,7 +44,7 @@ def execute(cmd, fail_ok=False, merge_stderr=False):
 
 class TestCase(utils.TestCase):
 
-    delimiter_line = re.compile('^\+\-[\+\-]+\-\+$')
+    delimiter_line = re.compile(r'^\+\-[\+\-]+\-\+$')
 
     @classmethod
     def openstack(cls, cmd, fail_ok=False):

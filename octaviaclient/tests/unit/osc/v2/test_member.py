@@ -365,7 +365,7 @@ class TestMemberUnset(TestMember):
             arg_param = (ref_param.replace('_', '-') if '_' in ref_param else
                          ref_param)
             arglist.append('--%s' % arg_param)
-        verifylist = list(zip(self.PARAMETERS, [True]*len(self.PARAMETERS)))
+        verifylist = list(zip(self.PARAMETERS, [True] * len(self.PARAMETERS)))
         verifylist = [('member', self._mem.id)] + verifylist
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
@@ -375,7 +375,7 @@ class TestMemberUnset(TestMember):
     def test_member_unset_none(self):
         self.api_mock.pool_set.reset_mock()
         arglist = [self._mem.pool_id, self._mem.id]
-        verifylist = list(zip(self.PARAMETERS, [False]*len(self.PARAMETERS)))
+        verifylist = list(zip(self.PARAMETERS, [False] * len(self.PARAMETERS)))
         verifylist = [('member', self._mem.id)] + verifylist
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)

@@ -237,7 +237,7 @@ class UnsetAvailabilityzone(command.Command):
 
     def take_action(self, parsed_args):
         unset_args = v2_utils.get_unsets(parsed_args)
-        if not len(unset_args):
+        if not unset_args:
             return
 
         availabilityzone_id = v2_utils.get_resource_id(

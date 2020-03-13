@@ -363,7 +363,7 @@ class TestLoadBalancerCreate(TestLoadBalancer):
             # init missing keys
             attrs_list[a] = ''
         # verify all valid combinations of args
-        for n in range(len(args)+1):
+        for n in range(len(args) + 1):
             for comb in itertools.combinations(args, n):
                 # subtract comb's keys from attrs_list
                 filtered_attrs = {k: v for k, v in attrs_list.items() if (
@@ -643,7 +643,7 @@ class TestLoadBalancerUnset(TestLoadBalancer):
             arg_param = (ref_param.replace('_', '-') if '_' in ref_param else
                          ref_param)
             arglist.append('--%s' % arg_param)
-        verifylist = list(zip(self.PARAMETERS, [True]*len(self.PARAMETERS)))
+        verifylist = list(zip(self.PARAMETERS, [True] * len(self.PARAMETERS)))
         verifylist = [('loadbalancer', self._lb.id)] + verifylist
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
@@ -653,7 +653,7 @@ class TestLoadBalancerUnset(TestLoadBalancer):
     def test_load_balancer_unset_none(self):
         self.api_mock.load_balancer_set.reset_mock()
         arglist = [self._lb.id]
-        verifylist = list(zip(self.PARAMETERS, [False]*len(self.PARAMETERS)))
+        verifylist = list(zip(self.PARAMETERS, [False] * len(self.PARAMETERS)))
         verifylist = [('loadbalancer', self._lb.id)] + verifylist
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)

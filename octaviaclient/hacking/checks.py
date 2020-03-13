@@ -41,7 +41,7 @@ _log_translation_hint = re.compile(
 
 assert_trueinst_re = re.compile(
     r"(.)*assertTrue\(isinstance\((\w|\.|\'|\"|\[|\])+, "
-    "(\w|\.|\'|\"|\[|\])+\)\)")
+    r"(\w|\.|\'|\"|\[|\])+\)\)")
 assert_equal_in_end_with_true_or_false_re = re.compile(
     r"assertEqual\((\w|[][.'\"])+ in (\w|[][.'\", ])+, (True|False)\)")
 assert_equal_in_start_with_true_or_false_re = re.compile(

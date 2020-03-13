@@ -25,8 +25,7 @@ class TestValidations(utils.TestCommand):
     def test_check_l7policy_attrs(self):
         attrs_dict = {
             "action": "redirect_to_pool".upper(),
-            "redirect_pool_id": "id",
-            }
+            "redirect_pool_id": "id"}
         try:
             validate.check_l7policy_attrs(attrs_dict)
         except exceptions.CommandError as e:
@@ -38,8 +37,7 @@ class TestValidations(utils.TestCommand):
 
         attrs_dict = {
             "action": "redirect_to_url".upper(),
-            "redirect_url": "url",
-            }
+            "redirect_url": "url"}
         try:
             validate.check_l7policy_attrs(attrs_dict)
         except exceptions.CommandError as e:

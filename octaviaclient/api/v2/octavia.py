@@ -10,7 +10,6 @@
 #   License for the specific language governing permissions and limitations
 #   under the License.
 #
-
 """Octavia API Library"""
 import functools
 
@@ -46,8 +45,8 @@ def correct_return_codes(func):
                         _status_dict.get(code, message))
                 except Exception:
                     message = _status_dict.get(code, message)
-            elif (isinstance(e, osc_exc.ClientException)
-                    and e.code != e.http_status):
+            elif (isinstance(e, osc_exc.ClientException) and
+                    e.code != e.http_status):
                 # cover https://review.opendev.org/675328 case
                 code = e.http_status
                 message = e.code

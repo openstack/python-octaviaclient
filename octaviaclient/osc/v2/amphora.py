@@ -80,8 +80,7 @@ class ListAmphora(lister.Lister):
             (utils.get_dict_properties(
                 amp,
                 columns,
-                formatters=formatters,
-                ) for amp in data['amphorae']),
+                formatters=formatters) for amp in data['amphorae']),
         )
 
 

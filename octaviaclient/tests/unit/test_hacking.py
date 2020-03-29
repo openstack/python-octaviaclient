@@ -198,16 +198,6 @@ class HackingTestCase(base.BaseTestCase):
         self.assertEqual(0, len(list(checks.check_no_basestring(
             "isinstance('foo', six.string_types)"))))
 
-    def test_dict_iteritems(self):
-        self.assertEqual(1, len(list(checks.check_python3_no_iteritems(
-            "obj.iteritems()"))))
-
-        self.assertEqual(0, len(list(checks.check_python3_no_iteritems(
-            "six.iteritems(obj)"))))
-
-        self.assertEqual(0, len(list(checks.check_python3_no_iteritems(
-            "obj.items()"))))
-
     def test_check_no_eventlet_imports(self):
         f = checks.check_no_eventlet_imports
         self.assertLinePasses(f, 'from not_eventlet import greenthread')
@@ -220,17 +210,3 @@ class HackingTestCase(base.BaseTestCase):
                  (1, 'os', (3, 4), (3, 6), '    os\n')]))
         self.assertEqual(1, len(results))
         self.assertEqual((2, 7), results[0][0])
-
-    def _get_factory_checks(self, factory):
-        check_fns = []
-
-        def _reg(check_fn):
-            self.assertTrue(hasattr(check_fn, '__call__'))
-            self.assertFalse(check_fn in check_fns)
-            check_fns.append(check_fn)
-
-        factory(_reg)
-        return check_fns
-
-    def test_factory(self):
-        self.assertGreater(len(self._get_factory_checks(checks.factory)), 0)

@@ -12,8 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import re
-
 
 """
 Guidelines for writing new hacking checks
@@ -29,6 +27,10 @@ Guidelines for writing new hacking checks
    octaviaclient/tests/unit/test_hacking.py
 
 """
+
+import re
+
+from hacking import core
 
 _all_log_levels = {'critical', 'error', 'exception', 'info', 'warning'}
 _all_hints = {'_LC', '_LE', '_LI', '_', '_LW'}
@@ -66,6 +68,7 @@ def _translation_checks_not_enforced(filename):
     return any(pat in filename for pat in ["/tests/", "rally-jobs/plugins/"])
 
 
+@core.flake8ext
 def assert_true_instance(logical_line):
     """Check for assertTrue(isinstance(a, b)) sentences
 
@@ -75,6 +78,7 @@ def assert_true_instance(logical_line):
         yield (0, "O316: assertTrue(isinstance(a, b)) sentences not allowed")
 
 
+@core.flake8ext
 def assert_equal_or_not_none(logical_line):
     """Check for assertEqual(A, None) or assertEqual(None, A) sentences,
 
@@ -92,6 +96,7 @@ def assert_equal_or_not_none(logical_line):
         yield (0, msg)
 
 
+@core.flake8ext
 def assert_equal_true_or_false(logical_line):
     """Check for assertEqual(True, A) or assertEqual(False, A) sentences
 
@@ -104,12 +109,14 @@ def assert_equal_true_or_false(logical_line):
                "sentences not allowed")
 
 
+@core.flake8ext
 def no_mutable_default_args(logical_line):
     msg = "O324: Method's default argument shouldn't be mutable!"
     if mutable_default_args.match(logical_line):
         yield (0, msg)
 
 
+@core.flake8ext
 def assert_equal_in(logical_line):
     """Check for assertEqual(A in B, True), assertEqual(True, A in B),
 
@@ -125,6 +132,7 @@ def assert_equal_in(logical_line):
                "contents.")
 
 
+@core.flake8ext
 def no_log_warn(logical_line):
     """Disallow 'LOG.warn('
 
@@ -134,6 +142,7 @@ def no_log_warn(logical_line):
         yield(0, "O339:Use LOG.warning() rather than LOG.warn()")
 
 
+@core.flake8ext
 def no_xrange(logical_line):
     """Disallow 'xrange()'
 
@@ -143,6 +152,7 @@ def no_xrange(logical_line):
         yield(0, "O340: Do not use xrange().")
 
 
+@core.flake8ext
 def no_translate_logs(logical_line, filename):
     """O341 - Don't translate logs.
 
@@ -168,6 +178,7 @@ def no_translate_logs(logical_line, filename):
         yield (logical_line.index(match.group()), msg)
 
 
+@core.flake8ext
 def check_raised_localized_exceptions(logical_line, filename):
     """O342 - Untranslated exception message.
 
@@ -190,6 +201,7 @@ def check_raised_localized_exceptions(logical_line, filename):
             yield (logical_line.index(exception_msg), msg)
 
 
+@core.flake8ext
 def check_no_basestring(logical_line):
     """O343 - basestring is not Python3-compatible.
 
@@ -204,23 +216,7 @@ def check_no_basestring(logical_line):
         yield(0, msg)
 
 
-def check_python3_no_iteritems(logical_line):
-    """O344 - Use dict.items() instead of dict.iteritems().
-
-    :param logical_line: The logical line to check.
-    :returns: None if the logical line passes the check, otherwise a tuple
-    is yielded that contains the offending index in logical line and a
-    message describe the check validation failure.
-    """
-    if re.search(r".*\.iteritems\(\)", logical_line):
-        msg = ("O344: Use dict.items() instead of dict.iteritems() to be "
-               "compatible with both Python 2 and Python 3. In Python 2, "
-               "dict.items() may be inefficient for very large dictionaries. "
-               "If you can prove that you need the optimization of an "
-               "iterator for Python 2, then you can use dict.items().")
-        yield(0, msg)
-
-
+@core.flake8ext
 def check_no_eventlet_imports(logical_line):
     """O345 - Usage of Python eventlet module not allowed.
 
@@ -234,6 +230,7 @@ def check_no_eventlet_imports(logical_line):
         yield logical_line.index('eventlet'), msg
 
 
+@core.flake8ext
 def check_line_continuation_no_backslash(logical_line, tokens):
     """O346 - Don't use backslashes for line continuation.
 
@@ -253,19 +250,3 @@ def check_line_continuation_no_backslash(logical_line, tokens):
     if backslash is not None:
         msg = 'O346 Backslash line continuations not allowed'
         yield backslash, msg
-
-
-def factory(register):
-    register(assert_true_instance)
-    register(assert_equal_or_not_none)
-    register(no_translate_logs)
-    register(assert_equal_true_or_false)
-    register(no_mutable_default_args)
-    register(assert_equal_in)
-    register(no_log_warn)
-    register(no_xrange)
-    register(check_raised_localized_exceptions)
-    register(check_no_basestring)
-    register(check_python3_no_iteritems)
-    register(check_no_eventlet_imports)
-    register(check_line_continuation_no_backslash)

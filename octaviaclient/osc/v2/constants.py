@@ -106,7 +106,8 @@ POOL_ROWS = (
     'tls_container_ref',
     'ca_tls_container_ref',
     'crl_container_ref',
-    'tls_enabled')
+    'tls_enabled',
+    'tls_ciphers')
 
 POOL_COLUMNS = (
     'id',

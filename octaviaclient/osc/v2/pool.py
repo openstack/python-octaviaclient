@@ -130,6 +130,12 @@ class CreatePool(command.ShowOne):
             action='store_true',
             help='Wait for action to complete',
         )
+        parser.add_argument(
+            '--tls-ciphers',
+            metavar='<tls_ciphers>',
+            help="Set the TLS ciphers to be used by the pool "
+                 "in OpenSSL cipher string format."
+        )
 
         return parser
 
@@ -349,6 +355,12 @@ class SetPool(command.Command):
             '--wait',
             action='store_true',
             help='Wait for action to complete',
+        )
+        parser.add_argument(
+            '--tls-ciphers',
+            metavar='<tls_ciphers>',
+            help="Set the TLS ciphers to be used by the pool "
+                 "in OpenSSL cipher string format."
         )
 
         return parser

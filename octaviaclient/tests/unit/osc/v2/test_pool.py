@@ -126,7 +126,8 @@ class TestPoolCreate(TestPool):
                    '--enable-tls',
                    '--tls-container-ref', self._po.tls_container_ref,
                    '--ca-tls-container-ref', self._po.ca_tls_container_ref,
-                   '--crl-container-ref', self._po.crl_container_ref]
+                   '--crl-container-ref', self._po.crl_container_ref,
+                   '--tls-ciphers', self._po.tls_ciphers]
 
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
@@ -136,7 +137,8 @@ class TestPoolCreate(TestPool):
             ('enable_tls', self._po.tls_enabled),
             ('tls_container_ref', self._po.tls_container_ref),
             ('ca_tls_container_ref', self._po.ca_tls_container_ref),
-            ('crl_container_ref', self._po.crl_container_ref)
+            ('crl_container_ref', self._po.crl_container_ref),
+            ('tls_ciphers', self._po.tls_ciphers)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -208,10 +210,12 @@ class TestPoolSet(TestPool):
             'test-crl-container-id')
         arglist = [self._po.id, '--name', 'new_name', '--tls-container-ref',
                    new_tls_id, '--ca-tls-container-ref', new_ca_id,
-                   '--crl-container-ref', new_crl_id, '--enable-tls']
+                   '--crl-container-ref', new_crl_id, '--enable-tls',
+                   '--tls-ciphers', self._po.tls_ciphers]
         verifylist = [
             ('pool', self._po.id),
-            ('name', 'new_name')
+            ('name', 'new_name'),
+            ('tls_ciphers', self._po.tls_ciphers)
         ]
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
@@ -220,7 +224,8 @@ class TestPoolSet(TestPool):
                                         'tls_container_ref': new_tls_id,
                                         'ca_tls_container_ref': new_ca_id,
                                         'crl_container_ref': new_crl_id,
-                                        'tls_enabled': True}})
+                                        'tls_enabled': True,
+                                        'tls_ciphers': self._po.tls_ciphers}})
 
     @mock.patch('osc_lib.utils.wait_for_status')
     def test_pool_set_wait(self, mock_wait):

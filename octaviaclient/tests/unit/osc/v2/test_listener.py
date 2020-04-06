@@ -190,7 +190,9 @@ class TestListenerCreate(TestListener):
                    '--client-authentication',
                    self._listener.client_authentication,
                    '--client-crl-container-ref',
-                   self._listener.client_crl_container_ref]
+                   self._listener.client_crl_container_ref,
+                   '--tls-ciphers',
+                   self._listener.tls_ciphers]
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
             ('name', self._listener.name),
@@ -203,7 +205,9 @@ class TestListenerCreate(TestListener):
              self._listener.client_ca_tls_container_ref),
             ('client_authentication', self._listener.client_authentication),
             ('client_crl_container_ref',
-             self._listener.client_crl_container_ref)
+             self._listener.client_crl_container_ref),
+            ('tls_ciphers',
+             self._listener.tls_ciphers)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -283,7 +287,9 @@ class TestListenerSet(TestListener):
                    '--allowed-cidr',
                    self._listener.allowed_cidrs[0],
                    '--allowed-cidr',
-                   self._listener.allowed_cidrs[1]]
+                   self._listener.allowed_cidrs[1],
+                   '--tls-ciphers',
+                   self._listener.tls_ciphers]
         verifylist = [
             ('listener', self._listener.id),
             ('name', 'new_name'),
@@ -296,7 +302,8 @@ class TestListenerSet(TestListener):
              self._listener.client_authentication),
             ('client_crl_container_ref',
              self._listener.client_crl_container_ref),
-            ('allowed_cidrs', self._listener.allowed_cidrs)
+            ('allowed_cidrs', self._listener.allowed_cidrs),
+            ('tls_ciphers', self._listener.tls_ciphers)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -315,6 +322,7 @@ class TestListenerSet(TestListener):
                     'client_crl_container_ref':
                         self._listener.client_crl_container_ref,
                     'allowed_cidrs': self._listener.allowed_cidrs,
+                    'tls_ciphers': self._listener.tls_ciphers,
                 }})
 
     @mock.patch('osc_lib.utils.wait_for_status')

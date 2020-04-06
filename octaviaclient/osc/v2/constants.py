@@ -75,7 +75,8 @@ LISTENER_ROWS = (
     'client_ca_tls_container_ref',
     'client_authentication',
     'client_crl_container_ref',
-    'allowed_cidrs')
+    'allowed_cidrs',
+    'tls_ciphers')
 
 LISTENER_COLUMNS = (
     'id',

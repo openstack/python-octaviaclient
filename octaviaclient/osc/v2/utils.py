@@ -225,6 +225,7 @@ def get_listener_attrs(client_manager, parsed_args):
         'client_crl_container_ref': ('client_crl_container_ref',
                                      _format_str_if_need_treat_unset),
         'allowed_cidrs': ('allowed_cidrs', list),
+        'tls_ciphers': ('tls_ciphers', str),
     }
 
     _attrs = vars(parsed_args)

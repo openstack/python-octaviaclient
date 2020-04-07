@@ -778,6 +778,19 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    def amphora_stats_show(self, amphora_id, **kwargs):
+        """Show the current statistics for an amphora
+
+        :param string amphora_id:
+            ID of the amphora to show
+        :return:
+            A ``list`` of ``dict`` of the specified amphora's statistics
+        """
+        url = const.BASE_AMPHORA_STATS_URL.format(uuid=amphora_id)
+        response = self._list(path=url, **kwargs)
+
+        return response
+
     def provider_list(self):
         """List all providers
 

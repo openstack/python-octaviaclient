@@ -154,6 +154,7 @@ SINGLE_HM_UPDATE = {'healthmonitor': {'admin_state_up': False}}
 SINGLE_QT_RESP = {'quota': {'pool': -1}}
 SINGLE_QT_UPDATE = {'quota': {'pool': -1}}
 SINGLB_AMP_RESP = {'amphora': {'id': FAKE_AMP}}
+SINGLE_AMP_STATS_RESP = {'bytes_in': '0'}
 
 SINGLE_PROVIDER_CAPABILITY_RESP = {
     'flavor_capabilities':
@@ -967,6 +968,16 @@ class TestLoadBalancer(TestOctaviaClient):
                                self._error_message,
                                self.api.amphora_configure,
                                FAKE_AMP)
+
+    def test_stats_show_amphora(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_OCTAVIA_URL + 'amphorae/' + FAKE_AMP + '/stats',
+            json=SINGLE_AMP_STATS_RESP,
+            status_code=200
+        )
+        ret = self.api.amphora_stats_show(FAKE_AMP)
+        self.assertEqual(SINGLE_AMP_STATS_RESP, ret)
 
     def test_failover_amphora(self):
         self.requests_mock.register_uri(

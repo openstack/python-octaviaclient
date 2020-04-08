@@ -616,7 +616,8 @@ def wait_for_active(status_f, res_id):
             message="The resource did not successfully reach ACTIVE status.")
 
 
-def wait_for_delete(status_f, res_id):
+def wait_for_delete(status_f, res_id,
+                    status_field=constants.PROVISIONING_STATUS):
     class Getter(object):
         @staticmethod
         def get(id):
@@ -626,7 +627,7 @@ def wait_for_delete(status_f, res_id):
         success = utils.wait_for_delete(
             manager=Getter,
             res_id=res_id,
-            status_field=constants.PROVISIONING_STATUS,
+            status_field=status_field,
             sleep_time=3
         )
         if not success:

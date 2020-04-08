@@ -283,3 +283,39 @@ class TestAmphoraStatsShow(TestAmphora):
         column_idx = columns.index('bytes_in')
         bytes_in = self.stats[listener_id]
         self.assertEqual(data[column_idx], bytes_in)
+
+
+class TestAmphoraDelete(TestAmphora):
+
+    def setUp(self):
+        super(TestAmphoraDelete, self).setUp()
+        self.cmd = amphora.DeleteAmphora(self.app, None)
+
+    def test_amphora_delete(self):
+        arglist = [self._amp.id]
+        verifylist = [
+            ('amphora_id', self._amp.id)
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.amphora_delete.assert_called_with(
+            amphora_id=self._amp.id)
+
+    @mock.patch('osc_lib.utils.wait_for_delete')
+    def test_amphora_delete_wait(self, mock_wait):
+        arglist = [self._amp.id, '--wait']
+        verifylist = [
+            ('amphora_id', self._amp.id),
+            ('wait', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.amphora_delete.assert_called_with(
+            amphora_id=self._amp.id)
+        mock_wait.assert_called_once_with(
+            manager=mock.ANY,
+            res_id=self._amp.id,
+            sleep_time=mock.ANY,
+            status_field='status')

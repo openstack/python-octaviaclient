@@ -969,6 +969,15 @@ class TestLoadBalancer(TestOctaviaClient):
                                self.api.amphora_configure,
                                FAKE_AMP)
 
+    def test_delete_amphora(self):
+        self.requests_mock.register_uri(
+            'DELETE',
+            FAKE_OCTAVIA_URL + 'amphorae/' + FAKE_AMP,
+            status_code=200
+        )
+        ret = self.api.amphora_delete(FAKE_AMP)
+        self.assertEqual(200, ret.status_code)
+
     def test_stats_show_amphora(self):
         self.requests_mock.register_uri(
             'GET',

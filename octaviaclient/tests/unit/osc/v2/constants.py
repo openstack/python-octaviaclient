@@ -78,6 +78,7 @@ LISTENER_ATTRS = {
     'client_authentication': "OPTIONAL",
     'client_crl_container_ref': uuidutils.generate_uuid(dashed=True),
     "allowed_cidrs": ['192.0.2.0/24', '198.51.100.0/24'],
+    'tls_ciphers': "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256"
 }
 
 LOADBALANCER_ATTRS = {

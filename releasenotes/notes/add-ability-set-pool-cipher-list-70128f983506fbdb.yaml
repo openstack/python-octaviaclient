@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Added an optional Argument ``--tls-ciphers``
+    for passing OpenSSL cipher strings when creating
+    or updating a pool.

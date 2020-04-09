@@ -279,6 +279,18 @@ AMPHORA_COLUMNS = (
     'ha_ip',
 )
 
+AMPHORA_COLUMNS_LONG = (
+    'id',
+    'loadbalancer_id',
+    'status',
+    'role',
+    'lb_network_ip',
+    'ha_ip',
+    'compute_id',
+    'cached_zone',
+    'image_id',
+)
+
 PROVIDER_COLUMNS = (
     'name',
     'description',

@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Amphora list now supports a ``--long`` option, which will include a few
+    additional columns (compute_id, cached_zone, image_id).

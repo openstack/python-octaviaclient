@@ -62,10 +62,19 @@ class ListAmphora(lister.Lister):
             help="Filter by amphora provisioning status."
         )
 
+        parser.add_argument(
+            '--long',
+            action='store_true',
+            help='Show additional fields.',
+        )
+
         return parser
 
     def take_action(self, parsed_args):
         columns = const.AMPHORA_COLUMNS
+        if parsed_args.long:
+            columns = const.AMPHORA_COLUMNS_LONG
+
         attrs = v2_utils.get_amphora_attrs(self.app.client_manager,
                                            parsed_args)
 

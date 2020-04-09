@@ -30,11 +30,12 @@ class TestAmphora(fakes.TestOctaviaClient):
         self._amp = fakes.createFakeResource('amphora')
         self.amp_info = copy.deepcopy(attr_consts.AMPHORA_ATTRS)
         self.columns = copy.deepcopy(constants.AMPHORA_COLUMNS)
+        self.columns_long = copy.deepcopy(constants.AMPHORA_COLUMNS_LONG)
         self.rows = copy.deepcopy(constants.AMPHORA_ROWS)
 
         info_list = {'amphorae': [
             {k: v for k, v in attr_consts.AMPHORA_ATTRS.items() if (
-                k in self.columns)},
+                k in self.columns_long)},
         ]}
         self.api_mock = mock.Mock()
         self.api_mock.amphora_list.return_value = info_list
@@ -50,6 +51,8 @@ class TestAmphoraList(TestAmphora):
         super(TestAmphoraList, self).setUp()
         self.data_list = (tuple(
             attr_consts.AMPHORA_ATTRS[k] for k in self.columns),)
+        self.data_list_long = (tuple(
+            attr_consts.AMPHORA_ATTRS[k] for k in self.columns_long),)
         self.cmd = amphora.ListAmphora(self.app, None)
 
     def test_amphora_list_no_options(self):
@@ -62,6 +65,17 @@ class TestAmphoraList(TestAmphora):
         self.api_mock.amphora_list.assert_called_with()
         self.assertEqual(self.columns, columns)
         self.assertEqual(self.data_list, tuple(data))
+
+    def test_amphora_list_long(self):
+        arglist = ['--long']
+        verify_list = []
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.amphora_list.assert_called_with()
+        self.assertEqual(self.columns_long, columns)
+        self.assertEqual(self.data_list_long, tuple(data))
 
     @mock.patch('octaviaclient.osc.v2.utils.get_amphora_attrs')
     def test_amphora_list_with_loadbalancer(self, mock_client):

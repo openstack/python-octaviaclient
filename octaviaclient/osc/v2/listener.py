@@ -181,6 +181,15 @@ class CreateListener(command.ShowOne):
             help="Set the TLS ciphers to be used "
                  "by the listener in OpenSSL format."
         )
+        parser.add_argument(
+            '--tls-version',
+            dest='tls_versions',
+            metavar='<tls_versions>',
+            nargs='?',
+            action='append',
+            help="Set the TLS protocol version to be used "
+                 "by the listener (can be set multiple times)."
+        )
 
         return parser
 
@@ -481,6 +490,15 @@ class SetListener(command.Command):
             metavar='<tls_ciphers>',
             help="Set the TLS ciphers to be used "
                  "by the listener in OpenSSL format."
+        )
+        parser.add_argument(
+            '--tls-version',
+            dest='tls_versions',
+            metavar='<tls_versions>',
+            nargs='?',
+            action='append',
+            help="Set the TLS protocol version to be used "
+                 "by the listener (can be set multiple times)."
         )
 
         return parser

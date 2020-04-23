@@ -192,7 +192,12 @@ class TestListenerCreate(TestListener):
                    '--client-crl-container-ref',
                    self._listener.client_crl_container_ref,
                    '--tls-ciphers',
-                   self._listener.tls_ciphers]
+                   self._listener.tls_ciphers,
+                   '--tls-version',
+                   self._listener.tls_versions[0],
+                   '--tls-version',
+                   self._listener.tls_versions[1]]
+
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
             ('name', self._listener.name),
@@ -207,7 +212,9 @@ class TestListenerCreate(TestListener):
             ('client_crl_container_ref',
              self._listener.client_crl_container_ref),
             ('tls_ciphers',
-             self._listener.tls_ciphers)
+             self._listener.tls_ciphers),
+            ('tls_versions',
+             self._listener.tls_versions)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -289,7 +296,11 @@ class TestListenerSet(TestListener):
                    '--allowed-cidr',
                    self._listener.allowed_cidrs[1],
                    '--tls-ciphers',
-                   self._listener.tls_ciphers]
+                   self._listener.tls_ciphers,
+                   '--tls-version',
+                   self._listener.tls_versions[0],
+                   '--tls-version',
+                   self._listener.tls_versions[1]]
         verifylist = [
             ('listener', self._listener.id),
             ('name', 'new_name'),
@@ -303,7 +314,8 @@ class TestListenerSet(TestListener):
             ('client_crl_container_ref',
              self._listener.client_crl_container_ref),
             ('allowed_cidrs', self._listener.allowed_cidrs),
-            ('tls_ciphers', self._listener.tls_ciphers)
+            ('tls_ciphers', self._listener.tls_ciphers),
+            ('tls_versions', self._listener.tls_versions)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -323,6 +335,7 @@ class TestListenerSet(TestListener):
                         self._listener.client_crl_container_ref,
                     'allowed_cidrs': self._listener.allowed_cidrs,
                     'tls_ciphers': self._listener.tls_ciphers,
+                    'tls_versions': self._listener.tls_versions,
                 }})
 
     @mock.patch('osc_lib.utils.wait_for_status')

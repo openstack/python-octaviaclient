@@ -274,6 +274,7 @@ def get_pool_attrs(client_manager, parsed_args):
         'enable_tls': ('tls_enabled', lambda x: True),
         'disable_tls': ('tls_enabled', lambda x: False),
         'tls_ciphers': ('tls_ciphers', str),
+        'tls_versions': ('tls_versions', list),
     }
 
     _attrs = vars(parsed_args)

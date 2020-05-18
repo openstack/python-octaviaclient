@@ -32,15 +32,21 @@ Getting Started
 .. note:: This is an OpenStack Client plugin. The ``python-openstackclient``
           project should be installed to use this plugin.
 
-Octavia client can be installed from PyPI using pip::
+Octavia client can be installed from PyPI using pip
+
+.. code-block:: bash
 
     pip install python-octaviaclient
 
 If you want to make changes to the Octavia client for testing and contribution,
-make any changes and then run::
+make any changes and then run
+
+.. code-block:: bash
 
     python setup.py develop
 
-or::
+or
+
+.. code-block:: bash
 
     pip install -e .

@@ -36,6 +36,7 @@ pep8==1.5.7
 positional==1.2.1
 pycparser==2.18
 pyflakes==0.8.1
+Pygments==2.2.0
 pylint==1.9.2
 pyOpenSSL==17.1.0
 pyperclip==1.5.27

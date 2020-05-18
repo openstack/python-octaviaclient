@@ -41,16 +41,6 @@ master_doc = 'index'
 # General information about the project.
 copyright = u'2016-2019, OpenStack Foundation'
 
-# The version info for the project you're documenting, acts as replacement for
-# |version| and |release|, also used in various other places throughout the
-# built documents.
-#
-# Version info
-from octaviaclient.version import version_info as octavia_client_version
-release = octavia_client_version.release_string()
-# The short X.Y version.
-version = octavia_client_version.version_string()
-
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
 
@@ -59,12 +49,12 @@ add_function_parentheses = True
 add_module_names = True
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'native'
 
 # openstackdocstheme options
-repository_name = 'openstack/python-octaviaclient'
-bug_project = '911'
-bug_tag = 'doc'
+openstackdocs_repo_name = 'openstack/python-octaviaclient'
+openstackdocs_pdf_link = True
+openstackdocs_use_storyboard = True
 
 autoprogram_cliff_application = 'openstack'
 

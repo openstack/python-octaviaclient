@@ -136,6 +136,15 @@ class CreatePool(command.ShowOne):
             help="Set the TLS ciphers to be used by the pool "
                  "in OpenSSL cipher string format."
         )
+        parser.add_argument(
+            '--tls-version',
+            dest='tls_versions',
+            metavar='<tls_versions>',
+            nargs='?',
+            action='append',
+            help="Set the TLS protocol version to be used "
+                 "by the pool (can be set multiple times)."
+        )
 
         return parser
 
@@ -361,6 +370,16 @@ class SetPool(command.Command):
             metavar='<tls_ciphers>',
             help="Set the TLS ciphers to be used by the pool "
                  "in OpenSSL cipher string format."
+        )
+        parser.add_argument(
+            '--tls-version',
+            dest='tls_versions',
+            metavar='<tls_versions>',
+            nargs='?',
+            action='append',
+            help="Set the TLS protocol version to be used "
+                 "by the pool (can be set multiple times)."
+
         )
 
         return parser

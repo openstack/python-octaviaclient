@@ -40,6 +40,7 @@ LOAD_BALANCER_COLUMNS = (
     'project_id',
     'vip_address',
     'provisioning_status',
+    'operating_status',
     'provider')
 
 LOAD_BALANCER_STATS_ROWS = (

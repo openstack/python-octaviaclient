@@ -227,6 +227,7 @@ def get_listener_attrs(client_manager, parsed_args):
         'allowed_cidrs': ('allowed_cidrs', list),
         'tls_ciphers': ('tls_ciphers', str),
         'tls_versions': ('tls_versions', list),
+        'alpn_protocols': ('alpn_protocols', list),
     }
 
     _attrs = vars(parsed_args)

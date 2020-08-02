@@ -196,7 +196,11 @@ class TestListenerCreate(TestListener):
                    '--tls-version',
                    self._listener.tls_versions[0],
                    '--tls-version',
-                   self._listener.tls_versions[1]]
+                   self._listener.tls_versions[1],
+                   '--alpn-protocol',
+                   self._listener.alpn_protocols[0],
+                   '--alpn-protocol',
+                   self._listener.alpn_protocols[1]]
 
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
@@ -214,7 +218,9 @@ class TestListenerCreate(TestListener):
             ('tls_ciphers',
              self._listener.tls_ciphers),
             ('tls_versions',
-             self._listener.tls_versions)
+             self._listener.tls_versions),
+            ('alpn_protocols',
+             self._listener.alpn_protocols),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -300,7 +306,11 @@ class TestListenerSet(TestListener):
                    '--tls-version',
                    self._listener.tls_versions[0],
                    '--tls-version',
-                   self._listener.tls_versions[1]]
+                   self._listener.tls_versions[1],
+                   '--alpn-protocol',
+                   self._listener.alpn_protocols[0],
+                   '--alpn-protocol',
+                   self._listener.alpn_protocols[1]]
         verifylist = [
             ('listener', self._listener.id),
             ('name', 'new_name'),
@@ -315,7 +325,8 @@ class TestListenerSet(TestListener):
              self._listener.client_crl_container_ref),
             ('allowed_cidrs', self._listener.allowed_cidrs),
             ('tls_ciphers', self._listener.tls_ciphers),
-            ('tls_versions', self._listener.tls_versions)
+            ('tls_versions', self._listener.tls_versions),
+            ('alpn_protocols', self._listener.alpn_protocols)
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -336,6 +347,7 @@ class TestListenerSet(TestListener):
                     'allowed_cidrs': self._listener.allowed_cidrs,
                     'tls_ciphers': self._listener.tls_ciphers,
                     'tls_versions': self._listener.tls_versions,
+                    'alpn_protocols': self._listener.alpn_protocols,
                 }})
 
     @mock.patch('osc_lib.utils.wait_for_status')

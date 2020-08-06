@@ -444,6 +444,16 @@ class UnsetPool(command.Command):
             help="Clear the certificate reference for this pool."
         )
         parser.add_argument(
+            '--tls-versions',
+            action='store_true',
+            help='Clear all TLS versions from the pool.',
+        )
+        parser.add_argument(
+            '--tls-ciphers',
+            action='store_true',
+            help='Clear all TLS ciphers from the pool.',
+        )
+        parser.add_argument(
             '--wait',
             action='store_true',
             help='Wait for action to complete',

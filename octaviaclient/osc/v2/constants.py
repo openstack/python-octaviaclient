@@ -239,6 +239,8 @@ QUOTA_ROWS = (
     'pool',
     'health_monitor',
     'member',
+    'l7policy',
+    'l7rule',
 )
 
 QUOTA_COLUMNS = (
@@ -248,6 +250,8 @@ QUOTA_COLUMNS = (
     'pool',
     'health_monitor',
     'member',
+    'l7policy',
+    'l7rule',
 )
 
 AMPHORA_ROWS = (

@@ -442,6 +442,8 @@ def get_quota_attrs(client_manager, parsed_args):
         'load_balancer': ('load_balancer', int),
         'member': ('member', int),
         'pool': ('pool', int),
+        'l7policy': ('l7policy', int),
+        'l7rule': ('l7rule', int),
         'project': (
             'project_id',
             'project',

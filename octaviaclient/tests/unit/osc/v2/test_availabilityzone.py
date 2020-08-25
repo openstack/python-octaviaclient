@@ -26,7 +26,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestAvailabilityzone(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestAvailabilityzone, self).setUp()
+        super().setUp()
 
         self._availabilityzone = fakes.createFakeResource('availability_zone')
         self.availabilityzone_info = copy.deepcopy(
@@ -43,7 +43,7 @@ class TestAvailabilityzone(fakes.TestOctaviaClient):
 class TestAvailabilityzoneList(TestAvailabilityzone):
 
     def setUp(self):
-        super(TestAvailabilityzoneList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.AVAILABILITY_ZONE_ATTRS[k] for k in self.columns),)
         self.cmd = availabilityzone.ListAvailabilityzone(self.app, None)
@@ -75,7 +75,7 @@ class TestAvailabilityzoneList(TestAvailabilityzone):
 class TestAvailabilityzoneDelete(TestAvailabilityzone):
 
     def setUp(self):
-        super(TestAvailabilityzoneDelete, self).setUp()
+        super().setUp()
         self.cmd = availabilityzone.DeleteAvailabilityzone(self.app, None)
 
     def test_availabilityzone_delete(self):
@@ -103,7 +103,7 @@ class TestAvailabilityzoneDelete(TestAvailabilityzone):
 class TestAvailabilityzoneCreate(TestAvailabilityzone):
 
     def setUp(self):
-        super(TestAvailabilityzoneCreate, self).setUp()
+        super().setUp()
         self.api_mock.availabilityzone_create.return_value = {
             'availability_zone': self.availabilityzone_info}
         lb_client = self.app.client_manager
@@ -132,7 +132,7 @@ class TestAvailabilityzoneCreate(TestAvailabilityzone):
 class TestAvailabilityzoneShow(TestAvailabilityzone):
 
     def setUp(self):
-        super(TestAvailabilityzoneShow, self).setUp()
+        super().setUp()
         mock_show = self.api_mock.availabilityzone_show
         mock_show.return_value = self.availabilityzone_info
         lb_client = self.app.client_manager
@@ -155,7 +155,7 @@ class TestAvailabilityzoneShow(TestAvailabilityzone):
 class TestAvailabilityzoneSet(TestAvailabilityzone):
 
     def setUp(self):
-        super(TestAvailabilityzoneSet, self).setUp()
+        super().setUp()
         self.cmd = availabilityzone.SetAvailabilityzone(self.app, None)
 
     def test_availabilityzone_set(self):
@@ -178,7 +178,7 @@ class TestAvailabilityzoneUnset(TestAvailabilityzone):
     PARAMETERS = ('description',)
 
     def setUp(self):
-        super(TestAvailabilityzoneUnset, self).setUp()
+        super().setUp()
         self.cmd = availabilityzone.UnsetAvailabilityzone(self.app, None)
 
     def test_hm_unset_description(self):

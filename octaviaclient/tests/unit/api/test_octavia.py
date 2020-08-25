@@ -185,7 +185,7 @@ class TestAPI(utils.TestCase):
 class TestOctaviaClient(utils.TestCase):
 
     def setUp(self):
-        super(TestOctaviaClient, self).setUp()
+        super().setUp()
         sess = session.Session()
         self.api = octavia.OctaviaAPI(session=sess, endpoint=FAKE_URL)
         self.requests_mock = self.useFixture(fixture.Fixture())

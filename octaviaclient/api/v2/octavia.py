@@ -56,7 +56,7 @@ def correct_return_codes(func):
             raise OctaviaClientException(
                 code=code,
                 message=message,
-                request_id=request_id)
+                request_id=request_id) from e
         return response
     return wrapper
 
@@ -67,7 +67,7 @@ class OctaviaAPI(api.BaseAPI):
     _endpoint_suffix = '/v2.0'
 
     def __init__(self, endpoint=None, **kwargs):
-        super(OctaviaAPI, self).__init__(endpoint=endpoint, **kwargs)
+        super().__init__(endpoint=endpoint, **kwargs)
         self.endpoint = self.endpoint.rstrip('/')
         self._build_url()
 

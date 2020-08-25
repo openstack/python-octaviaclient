@@ -24,7 +24,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestMember(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestMember, self).setUp()
+        super().setUp()
 
         self._mem = fakes.createFakeResource('member')
         self.mem_info = copy.deepcopy(attr_consts.MEMBER_ATTRS)
@@ -48,7 +48,7 @@ class TestMember(fakes.TestOctaviaClient):
 class TestListMember(TestMember):
 
     def setUp(self):
-        super(TestListMember, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.MEMBER_ATTRS[k] for k in self.columns),)
         self.cmd = member.ListMember(self.app, None)
@@ -79,7 +79,7 @@ class TestListMember(TestMember):
 class TestCreateMember(TestMember):
 
     def setUp(self):
-        super(TestCreateMember, self).setUp()
+        super().setUp()
         self.cmd = member.CreateMember(self.app, None)
         self.api_mock.member_create.return_value = {
             'member': self.mem_info}
@@ -155,7 +155,7 @@ class TestCreateMember(TestMember):
 class TestMemberDelete(TestMember):
 
     def setUp(self):
-        super(TestMemberDelete, self).setUp()
+        super().setUp()
         self.cmd = member.DeleteMember(self.app, None)
 
     @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
@@ -199,7 +199,7 @@ class TestMemberDelete(TestMember):
 class TestMemberSet(TestMember):
 
     def setUp(self):
-        super(TestMemberSet, self).setUp()
+        super().setUp()
         self.cmd = member.SetMember(self.app, None)
 
     @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
@@ -254,7 +254,7 @@ class TestMemberSet(TestMember):
 class TestMemberShow(TestMember):
 
     def setUp(self):
-        super(TestMemberShow, self).setUp()
+        super().setUp()
         self.api_mock.member_show.return_value = self.mem_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
@@ -284,7 +284,7 @@ class TestMemberUnset(TestMember):
                   'weight')
 
     def setUp(self):
-        super(TestMemberUnset, self).setUp()
+        super().setUp()
         self.cmd = member.UnsetMember(self.app, None)
 
     def test_member_unset_backup(self):

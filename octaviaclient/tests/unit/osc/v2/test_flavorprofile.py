@@ -26,7 +26,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestFlavorProfile(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestFlavorProfile, self).setUp()
+        super().setUp()
 
         self._flavorprofile = fakes.createFakeResource('flavorprofile')
         self.flavorprofile_info = copy.deepcopy(
@@ -43,7 +43,7 @@ class TestFlavorProfile(fakes.TestOctaviaClient):
 class TestFlavorProfileList(TestFlavorProfile):
 
     def setUp(self):
-        super(TestFlavorProfileList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.FLAVORPROFILE_ATTRS[k] for k in self.columns),)
         self.cmd = flavorprofile.ListFlavorProfile(self.app, None)
@@ -75,7 +75,7 @@ class TestFlavorProfileList(TestFlavorProfile):
 class TestFlavorProfileDelete(TestFlavorProfile):
 
     def setUp(self):
-        super(TestFlavorProfileDelete, self).setUp()
+        super().setUp()
         self.cmd = flavorprofile.DeleteFlavorProfile(self.app, None)
 
     def test_flavorprofile_delete(self):
@@ -103,7 +103,7 @@ class TestFlavorProfileDelete(TestFlavorProfile):
 class TestFlavorProfileCreate(TestFlavorProfile):
 
     def setUp(self):
-        super(TestFlavorProfileCreate, self).setUp()
+        super().setUp()
         self.api_mock.flavorprofile_create.return_value = {
             'flavorprofile': self.flavorprofile_info}
         lb_client = self.app.client_manager
@@ -132,7 +132,7 @@ class TestFlavorProfileCreate(TestFlavorProfile):
 class TestFlavorProfileShow(TestFlavorProfile):
 
     def setUp(self):
-        super(TestFlavorProfileShow, self).setUp()
+        super().setUp()
         self.api_mock.flavorprofile_show.return_value = self.flavorprofile_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
@@ -154,7 +154,7 @@ class TestFlavorProfileShow(TestFlavorProfile):
 class TestFlavorProfileSet(TestFlavorProfile):
 
     def setUp(self):
-        super(TestFlavorProfileSet, self).setUp()
+        super().setUp()
         self.cmd = flavorprofile.SetFlavorProfile(self.app, None)
 
     def test_flavorprofile_set(self):

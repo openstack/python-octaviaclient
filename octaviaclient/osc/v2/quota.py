@@ -30,7 +30,7 @@ class ListQuota(lister.Lister):
     """List quotas"""
 
     def get_parser(self, prog_name):
-        parser = super(ListQuota, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--project',
@@ -55,7 +55,7 @@ class ShowQuota(command.ShowOne):
     """Show the quota details for a project"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowQuota, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'project',
@@ -110,7 +110,7 @@ class SetQuota(command.ShowOne):
             raise exceptions.CommandError(msg)
 
     def get_parser(self, prog_name):
-        parser = super(SetQuota, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         quota_group = parser.add_argument_group(
             "Quota limits",
@@ -190,7 +190,7 @@ class ResetQuota(command.Command):
     """Resets quotas to default quotas"""
 
     def get_parser(self, prog_name):
-        parser = super(ResetQuota, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'project',
@@ -214,7 +214,7 @@ class UnsetQuota(command.Command):
     """Clear quota settings"""
 
     def get_parser(self, prog_name):
-        parser = super(UnsetQuota, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'project',

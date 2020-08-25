@@ -26,7 +26,7 @@ class ListProvider(lister.Lister):
     """List all providers"""
 
     def get_parser(self, prog_name):
-        parser = super(ListProvider, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         return parser
 
@@ -45,8 +45,7 @@ class ListProviderCapability(lister.Lister):
     """List specified provider driver's capabilities."""
 
     def get_parser(self, prog_name):
-        parser = super(ListProviderCapability,
-                       self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'provider',

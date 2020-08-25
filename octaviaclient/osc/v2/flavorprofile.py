@@ -29,7 +29,7 @@ class CreateFlavorProfile(command.ShowOne):
     """Create a octavia flavor profile"""
 
     def get_parser(self, prog_name):
-        parser = super(CreateFlavorProfile, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -69,7 +69,7 @@ class DeleteFlavorProfile(command.Command):
     """Delete a flavor profile"""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteFlavorProfile, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'flavorprofile',
@@ -92,7 +92,7 @@ class ListFlavorProfile(lister.Lister):
     """List flavor profile"""
 
     def get_parser(self, prog_name):
-        parser = super(ListFlavorProfile, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -122,7 +122,7 @@ class ShowFlavorProfile(command.ShowOne):
     """Show the details for a single flavor profile"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowFlavorProfile, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'flavorprofile',
@@ -159,7 +159,7 @@ class SetFlavorProfile(command.Command):
     """Update a flavor profile"""
 
     def get_parser(self, prog_name):
-        parser = super(SetFlavorProfile, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'flavorprofile',

@@ -25,7 +25,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestAmphora(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestAmphora, self).setUp()
+        super().setUp()
 
         self._amp = fakes.createFakeResource('amphora')
         self.amp_info = copy.deepcopy(attr_consts.AMPHORA_ATTRS)
@@ -48,7 +48,7 @@ class TestAmphora(fakes.TestOctaviaClient):
 class TestAmphoraList(TestAmphora):
 
     def setUp(self):
-        super(TestAmphoraList, self).setUp()
+        super().setUp()
         self.data_list = (tuple(
             attr_consts.AMPHORA_ATTRS[k] for k in self.columns),)
         self.data_list_long = (tuple(
@@ -107,7 +107,7 @@ class TestAmphoraList(TestAmphora):
 class TestAmphoraShow(TestAmphora):
 
     def setUp(self):
-        super(TestAmphoraShow, self).setUp()
+        super().setUp()
         self.cmd = amphora.ShowAmphora(self.app, None)
 
     def test_amphora_show_no_args(self):
@@ -130,7 +130,7 @@ class TestAmphoraShow(TestAmphora):
 
 class TestAmphoraConfigure(TestAmphora):
     def setUp(self):
-        super(TestAmphoraConfigure, self).setUp()
+        super().setUp()
         self.cmd = amphora.ConfigureAmphora(self.app, None)
 
     def test_amphora_configure(self):
@@ -173,7 +173,7 @@ class TestAmphoraConfigure(TestAmphora):
 
 class TestAmphoraFailover(TestAmphora):
     def setUp(self):
-        super(TestAmphoraFailover, self).setUp()
+        super().setUp()
         self.cmd = amphora.FailoverAmphora(self.app, None)
 
     def test_amphora_failover(self):
@@ -232,7 +232,7 @@ class TestAmphoraFailover(TestAmphora):
 class TestAmphoraStatsShow(TestAmphora):
 
     def setUp(self):
-        super(TestAmphoraStatsShow, self).setUp()
+        super().setUp()
         # map fake listener_id to fake bytes_in counter
         self.stats = {
             uuidutils.generate_uuid(): 12,

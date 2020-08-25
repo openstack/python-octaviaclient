@@ -119,9 +119,9 @@ def get_resource_id(resource, resource_name, name):
             raise osc_exc.CommandError(msg)
         return names[0].get(primary_key)
 
-    except IndexError:
+    except IndexError as e:
         msg = "Unable to locate {0} in {1}".format(name, resource_name)
-        raise osc_exc.CommandError(msg)
+        raise osc_exc.CommandError(msg) from e
 
 
 def get_loadbalancer_attrs(client_manager, parsed_args):

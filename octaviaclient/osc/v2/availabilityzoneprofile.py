@@ -27,7 +27,7 @@ class CreateAvailabilityzoneProfile(command.ShowOne):
     """Create an octavia availability zone profile"""
 
     def get_parser(self, prog_name):
-        parser = super(CreateAvailabilityzoneProfile, self).get_parser(
+        parser = super().get_parser(
             prog_name)
 
         parser.add_argument(
@@ -69,7 +69,7 @@ class DeleteAvailabilityzoneProfile(command.Command):
     """Delete an availability zone profile"""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteAvailabilityzoneProfile, self).get_parser(
+        parser = super().get_parser(
             prog_name)
 
         parser.add_argument(
@@ -93,7 +93,7 @@ class ListAvailabilityzoneProfile(lister.Lister):
     """List availability zone profiles"""
 
     def get_parser(self, prog_name):
-        parser = super(ListAvailabilityzoneProfile, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -125,7 +125,7 @@ class ShowAvailabilityzoneProfile(command.ShowOne):
     """Show the details of a single availability zone profile"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowAvailabilityzoneProfile, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'availabilityzoneprofile',
@@ -153,7 +153,7 @@ class SetAvailabilityzoneProfile(command.Command):
     """Update an availability zone profile"""
 
     def get_parser(self, prog_name):
-        parser = super(SetAvailabilityzoneProfile, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'availabilityzoneprofile',

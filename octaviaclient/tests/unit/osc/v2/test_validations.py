@@ -20,7 +20,7 @@ from octaviaclient.osc.v2 import validate
 
 class TestValidations(utils.TestCommand):
     def setUp(self):
-        super(TestValidations, self).setUp()
+        super().setUp()
 
     def test_check_l7policy_attrs(self):
         attrs_dict = {

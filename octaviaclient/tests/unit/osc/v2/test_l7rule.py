@@ -24,7 +24,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestL7Rule(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestL7Rule, self).setUp()
+        super().setUp()
 
         self._l7ru = fakes.createFakeResource('l7rule')
         self.l7rule_info = copy.deepcopy(attr_consts.L7RULE_ATTRS)
@@ -44,7 +44,7 @@ class TestL7Rule(fakes.TestOctaviaClient):
 class TestL7RuleList(TestL7Rule):
 
     def setUp(self):
-        super(TestL7RuleList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.L7RULE_ATTRS[k] for k in self.columns),)
         self.cmd = l7rule.ListL7Rule(self.app, None)
@@ -66,7 +66,7 @@ class TestL7RuleList(TestL7Rule):
 class TestL7RuleDelete(TestL7Rule):
 
     def setUp(self):
-        super(TestL7RuleDelete, self).setUp()
+        super().setUp()
         self.cmd = l7rule.DeleteL7Rule(self.app, None)
 
     @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
@@ -118,7 +118,7 @@ class TestL7RuleDelete(TestL7Rule):
 class TestL7RuleCreate(TestL7Rule):
 
     def setUp(self):
-        super(TestL7RuleCreate, self).setUp()
+        super().setUp()
         self.api_mock.l7rule_create.return_value = {
             'rule': self.l7rule_info}
         lb_client = self.app.client_manager
@@ -203,7 +203,7 @@ class TestL7RuleCreate(TestL7Rule):
 class TestL7RuleShow(TestL7Rule):
 
     def setUp(self):
-        super(TestL7RuleShow, self).setUp()
+        super().setUp()
         self.api_mock.l7rule_show.return_value = self.l7rule_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
@@ -228,7 +228,7 @@ class TestL7RuleShow(TestL7Rule):
 class TestL7RuleSet(TestL7Rule):
 
     def setUp(self):
-        super(TestL7RuleSet, self).setUp()
+        super().setUp()
         self.cmd = l7rule.SetL7Rule(self.app, None)
 
     @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
@@ -294,7 +294,7 @@ class TestL7RuleUnset(TestL7Rule):
     PARAMETERS = ('invert', 'key')
 
     def setUp(self):
-        super(TestL7RuleUnset, self).setUp()
+        super().setUp()
         self.cmd = l7rule.UnsetL7Rule(self.app, None)
 
     def test_l7rule_unset_invert(self):

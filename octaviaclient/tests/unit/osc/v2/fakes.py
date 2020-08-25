@@ -30,7 +30,7 @@ class FakeOctaviaClient(object):
 class TestOctaviaClient(utils.TestCommand):
 
     def setUp(self):
-        super(TestOctaviaClient, self).setUp()
+        super().setUp()
         self.app.client_manager.load_balancer = FakeOctaviaClient(
             endpoint=fakes.AUTH_URL,
             token=fakes.AUTH_TOKEN,

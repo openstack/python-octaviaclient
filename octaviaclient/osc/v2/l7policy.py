@@ -35,7 +35,7 @@ class CreateL7Policy(command.ShowOne):
     """Create a l7policy"""
 
     def get_parser(self, prog_name):
-        parser = super(CreateL7Policy, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'listener',
@@ -148,7 +148,7 @@ class DeleteL7Policy(command.Command):
     """Delete a l7policy"""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteL7Policy, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'l7policy',
@@ -184,7 +184,7 @@ class ListL7Policy(lister.Lister):
     """List l7policies"""
 
     def get_parser(self, prog_name):
-        parser = super(ListL7Policy, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--listener',
@@ -213,7 +213,7 @@ class ShowL7Policy(command.ShowOne):
     """Show the details of a single l7policy"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowL7Policy, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'l7policy',
@@ -251,7 +251,7 @@ class SetL7Policy(command.Command):
     """Update a l7policy"""
 
     def get_parser(self, prog_name):
-        parser = super(SetL7Policy, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'l7policy',
@@ -351,7 +351,7 @@ class UnsetL7Policy(command.Command):
     """Clear l7policy settings"""
 
     def get_parser(self, prog_name):
-        parser = super(UnsetL7Policy, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'l7policy',

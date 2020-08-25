@@ -26,7 +26,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestAvailabilityzoneProfile(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestAvailabilityzoneProfile, self).setUp()
+        super().setUp()
 
         self._availabilityzoneprofile = fakes.createFakeResource(
             'availability_zone_profile')
@@ -45,7 +45,7 @@ class TestAvailabilityzoneProfile(fakes.TestOctaviaClient):
 class TestAvailabilityzoneProfileList(TestAvailabilityzoneProfile):
 
     def setUp(self):
-        super(TestAvailabilityzoneProfileList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.AVAILABILITY_ZONE_PROFILE_ATTRS[k]
             for k in self.columns),)
@@ -79,7 +79,7 @@ class TestAvailabilityzoneProfileList(TestAvailabilityzoneProfile):
 class TestAvailabilityzoneProfileDelete(TestAvailabilityzoneProfile):
 
     def setUp(self):
-        super(TestAvailabilityzoneProfileDelete, self).setUp()
+        super().setUp()
         self.cmd = availabilityzoneprofile.DeleteAvailabilityzoneProfile(
             self.app, None)
 
@@ -108,7 +108,7 @@ class TestAvailabilityzoneProfileDelete(TestAvailabilityzoneProfile):
 class TestAvailabilityzoneProfileCreate(TestAvailabilityzoneProfile):
 
     def setUp(self):
-        super(TestAvailabilityzoneProfileCreate, self).setUp()
+        super().setUp()
         self.api_mock.availabilityzoneprofile_create.return_value = {
             'availability_zone_profile': self.availabilityzoneprofile_info}
         lb_client = self.app.client_manager
@@ -140,7 +140,7 @@ class TestAvailabilityzoneProfileCreate(TestAvailabilityzoneProfile):
 class TestAvailabilityzoneProfileShow(TestAvailabilityzoneProfile):
 
     def setUp(self):
-        super(TestAvailabilityzoneProfileShow, self).setUp()
+        super().setUp()
         mock_show = self.api_mock.availabilityzoneprofile_show
         mock_show.return_value = self.availabilityzoneprofile_info
         lb_client = self.app.client_manager
@@ -164,7 +164,7 @@ class TestAvailabilityzoneProfileShow(TestAvailabilityzoneProfile):
 class TestAvailabilityzoneProfileSet(TestAvailabilityzoneProfile):
 
     def setUp(self):
-        super(TestAvailabilityzoneProfileSet, self).setUp()
+        super().setUp()
         self.cmd = availabilityzoneprofile.SetAvailabilityzoneProfile(
             self.app, None)
 

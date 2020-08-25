@@ -25,7 +25,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestPool(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestPool, self).setUp()
+        super().setUp()
 
         self._po = fakes.createFakeResource('pool')
         self.pool_info = copy.deepcopy(attr_consts.POOL_ATTRS)
@@ -41,7 +41,7 @@ class TestPool(fakes.TestOctaviaClient):
 class TestPoolList(TestPool):
 
     def setUp(self):
-        super(TestPoolList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.POOL_ATTRS[k] for k in self.columns
         ),)
@@ -62,7 +62,7 @@ class TestPoolList(TestPool):
 class TestPoolDelete(TestPool):
 
     def setUp(self):
-        super(TestPoolDelete, self).setUp()
+        super().setUp()
         self.cmd = pool.DeletePool(self.app, None)
 
     def test_pool_delete(self):
@@ -108,7 +108,7 @@ class TestPoolDelete(TestPool):
 class TestPoolCreate(TestPool):
 
     def setUp(self):
-        super(TestPoolCreate, self).setUp()
+        super().setUp()
         self.api_mock.pool_create.return_value = {
             'pool': self.pool_info}
         lb_client = self.app.client_manager
@@ -183,7 +183,7 @@ class TestPoolCreate(TestPool):
 class TestPoolShow(TestPool):
 
     def setUp(self):
-        super(TestPoolShow, self).setUp()
+        super().setUp()
         self.api_mock.pool_show.return_value = self.pool_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
@@ -204,7 +204,7 @@ class TestPoolShow(TestPool):
 class TestPoolSet(TestPool):
 
     def setUp(self):
-        super(TestPoolSet, self).setUp()
+        super().setUp()
         self.cmd = pool.SetPool(self.app, None)
 
     def test_pool_set(self):
@@ -260,7 +260,7 @@ class TestPoolUnset(TestPool):
                   'tls_container_ref')
 
     def setUp(self):
-        super(TestPoolUnset, self).setUp()
+        super().setUp()
         self.cmd = pool.UnsetPool(self.app, None)
 
     def test_pool_unset_name(self):

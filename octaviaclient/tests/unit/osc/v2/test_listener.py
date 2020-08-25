@@ -24,7 +24,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestListener(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestListener, self).setUp()
+        super().setUp()
 
         self._listener = fakes.createFakeResource('listener')
         self.listener_info = copy.deepcopy(attr_consts.LISTENER_ATTRS)
@@ -40,7 +40,7 @@ class TestListener(fakes.TestOctaviaClient):
 class TestListenerList(TestListener):
 
     def setUp(self):
-        super(TestListenerList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.LISTENER_ATTRS[k] for k in self.columns),)
         self.cmd = listener.ListListener(self.app, None)
@@ -71,7 +71,7 @@ class TestListenerList(TestListener):
 class TestListenerDelete(TestListener):
 
     def setUp(self):
-        super(TestListenerDelete, self).setUp()
+        super().setUp()
         self.cmd = listener.DeleteListener(self.app, None)
 
     def test_listener_delete(self):
@@ -117,7 +117,7 @@ class TestListenerDelete(TestListener):
 class TestListenerCreate(TestListener):
 
     def setUp(self):
-        super(TestListenerCreate, self).setUp()
+        super().setUp()
         self.api_mock.listener_create.return_value = {
             'listener': self.listener_info}
         lb_client = self.app.client_manager
@@ -253,7 +253,7 @@ class TestListenerCreate(TestListener):
 class TestListenerShow(TestListener):
 
     def setUp(self):
-        super(TestListenerShow, self).setUp()
+        super().setUp()
         self.api_mock.listener_show.return_value = self.listener_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
@@ -275,7 +275,7 @@ class TestListenerShow(TestListener):
 class TestListenerSet(TestListener):
 
     def setUp(self):
-        super(TestListenerSet, self).setUp()
+        super().setUp()
         self.cmd = listener.SetListener(self.app, None)
 
     def test_listener_set(self):
@@ -361,7 +361,7 @@ class TestListenerSet(TestListener):
 class TestListenerStatsShow(TestListener):
 
     def setUp(self):
-        super(TestListenerStatsShow, self).setUp()
+        super().setUp()
         listener_stats_info = {'stats': {'bytes_in': '0'}}
         self.api_mock.listener_stats_show.return_value = {
             'stats': listener_stats_info['stats']}
@@ -391,7 +391,7 @@ class TestListenerUnset(TestListener):
                   'allowed_cidrs')
 
     def setUp(self):
-        super(TestListenerUnset, self).setUp()
+        super().setUp()
         self.cmd = listener.UnsetListener(self.app, None)
 
     def test_listener_unset_name(self):

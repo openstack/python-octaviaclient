@@ -37,7 +37,7 @@ class CreateL7Rule(command.ShowOne):
     """Create a l7rule"""
 
     def get_parser(self, prog_name):
-        parser = super(CreateL7Rule, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'l7policy',
             metavar='<l7policy>',
@@ -134,7 +134,7 @@ class DeleteL7Rule(command.Command):
     """Delete a l7rule"""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteL7Rule, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'l7policy',
@@ -177,7 +177,7 @@ class ListL7Rule(lister.Lister):
     """List l7rules for l7policy"""
 
     def get_parser(self, prog_name):
-        parser = super(ListL7Rule, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'l7policy',
@@ -204,7 +204,7 @@ class ShowL7Rule(command.ShowOne):
     """Show the details of a single l7rule"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowL7Rule, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'l7policy',
@@ -246,7 +246,7 @@ class SetL7Rule(command.Command):
     """Update a l7rule"""
 
     def get_parser(self, prog_name):
-        parser = super(SetL7Rule, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'l7policy',
@@ -339,7 +339,7 @@ class UnsetL7Rule(command.Command):
     """Clear l7rule settings"""
 
     def get_parser(self, prog_name):
-        parser = super(UnsetL7Rule, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'l7policy',

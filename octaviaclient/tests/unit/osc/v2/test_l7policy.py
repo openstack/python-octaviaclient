@@ -26,7 +26,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestL7Policy(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestL7Policy, self).setUp()
+        super().setUp()
 
         self._l7po = fakes.createFakeResource('l7policy')
         self.l7po_info = copy.deepcopy(attr_consts.L7POLICY_ATTRS)
@@ -43,7 +43,7 @@ class TestL7Policy(fakes.TestOctaviaClient):
 class TestL7PolicyList(TestL7Policy):
 
     def setUp(self):
-        super(TestL7PolicyList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.L7POLICY_ATTRS[k] for k in self.columns),)
         self.cmd = l7policy.ListL7Policy(self.app, None)
@@ -80,7 +80,7 @@ class TestL7PolicyList(TestL7Policy):
 class TestL7PolicyDelete(TestL7Policy):
 
     def setUp(self):
-        super(TestL7PolicyDelete, self).setUp()
+        super().setUp()
         self.cmd = l7policy.DeleteL7Policy(self.app, None)
 
     def test_l7policy_delete(self):
@@ -126,7 +126,7 @@ class TestL7PolicyDelete(TestL7Policy):
 class TestL7PolicyCreate(TestL7Policy):
 
     def setUp(self):
-        super(TestL7PolicyCreate, self).setUp()
+        super().setUp()
         self.api_mock.l7policy_create.return_value = {
             'l7policy': self.l7po_info}
         lb_client = self.app.client_manager
@@ -209,7 +209,7 @@ class TestL7PolicyCreate(TestL7Policy):
 class TestL7PolicyShow(TestL7Policy):
 
     def setUp(self):
-        super(TestL7PolicyShow, self).setUp()
+        super().setUp()
         self.api_mock.l7policy_list.return_value = [{'id': self._l7po.id}]
         self.api_mock.l7policy_show.return_value = self.l7po_info
         lb_client = self.app.client_manager
@@ -234,7 +234,7 @@ class TestL7PolicyShow(TestL7Policy):
 class TestL7PolicySet(TestL7Policy):
 
     def setUp(self):
-        super(TestL7PolicySet, self).setUp()
+        super().setUp()
         self.cmd = l7policy.SetL7Policy(self.app, None)
 
     def test_l7policy_set(self):
@@ -273,7 +273,7 @@ class TestL7PolicyUnset(TestL7Policy):
     PARAMETERS = ('name', 'description', 'redirect_http_code')
 
     def setUp(self):
-        super(TestL7PolicyUnset, self).setUp()
+        super().setUp()
         self.cmd = l7policy.UnsetL7Policy(self.app, None)
 
     def test_l7policy_unset_description(self):

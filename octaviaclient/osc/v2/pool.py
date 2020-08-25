@@ -34,7 +34,7 @@ class CreatePool(command.ShowOne):
     """Create a pool"""
 
     def get_parser(self, prog_name):
-        parser = super(CreatePool, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -182,7 +182,7 @@ class DeletePool(command.Command):
     """Delete a pool"""
 
     def get_parser(self, prog_name):
-        parser = super(DeletePool, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',
@@ -214,7 +214,7 @@ class ListPool(lister.Lister):
     """List pools"""
 
     def get_parser(self, prog_name):
-        parser = super(ListPool, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--loadbalancer',
@@ -241,7 +241,7 @@ class ShowPool(command.ShowOne):
     """Show the details of a single pool"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowPool, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',
@@ -282,7 +282,7 @@ class SetPool(command.Command):
     """Update a pool"""
 
     def get_parser(self, prog_name):
-        parser = super(SetPool, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',
@@ -404,7 +404,7 @@ class UnsetPool(command.Command):
     """Clear pool settings"""
 
     def get_parser(self, prog_name):
-        parser = super(UnsetPool, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',

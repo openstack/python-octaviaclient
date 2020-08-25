@@ -27,7 +27,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestLoadBalancer(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestLoadBalancer, self).setUp()
+        super().setUp()
 
         self._lb = fakes.createFakeResource('loadbalancer')
         self.lb_info = copy.deepcopy(attr_consts.LOADBALANCER_ATTRS)
@@ -45,7 +45,7 @@ class TestLoadBalancer(fakes.TestOctaviaClient):
 class TestLoadBalancerList(TestLoadBalancer):
 
     def setUp(self):
-        super(TestLoadBalancerList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.LOADBALANCER_ATTRS[k] for k in self.columns),)
         self.cmd = load_balancer.ListLoadBalancer(self.app, None)
@@ -200,7 +200,7 @@ class TestLoadBalancerList(TestLoadBalancer):
 class TestLoadBalancerDelete(TestLoadBalancer):
 
     def setUp(self):
-        super(TestLoadBalancerDelete, self).setUp()
+        super().setUp()
         self.cmd = load_balancer.DeleteLoadBalancer(self.app, None)
 
     def test_load_balancer_delete(self):
@@ -246,7 +246,7 @@ class TestLoadBalancerDelete(TestLoadBalancer):
 class TestLoadBalancerCreate(TestLoadBalancer):
 
     def setUp(self):
-        super(TestLoadBalancerCreate, self).setUp()
+        super().setUp()
 
         self.api_mock.load_balancer_create.return_value = {
             'loadbalancer': self.lb_info
@@ -389,7 +389,7 @@ class TestLoadBalancerCreate(TestLoadBalancer):
 class TestLoadBalancerShow(TestLoadBalancer):
 
     def setUp(self):
-        super(TestLoadBalancerShow, self).setUp()
+        super().setUp()
         self.api_mock.load_balancer_show.return_value = {
             'loadbalancer': self.lb_info}
         lb_client = self.app.client_manager
@@ -410,7 +410,7 @@ class TestLoadBalancerShow(TestLoadBalancer):
 class TestLoadBalancerSet(TestLoadBalancer):
 
     def setUp(self):
-        super(TestLoadBalancerSet, self).setUp()
+        super().setUp()
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
         self.cmd = load_balancer.SetLoadBalancer(self.app, None)
@@ -496,7 +496,7 @@ class TestLoadBalancerSet(TestLoadBalancer):
 class TestLoadBalancerStats(TestLoadBalancer):
 
     def setUp(self):
-        super(TestLoadBalancerStats, self).setUp()
+        super().setUp()
         lb_stats_info = {'stats': {'bytes_in': '0'}}
         self.api_mock.load_balancer_stats_show.return_value = {
             'stats': lb_stats_info['stats']}
@@ -518,7 +518,7 @@ class TestLoadBalancerStats(TestLoadBalancer):
 
 class TestLoadBalancerStatus(TestLoadBalancer):
     def setUp(self):
-        super(TestLoadBalancerStatus, self).setUp()
+        super().setUp()
         expected_res = {'statuses': {'operating_status': 'ONLINE',
                                      'provisioning_status': 'ACTIVE'}}
         self.api_mock.load_balancer_status_show.return_value = {
@@ -544,7 +544,7 @@ class TestLoadBalancerStatus(TestLoadBalancer):
 class TestLoadBalancerFailover(TestLoadBalancer):
 
     def setUp(self):
-        super(TestLoadBalancerFailover, self).setUp()
+        super().setUp()
         self.cmd = load_balancer.FailoverLoadBalancer(self.app, None)
 
     def test_load_balancer_failover(self):
@@ -581,7 +581,7 @@ class TestLoadBalancerUnset(TestLoadBalancer):
     PARAMETERS = ('name', 'description', 'vip_qos_policy_id')
 
     def setUp(self):
-        super(TestLoadBalancerUnset, self).setUp()
+        super().setUp()
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
         self.cmd = load_balancer.UnsetLoadBalancer(self.app, None)

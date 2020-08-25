@@ -26,7 +26,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestFlavor(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestFlavor, self).setUp()
+        super().setUp()
 
         self._flavor = fakes.createFakeResource('flavor')
         self.flavor_info = copy.deepcopy(attr_consts.FLAVOR_ATTRS)
@@ -42,7 +42,7 @@ class TestFlavor(fakes.TestOctaviaClient):
 class TestFlavorList(TestFlavor):
 
     def setUp(self):
-        super(TestFlavorList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.FLAVOR_ATTRS[k] for k in self.columns),)
         self.cmd = flavor.ListFlavor(self.app, None)
@@ -73,7 +73,7 @@ class TestFlavorList(TestFlavor):
 class TestFlavorDelete(TestFlavor):
 
     def setUp(self):
-        super(TestFlavorDelete, self).setUp()
+        super().setUp()
         self.cmd = flavor.DeleteFlavor(self.app, None)
 
     def test_flavor_delete(self):
@@ -101,7 +101,7 @@ class TestFlavorDelete(TestFlavor):
 class TestFlavorCreate(TestFlavor):
 
     def setUp(self):
-        super(TestFlavorCreate, self).setUp()
+        super().setUp()
         self.api_mock.flavor_create.return_value = {
             'flavor': self.flavor_info}
         lb_client = self.app.client_manager
@@ -130,7 +130,7 @@ class TestFlavorCreate(TestFlavor):
 class TestFlavorShow(TestFlavor):
 
     def setUp(self):
-        super(TestFlavorShow, self).setUp()
+        super().setUp()
         self.api_mock.flavor_show.return_value = self.flavor_info
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
@@ -152,7 +152,7 @@ class TestFlavorShow(TestFlavor):
 class TestFlavorSet(TestFlavor):
 
     def setUp(self):
-        super(TestFlavorSet, self).setUp()
+        super().setUp()
         self.cmd = flavor.SetFlavor(self.app, None)
 
     def test_flavor_set(self):
@@ -175,7 +175,7 @@ class TestFlavorUnset(TestFlavor):
     PARAMETERS = ('description',)
 
     def setUp(self):
-        super(TestFlavorUnset, self).setUp()
+        super().setUp()
         self.cmd = flavor.UnsetFlavor(self.app, None)
 
     def test_hm_unset_description(self):

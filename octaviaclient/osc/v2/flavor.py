@@ -31,7 +31,7 @@ class CreateFlavor(command.ShowOne):
     """Create a octavia flavor"""
 
     def get_parser(self, prog_name):
-        parser = super(CreateFlavor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -85,7 +85,7 @@ class DeleteFlavor(command.Command):
     """Delete a flavor"""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteFlavor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'flavor',
@@ -108,7 +108,7 @@ class ListFlavor(lister.Lister):
     """List flavor"""
 
     def get_parser(self, prog_name):
-        parser = super(ListFlavor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -152,7 +152,7 @@ class ShowFlavor(command.ShowOne):
     """Show the details for a single flavor"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowFlavor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'flavor',
@@ -189,7 +189,7 @@ class SetFlavor(command.Command):
     """Update a flavor"""
 
     def get_parser(self, prog_name):
-        parser = super(SetFlavor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'flavor',
@@ -231,7 +231,7 @@ class UnsetFlavor(command.Command):
     """Clear flavor settings"""
 
     def get_parser(self, prog_name):
-        parser = super(UnsetFlavor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'flavor',

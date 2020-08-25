@@ -234,7 +234,7 @@ class FakeResponse(requests.Response):
 
     def __init__(self, headers=None, status_code=200,
                  data=None, encoding=None):
-        super(FakeResponse, self).__init__()
+        super().__init__()
 
         headers = headers or {}
 

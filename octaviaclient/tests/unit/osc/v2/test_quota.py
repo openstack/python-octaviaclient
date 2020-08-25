@@ -24,7 +24,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestQuota(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestQuota, self).setUp()
+        super().setUp()
 
         self._qt = fakes.createFakeResource('quota')
         self.quota_info = copy.deepcopy(attr_consts.QUOTA_ATTRS)
@@ -41,7 +41,7 @@ class TestQuota(fakes.TestOctaviaClient):
 class TestQuotaList(TestQuota):
 
     def setUp(self):
-        super(TestQuotaList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.QUOTA_ATTRS[k] for k in self.columns),)
         self.cmd = quota.ListQuota(self.app, None)
@@ -61,7 +61,7 @@ class TestQuotaList(TestQuota):
 class TestQuotaShow(TestQuota):
 
     def setUp(self):
-        super(TestQuotaShow, self).setUp()
+        super().setUp()
         self.api_mock.quota_show.return_value = {
             'quota': self.quota_info}
         lb_client = self.app.client_manager
@@ -96,7 +96,7 @@ class TestQuotaDefaultsShow(TestQuota):
     }
 
     def setUp(self):
-        super(TestQuotaDefaultsShow, self).setUp()
+        super().setUp()
 
         self.api_mock.quota_defaults_show.return_value = {
             'quota': self.qt_defaults}
@@ -121,7 +121,7 @@ class TestQuotaDefaultsShow(TestQuota):
 class TestQuotaSet(TestQuota):
 
     def setUp(self):
-        super(TestQuotaSet, self).setUp()
+        super().setUp()
 
         self.api_mock.quota_set.return_value = {
             'quota': self.quota_info}
@@ -184,7 +184,7 @@ class TestQuotaSet(TestQuota):
 class TestQuotaReset(TestQuota):
 
     def setUp(self):
-        super(TestQuotaReset, self).setUp()
+        super().setUp()
         self.cmd = quota.ResetQuota(self.app, None)
 
     @mock.patch('octaviaclient.osc.v2.utils.get_quota_attrs')
@@ -213,7 +213,7 @@ class TestQuotaUnset(TestQuota):
                   'member', 'healthmonitor', 'l7policy', 'l7rule')
 
     def setUp(self):
-        super(TestQuotaUnset, self).setUp()
+        super().setUp()
         self.cmd = quota.UnsetQuota(self.app, None)
 
     def test_quota_unset_loadbalancer(self):

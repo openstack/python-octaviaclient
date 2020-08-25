@@ -46,7 +46,7 @@ class CreateLoadBalancer(command.ShowOne):
             raise exceptions.CommandError(msg)
 
     def get_parser(self, prog_name):
-        parser = super(CreateLoadBalancer, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -171,7 +171,7 @@ class DeleteLoadBalancer(command.Command):
     """Delete a load balancer"""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteLoadBalancer, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'loadbalancer',
@@ -213,7 +213,7 @@ class FailoverLoadBalancer(command.Command):
     """Trigger load balancer failover"""
 
     def get_parser(self, prog_name):
-        parser = super(FailoverLoadBalancer, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'loadbalancer',
@@ -247,7 +247,7 @@ class ListLoadBalancer(lister.Lister):
     """List load balancers"""
 
     def get_parser(self, prog_name):
-        parser = super(ListLoadBalancer, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -347,7 +347,7 @@ class ShowLoadBalancer(command.ShowOne):
     """Show the details for a single load balancer"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowLoadBalancer, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'loadbalancer',
@@ -391,7 +391,7 @@ class SetLoadBalancer(command.Command):
     """Update a load balancer"""
 
     def get_parser(self, prog_name):
-        parser = super(SetLoadBalancer, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'loadbalancer',
@@ -456,7 +456,7 @@ class UnsetLoadBalancer(command.Command):
     """Clear load balancer settings"""
 
     def get_parser(self, prog_name):
-        parser = super(UnsetLoadBalancer, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'loadbalancer',
@@ -512,7 +512,7 @@ class ShowLoadBalancerStats(command.ShowOne):
     """Shows the current statistics for a load balancer"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowLoadBalancerStats, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'loadbalancer',
@@ -540,7 +540,7 @@ class ShowLoadBalancerStatus(command.Command):
     """Display load balancer status tree in json format"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowLoadBalancerStatus, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'loadbalancer',

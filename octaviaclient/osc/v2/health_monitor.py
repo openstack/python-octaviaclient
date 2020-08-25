@@ -37,7 +37,7 @@ class CreateHealthMonitor(command.ShowOne):
     """Create a health monitor"""
 
     def get_parser(self, prog_name):
-        parser = super(CreateHealthMonitor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',
@@ -176,7 +176,7 @@ class DeleteHealthMonitor(command.Command):
     """Delete a health monitor"""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteHealthMonitor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'health_monitor',
@@ -212,7 +212,7 @@ class ListHealthMonitor(lister.Lister):
     """List health monitors"""
 
     def get_parser(self, prog_name):
-        parser = super(ListHealthMonitor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         return parser
 
@@ -233,7 +233,7 @@ class ShowHealthMonitor(command.ShowOne):
     """Show the details of a single health monitor"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowHealthMonitor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'health_monitor',
@@ -272,7 +272,7 @@ class SetHealthMonitor(command.Command):
     """Update a health monitor"""
 
     def get_parser(self, prog_name):
-        parser = super(SetHealthMonitor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'health_monitor',
@@ -389,7 +389,7 @@ class UnsetHealthMonitor(command.Command):
     """Clear health monitor settings"""
 
     def get_parser(self, prog_name):
-        parser = super(UnsetHealthMonitor, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'health_monitor',

@@ -33,7 +33,7 @@ class CreateListener(command.ShowOne):
     """Create a listener"""
 
     def get_parser(self, prog_name):
-        parser = super(CreateListener, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'loadbalancer',
@@ -232,7 +232,7 @@ class DeleteListener(command.Command):
     """Delete a listener"""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteListener, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'listener',
@@ -267,7 +267,7 @@ class ListListener(lister.Lister):
     """List listeners"""
 
     def get_parser(self, prog_name):
-        parser = super(ListListener, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -316,7 +316,7 @@ class ShowListener(command.ShowOne):
     """Show the details of a single listener"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowListener, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'listener',
@@ -358,7 +358,7 @@ class SetListener(command.Command):
     """Update a listener"""
 
     def get_parser(self, prog_name):
-        parser = super(SetListener, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'listener',
@@ -525,7 +525,7 @@ class UnsetListener(command.Command):
     """Clear listener settings"""
 
     def get_parser(self, prog_name):
-        parser = super(UnsetListener, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'listener',
@@ -642,7 +642,7 @@ class ShowListenerStats(command.ShowOne):
     """Shows the current statistics for a listener."""
 
     def get_parser(self, prog_name):
-        parser = super(ShowListenerStats, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'listener',

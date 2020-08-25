@@ -32,7 +32,7 @@ class ListMember(lister.Lister):
     """List members in a pool"""
 
     def get_parser(self, prog_name):
-        parser = super(ListMember, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',
@@ -62,7 +62,7 @@ class ShowMember(command.ShowOne):
     """Shows details of a single Member"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowMember, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',
@@ -105,7 +105,7 @@ class CreateMember(command.ShowOne):
     """Creating a member in a pool"""
 
     def get_parser(self, prog_name):
-        parser = super(CreateMember, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',
@@ -227,7 +227,7 @@ class SetMember(command.Command):
     """Update a member"""
 
     def get_parser(self, prog_name):
-        parser = super(SetMember, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',
@@ -326,7 +326,7 @@ class DeleteMember(command.Command):
     """Delete a member from a pool """
 
     def get_parser(self, prog_name):
-        parser = super(DeleteMember, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',
@@ -372,7 +372,7 @@ class UnsetMember(command.Command):
     """Clear member settings"""
 
     def get_parser(self, prog_name):
-        parser = super(UnsetMember, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'pool',

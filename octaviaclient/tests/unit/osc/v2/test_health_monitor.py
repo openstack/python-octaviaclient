@@ -26,7 +26,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestHealthMonitor(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestHealthMonitor, self).setUp()
+        super().setUp()
 
         self._hm = fakes.createFakeResource('hm')
         self.hm_info = copy.deepcopy(attr_consts.HM_ATTRS)
@@ -45,7 +45,7 @@ class TestHealthMonitor(fakes.TestOctaviaClient):
 class TestHealthMonitorList(TestHealthMonitor):
 
     def setUp(self):
-        super(TestHealthMonitorList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(attr_consts.HM_ATTRS[k] for k in self.columns),)
         self.cmd = health_monitor.ListHealthMonitor(self.app, None)
 
@@ -64,7 +64,7 @@ class TestHealthMonitorList(TestHealthMonitor):
 class TestHealthMonitorDelete(TestHealthMonitor):
 
     def setUp(self):
-        super(TestHealthMonitorDelete, self).setUp()
+        super().setUp()
         self.cmd = health_monitor.DeleteHealthMonitor(self.app, None)
 
     def test_health_monitor_delete(self):
@@ -110,7 +110,7 @@ class TestHealthMonitorDelete(TestHealthMonitor):
 class TestHealthMonitorCreate(TestHealthMonitor):
 
     def setUp(self):
-        super(TestHealthMonitorCreate, self).setUp()
+        super().setUp()
         self.api_mock = mock.Mock()
         self.api_mock.health_monitor_create.return_value = {
             'healthmonitor': self.hm_info}
@@ -193,7 +193,7 @@ class TestHealthMonitorCreate(TestHealthMonitor):
 class TestHealthMonitorShow(TestHealthMonitor):
 
     def setUp(self):
-        super(TestHealthMonitorShow, self).setUp()
+        super().setUp()
         self.api_mock.health_monitor_show.return_value = {
             'healthmonitor': self.hm_info,
         }
@@ -217,7 +217,7 @@ class TestHealthMonitorShow(TestHealthMonitor):
 class TestHealthMonitorSet(TestHealthMonitor):
 
     def setUp(self):
-        super(TestHealthMonitorSet, self).setUp()
+        super().setUp()
         self.cmd = health_monitor.SetHealthMonitor(self.app, None)
 
     def test_health_monitor_set(self):
@@ -263,7 +263,7 @@ class TestHealthMonitorUnset(TestHealthMonitor):
                   'http_version', 'max_retries_down', 'url_path')
 
     def setUp(self):
-        super(TestHealthMonitorUnset, self).setUp()
+        super().setUp()
         self.cmd = health_monitor.UnsetHealthMonitor(self.app, None)
 
     def test_hm_unset_domain_name(self):

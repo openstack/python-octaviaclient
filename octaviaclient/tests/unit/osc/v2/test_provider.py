@@ -24,7 +24,7 @@ from octaviaclient.tests.unit.osc.v2 import fakes
 class TestProvider(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestProvider, self).setUp()
+        super().setUp()
 
         self.columns = copy.deepcopy(constants.PROVIDER_COLUMNS)
 
@@ -38,7 +38,7 @@ class TestProvider(fakes.TestOctaviaClient):
 class TestProviderList(TestProvider):
 
     def setUp(self):
-        super(TestProviderList, self).setUp()
+        super().setUp()
         self.datalist = (tuple(
             attr_consts.PROVIDER_ATTRS[k] for k in self.columns),)
         self.cmd = provider.ListProvider(self.app, None)
@@ -58,7 +58,7 @@ class TestProviderList(TestProvider):
 class TestProviderCapability(fakes.TestOctaviaClient):
 
     def setUp(self):
-        super(TestProviderCapability, self).setUp()
+        super().setUp()
 
         self.api_mock = mock.Mock()
         self.api_mock.provider_flavor_capability_list.return_value = (
@@ -76,7 +76,7 @@ class TestProviderCapability(fakes.TestOctaviaClient):
 class TestProviderCapabilityShow(TestProviderCapability):
 
     def setUp(self):
-        super(TestProviderCapabilityShow, self).setUp()
+        super().setUp()
         lb_client = self.app.client_manager
         lb_client.load_balancer = self.api_mock
 

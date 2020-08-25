@@ -26,7 +26,7 @@ class ListAmphora(lister.Lister):
     """List amphorae"""
 
     def get_parser(self, prog_name):
-        parser = super(ListAmphora, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--loadbalancer',
@@ -97,7 +97,7 @@ class ShowAmphora(command.ShowOne):
     """Show the details of a single amphora"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowAmphora, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'amphora_id',
@@ -127,7 +127,7 @@ class ConfigureAmphora(command.Command):
     """Update the amphora agent configuration"""
 
     def get_parser(self, prog_name):
-        parser = super(ConfigureAmphora, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'amphora_id',
@@ -166,7 +166,7 @@ class FailoverAmphora(command.Command):
     """Force failover an amphora"""
 
     def get_parser(self, prog_name):
-        parser = super(FailoverAmphora, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'amphora_id',
@@ -209,7 +209,7 @@ class ShowAmphoraStats(command.ShowOne):
     """Shows the current statistics for an amphora."""
 
     def get_parser(self, prog_name):
-        parser = super(ShowAmphoraStats, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--listener',

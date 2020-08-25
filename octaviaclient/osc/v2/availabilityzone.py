@@ -29,7 +29,7 @@ class CreateAvailabilityzone(command.ShowOne):
     """Create an octavia availability zone"""
 
     def get_parser(self, prog_name):
-        parser = super(CreateAvailabilityzone, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -83,7 +83,7 @@ class DeleteAvailabilityzone(command.Command):
     """Delete an availability zone"""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteAvailabilityzone, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'availabilityzone',
@@ -106,7 +106,7 @@ class ListAvailabilityzone(lister.Lister):
     """List availability zones"""
 
     def get_parser(self, prog_name):
-        parser = super(ListAvailabilityzone, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             '--name',
@@ -150,7 +150,7 @@ class ShowAvailabilityzone(command.ShowOne):
     """Show the details for a single availability zone"""
 
     def get_parser(self, prog_name):
-        parser = super(ShowAvailabilityzone, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'availabilityzone',
@@ -179,7 +179,7 @@ class SetAvailabilityzone(command.Command):
     """Update an availability zone"""
 
     def get_parser(self, prog_name):
-        parser = super(SetAvailabilityzone, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'availabilityzone',
@@ -221,7 +221,7 @@ class UnsetAvailabilityzone(command.Command):
     """Clear availability zone settings"""
 
     def get_parser(self, prog_name):
-        parser = super(UnsetAvailabilityzone, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
 
         parser.add_argument(
             'availabilityzone',

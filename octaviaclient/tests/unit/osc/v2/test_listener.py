@@ -388,7 +388,7 @@ class TestListenerUnset(TestListener):
                   'timeout_member_connect', 'timeout_member_data',
                   'timeout_tcp_inspect', 'client_ca_tls_container_ref',
                   'client_authentication', 'client_crl_container_ref',
-                  'allowed_cidrs')
+                  'allowed_cidrs', 'tls_versions', 'tls_ciphers')
 
     def setUp(self):
         super().setUp()
@@ -441,6 +441,12 @@ class TestListenerUnset(TestListener):
 
     def test_listener_unset_allowed_cidrs(self):
         self._test_listener_unset_param('allowed_cidrs')
+
+    def test_listener_unset_tls_versions(self):
+        self._test_listener_unset_param('tls_versions')
+
+    def test_listener_unset_tls_ciphers(self):
+        self._test_listener_unset_param('tls_ciphers')
 
     def _test_listener_unset_param(self, param):
         self.api_mock.listener_set.reset_mock()

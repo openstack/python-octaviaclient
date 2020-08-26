@@ -611,9 +611,19 @@ class UnsetListener(command.Command):
             help="Clear all allowed CIDRs from the listener."
         )
         parser.add_argument(
+            '--tls-versions',
+            action='store_true',
+            help='Clear all TLS versions from the listener.',
+        )
+        parser.add_argument(
+            '--tls-ciphers',
+            action='store_true',
+            help='Clear all TLS ciphers from the listener.',
+        )
+        parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
         return parser
 

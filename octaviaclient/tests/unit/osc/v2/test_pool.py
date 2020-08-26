@@ -257,7 +257,7 @@ class TestPoolSet(TestPool):
 class TestPoolUnset(TestPool):
     PARAMETERS = ('name', 'description', 'ca_tls_container_ref',
                   'crl_container_ref', 'session_persistence',
-                  'tls_container_ref')
+                  'tls_container_ref', 'tls_versions', 'tls_ciphers')
 
     def setUp(self):
         super().setUp()
@@ -283,6 +283,12 @@ class TestPoolUnset(TestPool):
 
     def test_pool_unset_tls_container_ref(self):
         self._test_pool_unset_param('tls_container_ref')
+
+    def test_pool_unset_tls_versions(self):
+        self._test_pool_unset_param('tls_versions')
+
+    def test_pool_unset_tls_ciphers(self):
+        self._test_pool_unset_param('tls_ciphers')
 
     def _test_pool_unset_param(self, param):
         self.api_mock.pool_set.reset_mock()

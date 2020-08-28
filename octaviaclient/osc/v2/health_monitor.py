@@ -30,7 +30,7 @@ HTTP_METHODS = ['GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'OPTIONS', 'PATCH',
                 'CONNECT', 'TRACE']
 HTTP_VERSIONS = [1.0, 1.1]
 TYPE_CHOICES = ['PING', 'HTTP', 'TCP', 'HTTPS', 'TLS-HELLO',
-                'UDP-CONNECT']
+                'UDP-CONNECT', 'SCTP']
 
 
 class CreateHealthMonitor(command.ShowOne):

@@ -75,19 +75,19 @@ class TestValidations(utils.TestCommand):
                 exceptions.CommandError,
                 validate.check_l7rule_attrs, attrs_dict)
 
-    def test_validate_TCPUDP_port_range(self):
+    def test_validate_TCP_UDP_SCTP_port_range(self):
         # Positive tests, should not raise
-        validate._validate_TCPUDP_port_range(constants.MIN_PORT_NUMBER,
-                                             "fake-parameter")
-        validate._validate_TCPUDP_port_range(constants.MAX_PORT_NUMBER,
-                                             "fake-parameter")
+        validate._validate_TCP_UDP_SCTP_port_range(constants.MIN_PORT_NUMBER,
+                                                   "fake-parameter")
+        validate._validate_TCP_UDP_SCTP_port_range(constants.MAX_PORT_NUMBER,
+                                                   "fake-parameter")
 
         # Negative tests, should raise
         self.assertRaises(exceptions.InvalidValue,
-                          validate._validate_TCPUDP_port_range,
+                          validate._validate_TCP_UDP_SCTP_port_range,
                           constants.MIN_PORT_NUMBER - 1, "fake-parameter")
         self.assertRaises(exceptions.InvalidValue,
-                          validate._validate_TCPUDP_port_range,
+                          validate._validate_TCP_UDP_SCTP_port_range,
                           constants.MAX_PORT_NUMBER + 1, "fake-parameter")
 
     def test_check_listener_attrs(self):

@@ -25,7 +25,7 @@ from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
 from octaviaclient.osc.v2 import validate
 
-PROTOCOL_CHOICES = ['TCP', 'HTTP', 'HTTPS', 'TERMINATED_HTTPS', 'UDP']
+PROTOCOL_CHOICES = ['TCP', 'HTTP', 'HTTPS', 'TERMINATED_HTTPS', 'UDP', 'SCTP']
 CLIENT_AUTH_CHOICES = ['NONE', 'OPTIONAL', 'MANDATORY']
 
 

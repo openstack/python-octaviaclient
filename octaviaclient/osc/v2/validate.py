@@ -45,7 +45,7 @@ def check_l7rule_attrs(attrs):
 
 # Handling these range validations here instead of "choices" as "choices" will
 # output every possible option in the error message.
-def _validate_TCPUDP_port_range(port_number, parameter_name):
+def _validate_TCP_UDP_SCTP_port_range(port_number, parameter_name):
     if (port_number < constants.MIN_PORT_NUMBER or
             port_number > constants.MAX_PORT_NUMBER):
         msg = ("Invalid input for field/attribute '{name}', Value: "
@@ -58,15 +58,17 @@ def _validate_TCPUDP_port_range(port_number, parameter_name):
 
 def check_listener_attrs(attrs):
     if 'protocol_port' in attrs:
-        _validate_TCPUDP_port_range(attrs['protocol_port'], 'protocol-port')
+        _validate_TCP_UDP_SCTP_port_range(attrs['protocol_port'],
+                                          'protocol-port')
 
 
 def check_member_attrs(attrs):
     if 'protocol_port' in attrs:
-        _validate_TCPUDP_port_range(attrs['protocol_port'], 'protocol-port')
+        _validate_TCP_UDP_SCTP_port_range(attrs['protocol_port'],
+                                          'protocol-port')
 
     if 'member_port' in attrs:
-        _validate_TCPUDP_port_range(attrs['member_port'], 'member-port')
+        _validate_TCP_UDP_SCTP_port_range(attrs['member_port'], 'member-port')
 
     if 'weight' in attrs:
         if(attrs['weight'] < constants.MIN_WEIGHT or

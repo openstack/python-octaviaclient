@@ -1,0 +1,4 @@
+---
+features:
+  - |
+    Add support for SCTP protocol in listener, pool and health-monitor objects.

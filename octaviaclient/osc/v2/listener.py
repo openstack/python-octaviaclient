@@ -190,6 +190,15 @@ class CreateListener(command.ShowOne):
             help="Set the TLS protocol version to be used "
                  "by the listener (can be set multiple times)."
         )
+        parser.add_argument(
+            '--alpn-protocol',
+            dest='alpn_protocols',
+            metavar='<alpn_protocols>',
+            nargs='?',
+            action='append',
+            help="Set the ALPN protocol to be used "
+                 "by the listener (can be set multiple times)."
+        )
 
         return parser
 
@@ -500,6 +509,15 @@ class SetListener(command.Command):
             help="Set the TLS protocol version to be used "
                  "by the listener (can be set multiple times)."
         )
+        parser.add_argument(
+            '--alpn-protocol',
+            dest='alpn_protocols',
+            metavar='<alpn_protocols>',
+            nargs='?',
+            action='append',
+            help="Set the ALPN protocol to be used "
+                 "by the listener (can be set multiple times)."
+        )
 
         return parser
 
@@ -624,6 +642,11 @@ class UnsetListener(command.Command):
             '--wait',
             action='store_true',
             help='Wait for action to complete.',
+        )
+        parser.add_argument(
+            '--alpn-protocols',
+            action='store_true',
+            help="Clear all ALPN protocols from the listener."
         )
         return parser
 

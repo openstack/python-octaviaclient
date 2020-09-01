@@ -80,7 +80,8 @@ LISTENER_ATTRS = {
     'client_crl_container_ref': uuidutils.generate_uuid(dashed=True),
     "allowed_cidrs": ['192.0.2.0/24', '198.51.100.0/24'],
     'tls_ciphers': "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256",
-    'tls_versions': ['TLSv1.1', 'TLSv1.2']
+    'tls_versions': ['TLSv1.1', 'TLSv1.2'],
+    'alpn_protocols': ['h2', 'http/1.1']
 }
 
 LOADBALANCER_ATTRS = {

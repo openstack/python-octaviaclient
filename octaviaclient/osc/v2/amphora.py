@@ -251,3 +251,34 @@ class ShowAmphoraStats(command.ShowOne):
 
         return (rows, (utils.get_dict_properties(
             total_stats, rows, formatters={})))
+
+
+class DeleteAmphora(command.Command):
+    """Delete a amphora"""
+
+    def get_parser(self, prog_name):
+        parser = super().get_parser(prog_name)
+
+        parser.add_argument(
+            'amphora_id',
+            metavar='<amphora-id>',
+            help='UUID of the amphora to delete.',
+        )
+        parser.add_argument(
+            '--wait',
+            action='store_true',
+            help='Wait for action to complete',
+        )
+
+        return parser
+
+    def take_action(self, parsed_args):
+
+        self.app.client_manager.load_balancer.amphora_delete(
+            amphora_id=parsed_args.amphora_id)
+
+        if parsed_args.wait:
+            v2_utils.wait_for_delete(
+                status_f=self.app.client_manager.load_balancer.amphora_show,
+                res_id=parsed_args.amphora_id, status_field=const.STATUS
+            )

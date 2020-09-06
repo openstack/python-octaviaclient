@@ -365,6 +365,7 @@ AVAILABILITYZONEPROFILE_COLUMNS = (
 )
 
 PROVISIONING_STATUS = 'provisioning_status'
+STATUS = 'status'
 
 # TCP/UDP port min/max
 MIN_PORT_NUMBER = 1

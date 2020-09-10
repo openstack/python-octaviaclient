@@ -1,9 +1,9 @@
 asn1crypto==0.23.0
 bandit==1.4.0
-cffi==1.7.0
+cffi==1.14.0
 cliff==2.8.0
 coverage==4.0
-cryptography==2.1
+cryptography==3.0
 decorator==3.4.0
 deprecation==1.0
 doc8==0.6.0
@@ -23,7 +23,7 @@ munch==2.1.0
 netifaces==0.10.4
 openstacksdk==0.11.2
 os-service-types==1.2.0
-osc-lib==1.8.0
+osc-lib==1.14.1
 oslo.config==5.2.0
 oslo.serialization==2.18.0
 oslo.utils==3.33.0
@@ -33,7 +33,7 @@ positional==1.2.1
 pycparser==2.18
 Pygments==2.2.0
 pylint==1.9.2
-pyOpenSSL==17.1.0
+pyOpenSSL==19.1.0
 pyperclip==1.5.27
 python-cinderclient==3.3.0
 python-glanceclient==2.8.0

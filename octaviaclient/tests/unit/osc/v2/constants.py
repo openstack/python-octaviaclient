@@ -163,6 +163,7 @@ POOL_ATTRS = {
     "tls_ciphers": "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256",
     "tls_versions": ['TLSv1.1', 'TLSv1.2'],
     "tags": ["foo", "bar"],
+    "alpn_protocols": ['h2', 'http/1.1']
 }
 
 QUOTA_ATTRS = {

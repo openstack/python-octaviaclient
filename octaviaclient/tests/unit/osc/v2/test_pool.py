@@ -185,7 +185,9 @@ class TestPoolCreate(TestPool):
                    '--crl-container-ref', self._po.crl_container_ref,
                    '--tls-ciphers', self._po.tls_ciphers,
                    '--tls-version', self._po.tls_versions[0],
-                   '--tls-version', self._po.tls_versions[1]]
+                   '--tls-version', self._po.tls_versions[1],
+                   '--alpn-protocol', self._po.alpn_protocols[0],
+                   '--alpn-protocol', self._po.alpn_protocols[1]]
 
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
@@ -197,7 +199,8 @@ class TestPoolCreate(TestPool):
             ('ca_tls_container_ref', self._po.ca_tls_container_ref),
             ('crl_container_ref', self._po.crl_container_ref),
             ('tls_ciphers', self._po.tls_ciphers),
-            ('tls_versions', self._po.tls_versions)
+            ('tls_versions', self._po.tls_versions),
+            ('alpn_protocols', self._po.alpn_protocols),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -294,12 +297,15 @@ class TestPoolSet(TestPool):
                    '--crl-container-ref', new_crl_id, '--enable-tls',
                    '--tls-ciphers', self._po.tls_ciphers,
                    '--tls-version', self._po.tls_versions[0],
-                   '--tls-version', self._po.tls_versions[1]]
+                   '--tls-version', self._po.tls_versions[1],
+                   '--alpn-protocol', self._po.alpn_protocols[0],
+                   '--alpn-protocol', self._po.alpn_protocols[1]]
         verifylist = [
             ('pool', self._po.id),
             ('name', 'new_name'),
             ('tls_ciphers', self._po.tls_ciphers),
-            ('tls_versions', self._po.tls_versions)
+            ('tls_versions', self._po.tls_versions),
+            ('alpn_protocols', self._po.alpn_protocols)
         ]
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
@@ -310,7 +316,9 @@ class TestPoolSet(TestPool):
                                         'crl_container_ref': new_crl_id,
                                         'tls_enabled': True,
                                         'tls_ciphers': self._po.tls_ciphers,
-                                        'tls_versions': self._po.tls_versions
+                                        'tls_versions': self._po.tls_versions,
+                                        'alpn_protocols':
+                                            self._po.alpn_protocols,
                                         }})
 
     @mock.patch('osc_lib.utils.wait_for_status')

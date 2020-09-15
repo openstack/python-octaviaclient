@@ -115,7 +115,8 @@ POOL_ROWS = (
     'tls_enabled',
     'tls_ciphers',
     'tls_versions',
-    'tags')
+    'tags',
+    'alpn_protocols')
 
 POOL_COLUMNS = (
     'id',

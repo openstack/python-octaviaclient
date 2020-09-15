@@ -287,6 +287,7 @@ def get_pool_attrs(client_manager, parsed_args):
         'disable_tls': ('tls_enabled', lambda x: False),
         'tls_ciphers': ('tls_ciphers', str),
         'tls_versions': ('tls_versions', list),
+        'alpn_protocols': ('alpn_protocols', list),
     }
     add_tags_attr_map(attr_map)
 

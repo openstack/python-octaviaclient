@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    Added ALPN support for pools with parameter ``--alpn-protocol`` (can
+    be set multiple times). Users can define a list of application layer
+    protocols to be negotiated over a secure connection. For example, users
+    can limit to HTTP/2 or to HTTP/2 and HTTP/1.1 but exclude HTTP/1.0.

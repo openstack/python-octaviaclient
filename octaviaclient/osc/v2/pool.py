@@ -146,6 +146,15 @@ class CreatePool(command.ShowOne):
             help="Set the TLS protocol version to be used "
                  "by the pool (can be set multiple times)."
         )
+        parser.add_argument(
+            '--alpn-protocol',
+            dest='alpn_protocols',
+            metavar='<alpn_protocols>',
+            nargs='?',
+            action='append',
+            help="Set the ALPN protocol to be used "
+                 "by the pool (can be set multiple times)."
+        )
 
         _tag.add_tag_option_to_parser_for_create(
             parser, 'pool')
@@ -387,7 +396,15 @@ class SetPool(command.Command):
             action='append',
             help="Set the TLS protocol version to be used "
                  "by the pool (can be set multiple times)."
-
+        )
+        parser.add_argument(
+            '--alpn-protocol',
+            dest='alpn_protocols',
+            metavar='<alpn_protocols>',
+            nargs='?',
+            action='append',
+            help="Set the ALPN protocol to be used "
+                 "by the pool (can be set multiple times)."
         )
 
         _tag.add_tag_option_to_parser_for_set(parser, 'pool')
@@ -471,6 +488,11 @@ class UnsetPool(command.Command):
             '--wait',
             action='store_true',
             help='Wait for action to complete',
+        )
+        parser.add_argument(
+            '--alpn-protocols',
+            action='store_true',
+            help="Clear all ALPN protocols from the pool."
         )
 
         _tag.add_tag_option_to_parser_for_unset(parser, 'pool')

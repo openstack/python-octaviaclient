@@ -22,6 +22,7 @@ from cliff import lister
 from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils
+from osc_lib.utils import tags as _tag
 from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import constants as const
@@ -95,6 +96,9 @@ class CreateL7Rule(command.ShowOne):
             help='Wait for action to complete',
         )
 
+        _tag.add_tag_option_to_parser_for_create(
+            parser, 'l7rule')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -126,8 +130,10 @@ class CreateL7Rule(command.ShowOne):
                         l7policy_id, data['rule']['id']))
             }
 
+        formatters = {'tags': v2_utils.format_list_flat}
+
         return (rows, (utils.get_dict_properties(
-            data['rule'], rows, formatters={})))
+            data['rule'], rows, formatters=formatters)))
 
 
 class DeleteL7Rule(command.Command):
@@ -165,11 +171,11 @@ class DeleteL7Rule(command.Command):
         if parsed_args.wait:
             l7rule_show = functools.partial(
                 self.app.client_manager.load_balancer.l7rule_show,
-                attrs['l7policy_id']
+                attrs['l7rule_id']
             )
             v2_utils.wait_for_delete(
                 status_f=l7rule_show,
-                res_id=attrs['l7rule_id']
+                res_id=attrs['l7policy_id']
             )
 
 
@@ -185,6 +191,8 @@ class ListL7Rule(lister.Lister):
             help='l7policy to list rules for (name or ID).'
         )
 
+        _tag.add_tag_filtering_option_to_parser(parser, 'l7rule')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -192,7 +200,7 @@ class ListL7Rule(lister.Lister):
         attrs = v2_utils.get_l7rule_attrs(self.app.client_manager, parsed_args)
 
         data = self.app.client_manager.load_balancer.l7rule_list(
-            l7policy_id=attrs['l7policy_id']
+            **attrs
         )
 
         return (columns,
@@ -237,9 +245,10 @@ class ShowL7Rule(command.ShowOne):
                 l7rule_id=attrs['l7rule_id'],
                 l7policy_id=attrs['l7policy_id']
             )
+        formatters = {'tags': v2_utils.format_list_flat}
 
         return (rows, (utils.get_dict_properties(
-            data, rows, formatters={})))
+            data, rows, formatters=formatters)))
 
 
 class SetL7Rule(command.Command):
@@ -307,6 +316,8 @@ class SetL7Rule(command.Command):
             help='Wait for action to complete',
         )
 
+        _tag.add_tag_option_to_parser_for_set(parser, 'l7rule')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -315,6 +326,15 @@ class SetL7Rule(command.Command):
 
         l7policy_id = attrs.pop('l7policy_id')
         l7rule_id = attrs.pop('l7rule_id')
+
+        # l7rule_id is the first argument in l7rule_show
+        l7rule_show = functools.partial(
+            self.app.client_manager.load_balancer.l7rule_show,
+            l7rule_id
+        )
+
+        v2_utils.set_tags_for_set(
+            l7rule_show, l7policy_id, attrs, clear_tags=parsed_args.no_tag)
 
         body = {'rule': attrs}
 
@@ -325,13 +345,9 @@ class SetL7Rule(command.Command):
         )
 
         if parsed_args.wait:
-            l7rule_show = functools.partial(
-                self.app.client_manager.load_balancer.l7rule_show,
-                l7policy_id
-            )
             v2_utils.wait_for_active(
                 status_f=l7rule_show,
-                res_id=l7rule_id
+                res_id=l7policy_id
             )
 
 
@@ -366,16 +382,27 @@ class UnsetL7Rule(command.Command):
             action='store_true',
             help='Wait for action to complete',
         )
+        _tag.add_tag_option_to_parser_for_unset(parser, 'l7rule')
+
         return parser
 
     def take_action(self, parsed_args):
         unset_args = v2_utils.get_unsets(parsed_args)
-        if not unset_args:
+        if not unset_args and not parsed_args.all_tag:
             return
 
         policy_id = v2_utils.get_resource_id(
             self.app.client_manager.load_balancer.l7policy_list,
             'l7policies', parsed_args.l7policy)
+
+        l7rule_show = functools.partial(
+            self.app.client_manager.load_balancer.l7rule_show,
+            parsed_args.l7rule_id
+        )
+
+        v2_utils.set_tags_for_unset(
+            l7rule_show, policy_id, unset_args,
+            clear_tags=parsed_args.all_tag)
 
         body = {'rule': unset_args}
 
@@ -383,11 +410,7 @@ class UnsetL7Rule(command.Command):
             l7policy_id=policy_id, l7rule_id=parsed_args.l7rule_id, json=body)
 
         if parsed_args.wait:
-            l7rule_show = functools.partial(
-                self.app.client_manager.load_balancer.l7rule_show,
-                policy_id
-            )
             v2_utils.wait_for_active(
                 status_f=l7rule_show,
-                res_id=parsed_args.l7rule_id
+                res_id=policy_id,
             )

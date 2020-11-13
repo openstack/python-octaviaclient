@@ -60,6 +60,62 @@ class TestHealthMonitorList(TestHealthMonitor):
         self.assertEqual(self.columns, columns)
         self.assertEqual(self.datalist, tuple(data))
 
+    def test_health_monitor_list_with_tags(self):
+        arglist = ['--tags', 'foo,bar']
+        verifylist = [('tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'tags': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.health_monitor_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_health_monitor_list_with_any_tags(self):
+        arglist = ['--any-tags', 'foo,bar']
+        verifylist = [('any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'tags-any': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.health_monitor_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_health_monitor_list_with_not_tags(self):
+        arglist = ['--not-tags', 'foo,bar']
+        verifylist = [('not_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'not-tags': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.health_monitor_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_health_monitor_list_with_not_any_tags(self):
+        arglist = ['--not-any-tags', 'foo,bar']
+        verifylist = [('not_any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'not-tags-any': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.health_monitor_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
 
 class TestHealthMonitorDelete(TestHealthMonitor):
 
@@ -189,6 +245,32 @@ class TestHealthMonitorCreate(TestHealthMonitor):
             sleep_time=mock.ANY,
             status_field='provisioning_status')
 
+    @mock.patch('octaviaclient.osc.v2.utils.get_health_monitor_attrs')
+    def test_health_monitor_create_with_tag(self, mock_attrs):
+        mock_attrs.return_value = self.hm_info
+        arglist = ['mock_pool_id',
+                   '--name', self._hm.name,
+                   '--delay', str(self._hm.delay),
+                   '--timeout', str(self._hm.timeout),
+                   '--max-retries', str(self._hm.max_retries),
+                   '--type', self._hm.type.lower(),
+                   '--tag', 'foo']
+
+        verifylist = [
+            ('pool', 'mock_pool_id'),
+            ('name', self._hm.name),
+            ('delay', str(self._hm.delay)),
+            ('timeout', str(self._hm.timeout)),
+            ('max_retries', self._hm.max_retries),
+            ('type', self._hm.type),
+            ('tags', ['foo'])
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.health_monitor_create.assert_called_with(
+            json={'healthmonitor': self.hm_info})
+
 
 class TestHealthMonitorShow(TestHealthMonitor):
 
@@ -256,6 +338,43 @@ class TestHealthMonitorSet(TestHealthMonitor):
             res_id=self._hm.id,
             sleep_time=mock.ANY,
             status_field='provisioning_status')
+
+    def test_health_monitor_set_tag(self):
+        self.api_mock.health_monitor_show.return_value = {
+            'tags': ['foo']
+        }
+        arglist = [self._hm.id, '--tag', 'bar']
+        verifylist = [
+            ('health_monitor', self._hm.id),
+            ('tags', ['bar']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.health_monitor_set.assert_called_once()
+        kwargs = self.api_mock.health_monitor_set.mock_calls[0][2]
+        tags = kwargs['json']['healthmonitor']['tags']
+        self.assertEqual(2, len(tags))
+        self.assertIn('foo', tags)
+        self.assertIn('bar', tags)
+
+    def test_health_monitor_set_tag_no_tag(self):
+        self.api_mock.health_monitor_show.return_value = {
+            'tags': ['foo']
+        }
+        arglist = [self._hm.id, '--tag', 'bar', '--no-tag']
+        verifylist = [
+            ('health_monitor', self._hm.id),
+            ('tags', ['bar']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.health_monitor_set.assert_called_once_with(
+            self._hm.id,
+            json={"healthmonitor": {"tags": ['bar']}})
 
 
 class TestHealthMonitorUnset(TestHealthMonitor):
@@ -350,3 +469,41 @@ class TestHealthMonitorUnset(TestHealthMonitor):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.health_monitor_set.assert_not_called()
+
+    def test_health_monitor_unset_tag(self):
+        self.api_mock.health_monitor_set.reset_mock()
+        self.api_mock.health_monitor_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+
+        arglist = [self._hm.id, '--tag', 'foo']
+        verifylist = [
+            ('health_monitor', self._hm.id),
+            ('tags', ['foo']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.health_monitor_set.assert_called_once_with(
+            self._hm.id,
+            json={"healthmonitor": {"tags": ['bar']}})
+
+    def test_health_monitor_unset_all_tag(self):
+        self.api_mock.health_monitor_set.reset_mock()
+        self.api_mock.health_monitor_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+
+        arglist = [self._hm.id, '--all-tag']
+        verifylist = [
+            ('health_monitor', self._hm.id),
+            ('all_tag', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.health_monitor_set.assert_called_once_with(
+            self._hm.id,
+            json={"healthmonitor": {"tags": []}})

@@ -19,6 +19,7 @@ from cliff import lister
 from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils
+from osc_lib.utils import tags as _tag
 from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import constants as const
@@ -200,6 +201,9 @@ class CreateListener(command.ShowOne):
                  "by the listener (can be set multiple times)."
         )
 
+        _tag.add_tag_option_to_parser_for_create(
+            parser, 'listener')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -229,7 +233,8 @@ class CreateListener(command.ShowOne):
                       'pools': v2_utils.format_list,
                       'l7policies': v2_utils.format_list,
                       'insert_headers': v2_utils.format_hash,
-                      'allowed_cidrs': v2_utils.format_list_flat}
+                      'allowed_cidrs': v2_utils.format_list_flat,
+                      'tags': v2_utils.format_list_flat}
 
         return (rows,
                 (utils.get_dict_properties(data['listener'],
@@ -308,6 +313,9 @@ class ListListener(lister.Lister):
             metavar='<project>',
             help="List listeners by project ID."
         )
+
+        _tag.add_tag_filtering_option_to_parser(parser, 'listener')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -357,7 +365,8 @@ class ShowListener(command.ShowOne):
                       'pools': v2_utils.format_list,
                       'l7policies': v2_utils.format_list,
                       'insert_headers': v2_utils.format_hash,
-                      'allowed_cidrs': v2_utils.format_list_flat}
+                      'allowed_cidrs': v2_utils.format_list_flat,
+                      'tags': v2_utils.format_list_flat}
 
         return rows, utils.get_dict_properties(data, rows,
                                                formatters=formatters)
@@ -519,6 +528,8 @@ class SetListener(command.Command):
                  "by the listener (can be set multiple times)."
         )
 
+        _tag.add_tag_option_to_parser_for_set(parser, 'listener')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -526,6 +537,10 @@ class SetListener(command.Command):
                                             parsed_args)
 
         listener_id = attrs.pop('listener_id')
+
+        v2_utils.set_tags_for_set(
+            self.app.client_manager.load_balancer.listener_show,
+            listener_id, attrs, clear_tags=parsed_args.no_tag)
 
         body = {'listener': attrs}
 
@@ -648,16 +663,23 @@ class UnsetListener(command.Command):
             action='store_true',
             help="Clear all ALPN protocols from the listener."
         )
+
+        _tag.add_tag_option_to_parser_for_unset(parser, 'listener')
+
         return parser
 
     def take_action(self, parsed_args):
         unset_args = v2_utils.get_unsets(parsed_args)
-        if not unset_args:
+        if not unset_args and not parsed_args.all_tag:
             return
 
         listener_id = v2_utils.get_resource_id(
             self.app.client_manager.load_balancer.listener_list,
             'listeners', parsed_args.listener)
+
+        v2_utils.set_tags_for_unset(
+            self.app.client_manager.load_balancer.listener_show,
+            listener_id, unset_args, clear_tags=parsed_args.all_tag)
 
         body = {'listener': unset_args}
 

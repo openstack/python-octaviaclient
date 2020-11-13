@@ -32,6 +32,7 @@ LOAD_BALANCER_ROWS = (
     'vip_port_id',
     'vip_qos_policy_id',
     'vip_subnet_id',
+    'tags',
 )
 
 LOAD_BALANCER_COLUMNS = (
@@ -79,7 +80,8 @@ LISTENER_ROWS = (
     'allowed_cidrs',
     'tls_ciphers',
     'tls_versions',
-    'alpn_protocols')
+    'alpn_protocols',
+    'tags')
 
 LISTENER_COLUMNS = (
     'id',
@@ -112,7 +114,8 @@ POOL_ROWS = (
     'crl_container_ref',
     'tls_enabled',
     'tls_ciphers',
-    'tls_versions')
+    'tls_versions',
+    'tags')
 
 POOL_COLUMNS = (
     'id',
@@ -138,8 +141,8 @@ MEMBER_ROWS = (
     'weight',
     'monitor_port',
     'monitor_address',
-    'backup'
-)
+    'backup',
+    'tags')
 
 MEMBER_COLUMNS = (
     'id',
@@ -168,7 +171,8 @@ L7POLICY_ROWS = (
     'id',
     'operating_status',
     'name',
-    'redirect_http_code')
+    'redirect_http_code',
+    'tags')
 
 L7POLICY_COLUMNS = (
     'id',
@@ -191,7 +195,8 @@ L7RULE_ROWS = (
     'project_id',
     'type',
     'id',
-    'operating_status')
+    'operating_status',
+    'tags')
 
 L7RULE_COLUMNS = (
     'id',
@@ -223,8 +228,8 @@ MONITOR_ROWS = (
     'id',
     'operating_status',
     'http_version',
-    'domain_name'
-)
+    'domain_name',
+    'tags')
 
 MONITOR_COLUMNS = (
     'id',

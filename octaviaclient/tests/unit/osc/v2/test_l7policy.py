@@ -76,6 +76,62 @@ class TestL7PolicyList(TestL7Policy):
         self.assertEqual(self.columns, columns)
         self.assertEqual(self.datalist, tuple(data))
 
+    def test_l7policy_list_with_tags(self):
+        arglist = ['--tags', 'foo,bar']
+        verifylist = [('tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'tags': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7policy_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_l7policy_list_with_any_tags(self):
+        arglist = ['--any-tags', 'foo,bar']
+        verifylist = [('any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'tags-any': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7policy_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_l7policy_list_with_not_tags(self):
+        arglist = ['--not-tags', 'foo,bar']
+        verifylist = [('not_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'not-tags': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7policy_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_l7policy_list_with_not_any_tags(self):
+        arglist = ['--not-any-tags', 'foo,bar']
+        verifylist = [('not_any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'not-tags-any': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7policy_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
 
 class TestL7PolicyDelete(TestL7Policy):
 
@@ -205,6 +261,40 @@ class TestL7PolicyCreate(TestL7Policy):
             sleep_time=mock.ANY,
             status_field='provisioning_status')
 
+    @mock.patch('octaviaclient.osc.v2.utils.get_l7policy_attrs')
+    def test_l7policy_create_with_tag(self, mock_attrs):
+        mock_attrs.return_value = {
+            'listener_id': self._l7po.listener_id,
+            'name': self._l7po.name,
+            'action': 'REDIRECT_TO_POOL',
+            'redirect_pool_id': self._l7po.redirect_pool_id,
+            'tags': ['foo']
+        }
+
+        arglist = ['mock_li_id',
+                   '--name', self._l7po.name,
+                   '--action', 'REDIRECT_TO_POOL'.lower(),
+                   '--redirect-pool', self._l7po.redirect_pool_id,
+                   '--tag', 'foo']
+
+        verifylist = [
+            ('listener', 'mock_li_id'),
+            ('name', self._l7po.name),
+            ('action', 'REDIRECT_TO_POOL'),
+            ('redirect_pool', self._l7po.redirect_pool_id),
+            ('tags', ['foo'])
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7policy_create.assert_called_with(
+            json={'l7policy': {
+                'listener_id': self._l7po.listener_id,
+                'name': self._l7po.name,
+                'action': 'REDIRECT_TO_POOL',
+                'redirect_pool_id': self._l7po.redirect_pool_id,
+                'tags': ['foo']}})
+
 
 class TestL7PolicyShow(TestL7Policy):
 
@@ -267,6 +357,44 @@ class TestL7PolicySet(TestL7Policy):
             res_id=self._l7po.id,
             sleep_time=mock.ANY,
             status_field='provisioning_status')
+
+    def test_l7policy_set_tag(self):
+        self.api_mock.l7policy_show.return_value = {
+            'tags': ['foo']
+        }
+        arglist = [self._l7po.id, '--tag', 'bar']
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('tags', ['bar']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7policy_set.assert_called_once()
+        kwargs = self.api_mock.l7policy_set.mock_calls[0][2]
+        tags = kwargs['json']['l7policy']['tags']
+        self.assertEqual(2, len(tags))
+        self.assertIn('foo', tags)
+        self.assertIn('bar', tags)
+
+    def test_l7policy_set_tag_no_tag(self):
+        self.api_mock.l7policy_show.return_value = {
+            'tags': ['foo']
+        }
+        arglist = [self._l7po.id, '--tag', 'bar', '--no-tag']
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('tags', ['bar']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7policy_set.assert_called_once_with(
+            self._l7po.id,
+            json={'l7policy': {'tags': ['bar']}}
+        )
 
 
 class TestL7PolicyUnset(TestL7Policy):
@@ -348,3 +476,43 @@ class TestL7PolicyUnset(TestL7Policy):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.l7policy_set.assert_not_called()
+
+    def test_l7policy_unset_tag(self):
+        self.api_mock.l7policy_set.reset_mock()
+        self.api_mock.l7policy_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+
+        arglist = [self._l7po.id, '--tag', 'foo']
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('tags', ['foo']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7policy_set.assert_called_once_with(
+            self._l7po.id,
+            json={'l7policy': {'tags': ['bar']}}
+        )
+
+    def test_l7policy_unset_all_tag(self):
+        self.api_mock.l7policy_set.reset_mock()
+        self.api_mock.l7policy_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+
+        arglist = [self._l7po.id, '--all-tag']
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('all_tag', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7policy_set.assert_called_once_with(
+            self._l7po.id,
+            json={'l7policy': {'tags': []}}
+        )

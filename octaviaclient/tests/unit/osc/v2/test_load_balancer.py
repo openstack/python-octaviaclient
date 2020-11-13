@@ -196,6 +196,74 @@ class TestLoadBalancerList(TestLoadBalancer):
         self.assertEqual(self.columns, columns)
         self.assertEqual(self.datalist, tuple(data))
 
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_list_with_tags(self, mock_client):
+        mock_client.return_value = {
+            'tags': self._lb.tags,
+        }
+        arglist = [
+            '--tags', ",".join(self._lb.tags),
+        ]
+        verify_list = [
+            ('tags', self._lb.tags),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        columns, data = self.cmd.take_action(parsed_args)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_list_with_any_tags(self, mock_client):
+        mock_client.return_value = {
+            'tags': self._lb.tags,
+        }
+        arglist = [
+            '--any-tags', ",".join(self._lb.tags),
+        ]
+        verify_list = [
+            ('any_tags', self._lb.tags),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        columns, data = self.cmd.take_action(parsed_args)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_list_with_not_tags(self, mock_client):
+        mock_client.return_value = {
+            'tags': self._lb.tags[0],
+        }
+        arglist = [
+            '--any-tags', ",".join(self._lb.tags),
+        ]
+        verify_list = [
+            ('any_tags', self._lb.tags),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        columns, data = self.cmd.take_action(parsed_args)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_list_with_not_any_tags(self, mock_client):
+        mock_client.return_value = {
+            'tags': self._lb.tags[0],
+        }
+        arglist = [
+            '--not-any-tags', ",".join(self._lb.tags),
+        ]
+        verify_list = [
+            ('not_any_tags', self._lb.tags),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verify_list)
+        columns, data = self.cmd.take_action(parsed_args)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
 
 class TestLoadBalancerDelete(TestLoadBalancer):
 
@@ -354,6 +422,31 @@ class TestLoadBalancerCreate(TestLoadBalancer):
             json={'loadbalancer': lb_info})
 
     @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_create_with_tags(self, mock_client):
+        lb_info = copy.deepcopy(self.lb_info)
+        lb_info.update({'tags': self._lb.tags})
+        mock_client.return_value = lb_info
+
+        arglist = [
+            '--name', self._lb.name,
+            '--vip-network-id', self._lb.vip_network_id,
+            '--project', self._lb.project_id,
+            '--tag', self._lb.tags[0],
+            '--tag', self._lb.tags[1],
+        ]
+        verifylist = [
+            ('name', self._lb.name),
+            ('vip_network_id', self._lb.vip_network_id),
+            ('project', self._lb.project_id),
+            ('tags', self._lb.tags),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_create.assert_called_with(
+            json={'loadbalancer': lb_info})
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
     def test_load_balancer_create_missing_args(self, mock_client):
         attrs_list = self.lb_info
 
@@ -473,6 +566,61 @@ class TestLoadBalancerSet(TestLoadBalancer):
             res_id=self.lb_info['id'],
             sleep_time=mock.ANY,
             status_field='provisioning_status')
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_set_tag(self, mock_attrs):
+        self.api_mock.load_balancer_show.return_value = {
+            'tags': ['foo']
+        }
+
+        mock_attrs.return_value = {
+            'loadbalancer_id': self._lb.id,
+            'tags': ['bar']
+        }
+        arglist = [self._lb.id, '--tag', 'bar']
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('tags', ['bar'])
+        ]
+
+        try:
+            parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+            self.cmd.take_action(parsed_args)
+        except Exception as e:
+            self.fail("%s raised unexpectedly" % e)
+
+        self.api_mock.load_balancer_set.assert_called_once()
+        kwargs = self.api_mock.load_balancer_set.mock_calls[0][2]
+        tags = kwargs['json']['loadbalancer']['tags']
+        self.assertEqual(2, len(tags))
+        self.assertIn('foo', tags)
+        self.assertIn('bar', tags)
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_set_tag_no_tag(self, mock_attrs):
+        self.api_mock.load_balancer_show.return_value = {
+            'tags': ['foo']
+        }
+
+        mock_attrs.return_value = {
+            'loadbalancer_id': self._lb.id,
+            'tags': ['bar']
+        }
+        arglist = [self._lb.id, '--tag', 'bar', '--no-tag']
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('tags', ['bar'])
+        ]
+
+        try:
+            parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+            self.cmd.take_action(parsed_args)
+        except Exception as e:
+            self.fail("%s raised unexpectedly" % e)
+
+        self.api_mock.load_balancer_set.assert_called_once_with(
+            self._lb.id,
+            json={'loadbalancer': {'tags': ['bar']}})
 
     @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
     def test_load_balancer_remove_qos_policy(self, mock_attrs):
@@ -658,3 +806,45 @@ class TestLoadBalancerUnset(TestLoadBalancer):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.load_balancer_set.assert_not_called()
+
+    def test_load_balancer_unset_tag(self):
+        self.api_mock.load_balancer_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+
+        arglist = [self._lb.id, '--tag', 'foo']
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('tags', ['foo'])
+        ]
+
+        try:
+            parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+            self.cmd.take_action(parsed_args)
+        except Exception as e:
+            self.fail("%s raised unexpectedly" % e)
+
+        self.api_mock.load_balancer_set.assert_called_once_with(
+            self._lb.id,
+            json={'loadbalancer': {'tags': ['bar']}})
+
+    def test_load_balancer_unset_all_tag(self):
+        self.api_mock.load_balancer_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+
+        arglist = [self._lb.id, '--all-tag']
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('all_tag', True)
+        ]
+
+        try:
+            parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+            self.cmd.take_action(parsed_args)
+        except Exception as e:
+            self.fail("%s raised unexpectedly" % e)
+
+        self.api_mock.load_balancer_set.assert_called_once_with(
+            self._lb.id,
+            json={'loadbalancer': {'tags': []}})

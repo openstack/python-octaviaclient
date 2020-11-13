@@ -67,6 +67,60 @@ class TestListenerList(TestListener):
         self.assertEqual(self.columns, columns)
         self.assertEqual(self.datalist, tuple(data))
 
+    def test_listener_list_with_tags(self):
+        arglist = ['--tags', 'foo,bar']
+        verifylist = [('tags', ['foo', 'bar'])]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+        self.api_mock.listener_list.assert_called_with(
+            tags=['foo', 'bar'])
+
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_listener_list_with_any_tags(self):
+        arglist = ['--any-tags', 'foo,bar']
+        verifylist = [('any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            "tags-any": ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+        self.api_mock.listener_list.assert_called_with(**expected_attrs)
+
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_listener_list_with_not_tags(self):
+        arglist = ['--not-tags', 'foo,bar']
+        verifylist = [('not_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            "not-tags": ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+        self.api_mock.listener_list.assert_called_with(**expected_attrs)
+
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_listener_list_with_not_any_tags(self):
+        arglist = ['--not-any-tags', 'foo,bar']
+        verifylist = [('not_any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            "not-tags-any": ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+        self.api_mock.listener_list.assert_called_with(**expected_attrs)
+
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
 
 class TestListenerDelete(TestListener):
 
@@ -255,6 +309,27 @@ class TestListenerCreate(TestListener):
         self.api_mock.listener_create.assert_called_with(
             json={'listener': self.listener_info})
 
+    @mock.patch('octaviaclient.osc.v2.utils.get_listener_attrs')
+    def test_listener_create_with_tag(self, mock_client):
+        mock_client.return_value = self.listener_info
+        arglist = ['mock_lb_id',
+                   '--name', self._listener.name,
+                   '--protocol', 'HTTP',
+                   '--protocol-port', '80',
+                   '--tag', 'foo']
+        verifylist = [
+            ('loadbalancer', 'mock_lb_id'),
+            ('name', self._listener.name),
+            ('protocol', 'HTTP'),
+            ('protocol_port', 80),
+            ('tags', ['foo']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.listener_create.assert_called_with(
+            json={'listener': self.listener_info})
+
 
 class TestListenerShow(TestListener):
 
@@ -368,6 +443,44 @@ class TestListenerSet(TestListener):
             res_id=self._listener.id,
             sleep_time=mock.ANY,
             status_field='provisioning_status')
+
+    def test_listener_set_tag(self):
+        self.api_mock.listener_show.return_value = {
+            'tags': ['foo']
+        }
+        arglist = [self._listener.id, '--tag', 'bar']
+        verifylist = [
+            ('listener', self._listener.id),
+            ('tags', ['bar']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.listener_set.assert_called_once()
+        kwargs = self.api_mock.listener_set.mock_calls[0][2]
+        tags = kwargs['json']['listener']['tags']
+        self.assertEqual(2, len(tags))
+        self.assertIn('foo', tags)
+        self.assertIn('bar', tags)
+
+    def test_listener_set_tag_no_tag(self):
+        self.api_mock.listener_show.return_value = {
+            'tags': ['foo']
+        }
+        arglist = [self._listener.id, '--tag', 'bar', '--no-tag']
+        verifylist = [
+            ('listener', self._listener.id),
+            ('tags', ['bar']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.listener_set.assert_called_once_with(
+            self._listener.id,
+            json={"listener": {"tags": ['bar']}}
+        )
 
 
 class TestListenerStatsShow(TestListener):
@@ -529,3 +642,43 @@ class TestListenerUnset(TestListener):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_set.assert_not_called()
+
+    def test_listener_unset_tag(self):
+        self.api_mock.listener_set.reset_mock()
+        self.api_mock.listener_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+
+        arglist = [self._listener.id, '--tag', 'foo']
+        verifylist = [
+            ('listener', self._listener.id),
+            ('tags', ['foo']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.listener_set.assert_called_once_with(
+            self._listener.id,
+            json={"listener": {"tags": ['bar']}}
+        )
+
+    def test_listener_unset_all_tag(self):
+        self.api_mock.listener_set.reset_mock()
+        self.api_mock.listener_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+
+        arglist = [self._listener.id, '--all-tag']
+        verifylist = [
+            ('listener', self._listener.id),
+            ('all_tag', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.listener_set.assert_called_once_with(
+            self._listener.id,
+            json={"listener": {"tags": []}}
+        )

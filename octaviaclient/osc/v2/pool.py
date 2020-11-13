@@ -19,6 +19,7 @@ from cliff import lister
 from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils
+from osc_lib.utils import tags as _tag
 from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import constants as const
@@ -146,6 +147,9 @@ class CreatePool(command.ShowOne):
                  "by the pool (can be set multiple times)."
         )
 
+        _tag.add_tag_option_to_parser_for_create(
+            parser, 'pool')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -171,7 +175,8 @@ class CreatePool(command.ShowOne):
         formatters = {'loadbalancers': v2_utils.format_list,
                       'members': v2_utils.format_list,
                       'listeners': v2_utils.format_list,
-                      'session_persistence': v2_utils.format_hash}
+                      'session_persistence': v2_utils.format_hash,
+                      'tags': v2_utils.format_list_flat}
 
         return (rows, (utils.get_dict_properties(
             data['pool'], rows, formatters=formatters,
@@ -222,6 +227,8 @@ class ListPool(lister.Lister):
             help="Filter by load balancer (name or ID).",
         )
 
+        _tag.add_tag_filtering_option_to_parser(parser, 'pool')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -271,7 +278,8 @@ class ShowPool(command.ShowOne):
         formatters = {'loadbalancers': v2_utils.format_list,
                       'members': v2_utils.format_list,
                       'listeners': v2_utils.format_list,
-                      'session_persistence': v2_utils.format_hash}
+                      'session_persistence': v2_utils.format_hash,
+                      'tags': v2_utils.format_list_flat}
 
         return (rows, (utils.get_dict_properties(
             data, rows, formatters=formatters,
@@ -382,11 +390,17 @@ class SetPool(command.Command):
 
         )
 
+        _tag.add_tag_option_to_parser_for_set(parser, 'pool')
+
         return parser
 
     def take_action(self, parsed_args):
         attrs = v2_utils.get_pool_attrs(self.app.client_manager, parsed_args)
         pool_id = attrs.pop('pool_id')
+
+        v2_utils.set_tags_for_set(
+            self.app.client_manager.load_balancer.pool_show,
+            pool_id, attrs, clear_tags=parsed_args.no_tag)
 
         body = {'pool': attrs}
 
@@ -458,16 +472,23 @@ class UnsetPool(command.Command):
             action='store_true',
             help='Wait for action to complete',
         )
+
+        _tag.add_tag_option_to_parser_for_unset(parser, 'pool')
+
         return parser
 
     def take_action(self, parsed_args):
         unset_args = v2_utils.get_unsets(parsed_args)
-        if not unset_args:
+        if not unset_args and not parsed_args.all_tag:
             return
 
         pool_id = v2_utils.get_resource_id(
             self.app.client_manager.load_balancer.pool_list,
             'pools', parsed_args.pool)
+
+        v2_utils.set_tags_for_unset(
+            self.app.client_manager.load_balancer.pool_show,
+            pool_id, unset_args, clear_tags=parsed_args.all_tag)
 
         body = {'pool': unset_args}
 

@@ -39,7 +39,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-copyright = u'2016-2019, OpenStack Foundation'
+copyright = '2016-2019, OpenStack Foundation'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
@@ -114,8 +114,8 @@ smartquotes_excludes = {'builders': ['latex']}
 latex_documents = [(
     'index',
     'doc-python-octaviaclient.tex',
-    u'Octavia Python Client Documentation',
-    u'OpenStack Octavia Team',
+    'Octavia Python Client Documentation',
+    'OpenStack Octavia Team',
     'manual'
 )]
 

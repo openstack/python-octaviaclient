@@ -21,6 +21,7 @@ from cliff import lister
 from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils
+from osc_lib.utils import tags as _tag
 from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import constants as const
@@ -140,6 +141,9 @@ class CreateHealthMonitor(command.ShowOne):
             help='Wait for action to complete',
         )
 
+        _tag.add_tag_option_to_parser_for_create(
+            parser, 'health monitor')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -164,7 +168,8 @@ class CreateHealthMonitor(command.ShowOne):
                         data['healthmonitor']['id']))
             }
 
-        formatters = {'pools': v2_utils.format_list}
+        formatters = {'pools': v2_utils.format_list,
+                      'tags': v2_utils.format_list_flat}
 
         return (rows,
                 (utils.get_dict_properties(data['healthmonitor'],
@@ -214,6 +219,8 @@ class ListHealthMonitor(lister.Lister):
     def get_parser(self, prog_name):
         parser = super().get_parser(prog_name)
 
+        _tag.add_tag_filtering_option_to_parser(parser, 'health monitor')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -262,7 +269,8 @@ class ShowHealthMonitor(command.ShowOne):
             data = self.app.client_manager.load_balancer.health_monitor_show(
                 health_monitor_id=health_monitor_id,
             )
-        formatters = {'pools': v2_utils.format_list}
+        formatters = {'pools': v2_utils.format_list,
+                      'tags': v2_utils.format_list_flat}
 
         return (rows,
                 (utils.get_dict_properties(data, rows, formatters=formatters)))
@@ -364,6 +372,8 @@ class SetHealthMonitor(command.Command):
             help='Wait for action to complete',
         )
 
+        _tag.add_tag_option_to_parser_for_set(parser, 'health monitor')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -371,6 +381,10 @@ class SetHealthMonitor(command.Command):
                                                   parsed_args)
 
         hm_id = attrs.pop('health_monitor_id')
+
+        v2_utils.set_tags_for_set(
+            self.app.client_manager.load_balancer.health_monitor_show,
+            hm_id, attrs, clear_tags=parsed_args.no_tag)
 
         body = {'healthmonitor': attrs}
 
@@ -437,16 +451,23 @@ class UnsetHealthMonitor(command.Command):
             action='store_true',
             help='Wait for action to complete',
         )
+
+        _tag.add_tag_option_to_parser_for_unset(parser, 'health monitor')
+
         return parser
 
     def take_action(self, parsed_args):
         unset_args = v2_utils.get_unsets(parsed_args)
-        if not unset_args:
+        if not unset_args and not parsed_args.all_tag:
             return
 
         hm_id = v2_utils.get_resource_id(
             self.app.client_manager.load_balancer.health_monitor_list,
             'healthmonitors', parsed_args.health_monitor)
+
+        v2_utils.set_tags_for_unset(
+            self.app.client_manager.load_balancer.health_monitor_show,
+            hm_id, unset_args, clear_tags=parsed_args.all_tag)
 
         body = {'healthmonitor': unset_args}
 

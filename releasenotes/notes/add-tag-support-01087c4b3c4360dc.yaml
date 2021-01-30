@@ -1,0 +1,12 @@
+---
+features:
+  - |
+    Add support for tags for Octavia resources. Tags are supported with load
+    balancers, listeners, pools, members, health monitors, l7policies and
+    l7rules.
+    Tags can be added when creating a resource, and they can be set and unset.
+    Tags allow also to filter elements when listing Octavia resources.
+fixes:
+  - |
+    Fix errors when combining set/unset CLI for l7rule resources and the --wait
+    option.

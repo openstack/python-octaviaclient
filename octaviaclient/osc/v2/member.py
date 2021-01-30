@@ -21,6 +21,7 @@ from cliff import lister
 from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils
+from osc_lib.utils import tags as _tag
 from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import constants as const
@@ -40,16 +41,17 @@ class ListMember(lister.Lister):
             help="Pool name or ID to list the members of."
         )
 
+        _tag.add_tag_filtering_option_to_parser(parser, 'member')
+
         return parser
 
     def take_action(self, parsed_args):
         columns = const.MEMBER_COLUMNS
 
         attrs = v2_utils.get_member_attrs(self.app.client_manager, parsed_args)
-        pool_id = attrs.pop('pool_id')
 
         data = self.app.client_manager.load_balancer.member_list(
-            pool_id=pool_id)
+            **attrs)
 
         return (columns,
                 (utils.get_dict_properties(
@@ -97,8 +99,10 @@ class ShowMember(command.ShowOne):
             data = self.app.client_manager.load_balancer.member_show(
                 pool_id=pool_id, member_id=member_id)
 
+        formatters = {'tags': v2_utils.format_list_flat}
+
         return (rows, (utils.get_dict_properties(
-            data, rows, formatters={})))
+            data, rows, formatters=formatters)))
 
 
 class CreateMember(command.ShowOne):
@@ -189,6 +193,9 @@ class CreateMember(command.ShowOne):
             help='Wait for action to complete',
         )
 
+        _tag.add_tag_option_to_parser_for_create(
+            parser, 'member')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -218,9 +225,11 @@ class CreateMember(command.ShowOne):
                         pool_id, data['member']['id']))
             }
 
+        formatters = {'tags': v2_utils.format_list_flat}
+
         return (rows,
                 (utils.get_dict_properties(
-                    data['member'], rows, formatters={})))
+                    data['member'], rows, formatters=formatters)))
 
 
 class SetMember(command.Command):
@@ -294,6 +303,8 @@ class SetMember(command.Command):
             help='Wait for action to complete',
         )
 
+        _tag.add_tag_option_to_parser_for_set(parser, 'member')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -303,6 +314,14 @@ class SetMember(command.Command):
 
         pool_id = attrs.pop('pool_id')
         member_id = attrs.pop('member_id')
+
+        member_show = functools.partial(
+            self.app.client_manager.load_balancer.member_show,
+            pool_id
+        )
+        v2_utils.set_tags_for_set(
+            member_show, member_id, attrs, clear_tags=parsed_args.no_tag)
+
         post_data = {"member": attrs}
 
         self.app.client_manager.load_balancer.member_set(
@@ -312,10 +331,6 @@ class SetMember(command.Command):
         )
 
         if parsed_args.wait:
-            member_show = functools.partial(
-                self.app.client_manager.load_balancer.member_show,
-                pool_id
-            )
             v2_utils.wait_for_active(
                 status_f=member_show,
                 res_id=member_id
@@ -414,21 +429,32 @@ class UnsetMember(command.Command):
             action='store_true',
             help='Wait for action to complete',
         )
+        _tag.add_tag_option_to_parser_for_unset(parser, 'member')
+
         return parser
 
     def take_action(self, parsed_args):
         unset_args = v2_utils.get_unsets(parsed_args)
-        if not unset_args:
+        if not unset_args and not parsed_args.all_tag:
             return
 
         pool_id = v2_utils.get_resource_id(
             self.app.client_manager.load_balancer.pool_list,
             'pools', parsed_args.pool)
 
+        member_show = functools.partial(
+            self.app.client_manager.load_balancer.member_show,
+            pool_id
+        )
+
         member_dict = {'pool_id': pool_id, 'member_id': parsed_args.member}
         member_id = v2_utils.get_resource_id(
             self.app.client_manager.load_balancer.member_list,
             'members', member_dict)
+
+        v2_utils.set_tags_for_unset(
+            member_show, member_id, unset_args,
+            clear_tags=parsed_args.all_tag)
 
         body = {'member': unset_args}
 
@@ -436,10 +462,6 @@ class UnsetMember(command.Command):
             pool_id=pool_id, member_id=member_id, json=body)
 
         if parsed_args.wait:
-            member_show = functools.partial(
-                self.app.client_manager.load_balancer.member_show,
-                pool_id
-            )
             v2_utils.wait_for_active(
                 status_f=member_show,
                 res_id=member_id

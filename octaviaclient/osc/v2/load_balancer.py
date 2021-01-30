@@ -17,6 +17,7 @@ from cliff import lister
 from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils
+from osc_lib.utils import tags as _tag
 from oslo_serialization import jsonutils
 from oslo_utils import uuidutils
 
@@ -132,6 +133,9 @@ class CreateLoadBalancer(command.ShowOne):
             help='Wait for action to complete',
         )
 
+        _tag.add_tag_option_to_parser_for_create(
+            parser, 'load balancer')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -159,7 +163,8 @@ class CreateLoadBalancer(command.ShowOne):
         formatters = {
             'listeners': v2_utils.format_list,
             'pools': v2_utils.format_list,
-            'l7policies': v2_utils.format_list
+            'l7policies': v2_utils.format_list,
+            'tags': v2_utils.format_list_flat
         }
 
         return (rows,
@@ -326,6 +331,8 @@ class ListLoadBalancer(lister.Lister):
             help="List load balancers according to their availability zone."
         )
 
+        _tag.add_tag_filtering_option_to_parser(parser, 'load balancer')
+
         return parser
 
     def take_action(self, parsed_args):
@@ -380,7 +387,8 @@ class ShowLoadBalancer(command.ShowOne):
         formatters = {
             'listeners': v2_utils.format_list,
             'pools': v2_utils.format_list,
-            'l7policies': v2_utils.format_list
+            'l7policies': v2_utils.format_list,
+            'tags': v2_utils.format_list_flat
         }
 
         return (rows, (utils.get_dict_properties(
@@ -433,12 +441,19 @@ class SetLoadBalancer(command.Command):
             help='Wait for action to complete',
         )
 
+        _tag.add_tag_option_to_parser_for_set(parser, 'load balancer')
+
         return parser
 
     def take_action(self, parsed_args):
         attrs = v2_utils.get_loadbalancer_attrs(self.app.client_manager,
                                                 parsed_args)
         lb_id = attrs.pop('loadbalancer_id')
+
+        v2_utils.set_tags_for_set(
+            self.app.client_manager.load_balancer.load_balancer_show,
+            lb_id, attrs, clear_tags=parsed_args.no_tag)
+
         body = {'loadbalancer': attrs}
 
         self.app.client_manager.load_balancer.load_balancer_set(
@@ -484,16 +499,22 @@ class UnsetLoadBalancer(command.Command):
             help='Wait for action to complete',
         )
 
+        _tag.add_tag_option_to_parser_for_unset(parser, 'load balancer')
+
         return parser
 
     def take_action(self, parsed_args):
         unset_args = v2_utils.get_unsets(parsed_args)
-        if not unset_args:
+        if not unset_args and not parsed_args.all_tag:
             return
 
         lb_id = v2_utils.get_resource_id(
             self.app.client_manager.load_balancer.load_balancer_list,
             'loadbalancers', parsed_args.loadbalancer)
+
+        v2_utils.set_tags_for_unset(
+            self.app.client_manager.load_balancer.load_balancer_show,
+            lb_id, unset_args, clear_tags=parsed_args.all_tag)
 
         body = {'loadbalancer': unset_args}
 

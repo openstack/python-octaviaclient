@@ -71,7 +71,78 @@ class TestListMember(TestMember):
 
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.api_mock.member_list.assert_called_once_with(pool_id='pool_id')
+        self.api_mock.member_list.assert_called_once_with(
+            pool_id='pool_id',
+            project_id=self._mem.project_id)
+
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_member_list_with_tags(self):
+        arglist = [self._mem.pool_id,
+                   '--tags', 'foo,bar']
+        verifylist = [('pool', self._mem.pool_id),
+                      ('tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'pool_id': self._mem.pool_id,
+            'tags': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.member_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_member_list_with_any_tags(self):
+        arglist = [self._mem.pool_id,
+                   '--any-tags', 'foo,bar']
+        verifylist = [('pool', self._mem.pool_id),
+                      ('any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'pool_id': self._mem.pool_id,
+            'tags-any': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.member_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_member_list_with_not_tags(self):
+        arglist = [self._mem.pool_id,
+                   '--not-tags', 'foo,bar']
+        verifylist = [('pool', self._mem.pool_id),
+                      ('not_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'pool_id': self._mem.pool_id,
+            'not-tags': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.member_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_member_list_with_not_any_tags(self):
+        arglist = [self._mem.pool_id,
+                   '--not-any-tags', 'foo,bar']
+        verifylist = [('pool', self._mem.pool_id),
+                      ('not_any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'pool_id': self._mem.pool_id,
+            'not-tags-any': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.member_list.assert_called_with(**expected_attrs)
         self.assertEqual(self.columns, columns)
         self.assertEqual(self.datalist, tuple(data))
 
@@ -150,6 +221,32 @@ class TestCreateMember(TestMember):
             res_id='mock_lb_id',
             sleep_time=mock.ANY,
             status_field='provisioning_status')
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
+    def test_member_create_with_tag(self, mock_attrs):
+        mock_attrs.return_value = {
+            'ip_address': '192.0.2.122',
+            'protocol_port': self._mem.protocol_port,
+            'pool_id': self._mem.pool_id,
+            'tags': ['foo']}
+
+        arglist = ['pool_id', '--address', '192.0.2.122',
+                   '--protocol-port', '80',
+                   '--tag', 'foo']
+        verifylist = [
+            ('address', '192.0.2.122'),
+            ('protocol_port', 80),
+            ('tags', ['foo'])
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.member_create.assert_called_with(
+            pool_id=self._mem.pool_id, json={
+                'member': {'ip_address': '192.0.2.122',
+                           'protocol_port': self._mem.protocol_port,
+                           'tags': ['foo']
+                           }})
 
 
 class TestMemberDelete(TestMember):
@@ -249,6 +346,56 @@ class TestMemberSet(TestMember):
             res_id=self._mem.id,
             sleep_time=mock.ANY,
             status_field='provisioning_status')
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
+    def test_member_set_tag(self, mock_attrs):
+        self.api_mock.member_show.return_value = {
+            'tags': ['foo']
+        }
+        mock_attrs.return_value = {'pool_id': self._mem.pool_id,
+                                   'member_id': self._mem.id,
+                                   'tags': ['bar']}
+        arglist = [self._mem.pool_id, self._mem.id,
+                   '--tag', 'bar']
+        verifylist = [
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id),
+            ('tags', ['bar'])
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.member_set.assert_called_once()
+        kwargs = self.api_mock.member_set.mock_calls[0][2]
+        tags = kwargs['json']['member']['tags']
+        self.assertEqual(2, len(tags))
+        self.assertIn('foo', tags)
+        self.assertIn('bar', tags)
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
+    def test_member_set_tag_no_tag(self, mock_attrs):
+        self.api_mock.member_show.return_value = {
+            'tags': ['foo']
+        }
+        mock_attrs.return_value = {'pool_id': self._mem.pool_id,
+                                   'member_id': self._mem.id,
+                                   'tags': ['bar']}
+        arglist = [self._mem.pool_id, self._mem.id,
+                   '--tag', 'bar', '--no-tag']
+        verifylist = [
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id),
+            ('tags', ['bar'])
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.member_set.assert_called_once_with(
+            pool_id=self._mem.pool_id,
+            member_id=self._mem.id,
+            json={'member': {'tags': ['bar']}})
 
 
 class TestMemberShow(TestMember):
@@ -368,3 +515,51 @@ class TestMemberUnset(TestMember):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.member_set.assert_not_called()
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
+    def test_member_unset_tag(self, mock_attrs):
+        self.api_mock.member_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+        mock_attrs.return_value = {'pool_id': self._mem.pool_id,
+                                   'member_id': self._mem.id,
+                                   'tags': ['bar']}
+        arglist = [self._mem.pool_id, self._mem.id,
+                   '--tag', 'bar']
+        verifylist = [
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id),
+            ('tags', ['bar'])
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.member_set.assert_called_once_with(
+            pool_id=self._mem.pool_id,
+            member_id=self._mem.id,
+            json={'member': {'tags': ['foo']}})
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')
+    def test_member_unset_all_tags(self, mock_attrs):
+        self.api_mock.member_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+        mock_attrs.return_value = {'pool_id': self._mem.pool_id,
+                                   'member_id': self._mem.id,
+                                   'tags': ['foo', 'bar']}
+        arglist = [self._mem.pool_id, self._mem.id,
+                   '--all-tag']
+        verifylist = [
+            ('pool', self._mem.pool_id),
+            ('member', self._mem.id),
+            ('all_tag', True)
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.member_set.assert_called_once_with(
+            pool_id=self._mem.pool_id,
+            member_id=self._mem.id,
+            json={'member': {'tags': []}})

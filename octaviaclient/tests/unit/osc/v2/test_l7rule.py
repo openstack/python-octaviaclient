@@ -62,6 +62,74 @@ class TestL7RuleList(TestL7Rule):
         self.assertEqual(self.columns, columns)
         self.assertEqual(self.datalist, tuple(data))
 
+    def test_l7rule_list_with_tags(self):
+        arglist = [self._l7po.id,
+                   '--tags', 'foo,bar']
+        verifylist = [('l7policy', self._l7po.id),
+                      ('tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'l7policy_id': self._l7po.id,
+            'tags': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7rule_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_l7rule_list_with_any_tags(self):
+        arglist = [self._l7po.id,
+                   '--any-tags', 'foo,bar']
+        verifylist = [('l7policy', self._l7po.id),
+                      ('any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'l7policy_id': self._l7po.id,
+            'tags-any': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7rule_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_l7rule_list_with_not_tags(self):
+        arglist = [self._l7po.id,
+                   '--not-tags', 'foo,bar']
+        verifylist = [('l7policy', self._l7po.id),
+                      ('not_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'l7policy_id': self._l7po.id,
+            'not-tags': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7rule_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_l7rule_list_with_not_any_tags(self):
+        arglist = [self._l7po.id,
+                   '--not-any-tags', 'foo,bar']
+        verifylist = [('l7policy', self._l7po.id),
+                      ('not_any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'l7policy_id': self._l7po.id,
+            'not-tags-any': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7rule_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
 
 class TestL7RuleDelete(TestL7Rule):
 
@@ -110,7 +178,7 @@ class TestL7RuleDelete(TestL7Rule):
         )
         mock_wait.assert_called_once_with(
             manager=mock.ANY,
-            res_id=self._l7ru.id,
+            res_id=self._l7po.id,
             sleep_time=mock.ANY,
             status_field='provisioning_status')
 
@@ -199,6 +267,40 @@ class TestL7RuleCreate(TestL7Rule):
             sleep_time=mock.ANY,
             status_field='provisioning_status')
 
+    @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
+    def test_l7rule_create_with_tag(self, mock_attrs):
+        mock_attrs.return_value = {
+            'l7policy_id': self._l7po.id,
+            'compare-type': 'ENDS_WITH',
+            'value': '.example.com',
+            'type': 'HOST_NAME',
+            'tags': ['foo']
+        }
+        arglist = [self._l7po.id,
+                   '--compare-type', 'ENDS_WITH',
+                   '--value', '.example.com',
+                   '--type', 'HOST_NAME'.lower(),
+                   '--tag', 'foo']
+
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('compare_type', 'ENDS_WITH'),
+            ('value', '.example.com'),
+            ('type', 'HOST_NAME'),
+            ('tags', ['foo'])
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.l7rule_create.assert_called_with(
+            l7policy_id=self._l7po.id,
+            json={'rule': {
+                'compare-type': 'ENDS_WITH',
+                'value': '.example.com',
+                'type': 'HOST_NAME',
+                'tags': ['foo']}
+            })
+
 
 class TestL7RuleShow(TestL7Rule):
 
@@ -285,9 +387,71 @@ class TestL7RuleSet(TestL7Rule):
             json={'rule': {'admin_state_up': False}})
         mock_wait.assert_called_once_with(
             status_f=mock.ANY,
-            res_id=self._l7ru.id,
+            res_id=self._l7po.id,
             sleep_time=mock.ANY,
             status_field='provisioning_status')
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
+    def test_l7rule_set_tag(self, mock_attrs):
+        self.api_mock.l7rule_show.return_value = {
+            'tags': ['foo']
+        }
+        mock_attrs.return_value = {
+            'l7policy_id': self._l7po.id,
+            'l7rule_id': self._l7ru.id,
+            'tags': ['bar']
+        }
+        arglist = [
+            self._l7po.id,
+            self._l7ru.id,
+            '--tag', 'bar'
+        ]
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('l7rule', self._l7ru.id),
+            ('tags', ['bar'])
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7rule_set.assert_called_once()
+        kwargs = self.api_mock.l7rule_set.mock_calls[0][2]
+        tags = kwargs['json']['rule']['tags']
+        self.assertEqual(2, len(tags))
+        self.assertIn('foo', tags)
+        self.assertIn('bar', tags)
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
+    def test_l7rule_set_tag_no_tag(self, mock_attrs):
+        self.api_mock.l7rule_show.return_value = {
+            'tags': ['foo']
+        }
+        mock_attrs.return_value = {
+            'l7policy_id': self._l7po.id,
+            'l7rule_id': self._l7ru.id,
+            'tags': ['bar']
+        }
+        arglist = [
+            self._l7po.id,
+            self._l7ru.id,
+            '--tag', 'bar', '--no-tag'
+        ]
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('l7rule', self._l7ru.id),
+            ('tags', ['bar']),
+            ('no_tag', True)
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7rule_set.assert_called_once_with(
+            l7policy_id=self._l7po.id,
+            l7rule_id=self._l7ru.id,
+            json={'rule': {'tags': ['bar']}}
+        )
 
 
 class TestL7RuleUnset(TestL7Rule):
@@ -340,7 +504,7 @@ class TestL7RuleUnset(TestL7Rule):
             l7policy_id=self._l7po.id, l7rule_id=self._l7ru.id, json=ref_body)
         mock_wait.assert_called_once_with(
             status_f=mock.ANY,
-            res_id=self._l7ru.id,
+            res_id=self._l7po.id,
             sleep_time=mock.ANY,
             status_field='provisioning_status')
 
@@ -367,3 +531,63 @@ class TestL7RuleUnset(TestL7Rule):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.l7rule_set.assert_not_called()
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
+    def test_l7rule_unset_tag(self, mock_attrs):
+        self.api_mock.l7rule_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+        mock_attrs.return_value = {
+            'l7policy_id': self._l7po.id,
+            'l7rule_id': self._l7ru.id,
+            'tags': ['foo', 'bar']
+        }
+        arglist = [
+            self._l7po.id,
+            self._l7ru.id,
+            '--tag', 'foo'
+        ]
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('l7rule_id', self._l7ru.id),
+            ('tags', ['foo'])
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7rule_set.assert_called_once_with(
+            l7policy_id=self._l7po.id,
+            l7rule_id=self._l7ru.id,
+            json={'rule': {'tags': ['bar']}}
+        )
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
+    def test_l7rule_unset_all_tags(self, mock_attrs):
+        self.api_mock.l7rule_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+        mock_attrs.return_value = {
+            'l7policy_id': self._l7po.id,
+            'l7rule_id': self._l7ru.id,
+            'tags': ['foo', 'bar']
+        }
+        arglist = [
+            self._l7po.id,
+            self._l7ru.id,
+            '--all-tag'
+        ]
+        verifylist = [
+            ('l7policy', self._l7po.id),
+            ('l7rule_id', self._l7ru.id),
+            ('all_tag', True)
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.l7rule_set.assert_called_once_with(
+            l7policy_id=self._l7po.id,
+            l7rule_id=self._l7ru.id,
+            json={'rule': {'tags': []}}
+        )

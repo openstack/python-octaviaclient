@@ -58,6 +58,62 @@ class TestPoolList(TestPool):
         self.assertEqual(self.columns, columns)
         self.assertEqual(self.datalist, tuple(data))
 
+    def test_pool_list_with_tags(self):
+        arglist = ['--tags', 'foo,bar']
+        verifylist = [('tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'tags': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.pool_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_pool_list_with_any_tags(self):
+        arglist = ['--any-tags', 'foo,bar']
+        verifylist = [('any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'tags-any': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.pool_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_pool_list_with_not_tags(self):
+        arglist = ['--not-tags', 'foo,bar']
+        verifylist = [('not_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'not-tags': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.pool_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
+    def test_pool_list_with_not_any_tags(self):
+        arglist = ['--not-any-tags', 'foo,bar']
+        verifylist = [('not_any_tags', ['foo', 'bar'])]
+        expected_attrs = {
+            'not-tags-any': ['foo', 'bar']
+        }
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.api_mock.pool_list.assert_called_with(**expected_attrs)
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.datalist, tuple(data))
+
 
 class TestPoolDelete(TestPool):
 
@@ -142,6 +198,28 @@ class TestPoolCreate(TestPool):
             ('crl_container_ref', self._po.crl_container_ref),
             ('tls_ciphers', self._po.tls_ciphers),
             ('tls_versions', self._po.tls_versions)
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.pool_create.assert_called_with(
+            json={'pool': self.pool_info})
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_pool_attrs')
+    def test_pool_create_with_tag(self, mock_attrs):
+        mock_attrs.return_value = self.pool_info
+        arglist = ['--loadbalancer', 'mock_lb_id',
+                   '--name', self._po.name,
+                   '--protocol', 'HTTP',
+                   '--lb-algorithm', 'ROUND_ROBIN',
+                   '--tag', 'foo']
+
+        verifylist = [
+            ('loadbalancer', 'mock_lb_id'),
+            ('name', self._po.name),
+            ('protocol', 'HTTP'),
+            ('lb_algorithm', 'ROUND_ROBIN'),
+            ('tags', ['foo'])
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -253,6 +331,43 @@ class TestPoolSet(TestPool):
             sleep_time=mock.ANY,
             status_field='provisioning_status')
 
+    def test_pool_set_tag(self):
+        self.api_mock.pool_show.return_value = {
+            'tags': ['foo']
+        }
+        arglist = [self._po.id, '--tag', 'bar']
+        verifylist = [
+            ('pool', self._po.id),
+            ('tags', ['bar']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.pool_set.assert_called_once()
+        kwargs = self.api_mock.pool_set.mock_calls[0][2]
+        tags = kwargs['json']['pool']['tags']
+        self.assertEqual(2, len(tags))
+        self.assertIn('foo', tags)
+        self.assertIn('bar', tags)
+
+    def test_pool_set_tag_no_tag(self):
+        self.api_mock.pool_show.return_value = {
+            'tags': ['foo']
+        }
+        arglist = [self._po.id, '--tag', 'bar', '--no-tag']
+        verifylist = [
+            ('pool', self._po.id),
+            ('tags', ['bar']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.pool_set.assert_called_once_with(
+            self._po.id,
+            json={"pool": {"tags": ["bar"]}})
+
 
 class TestPoolUnset(TestPool):
     PARAMETERS = ('name', 'description', 'ca_tls_container_ref',
@@ -350,3 +465,41 @@ class TestPoolUnset(TestPool):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.pool_set.assert_not_called()
+
+    def test_pool_unset_tag(self):
+        self.api_mock.pool_set.reset_mock()
+        self.api_mock.pool_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+
+        arglist = [self._po.id, '--tag', 'foo']
+        verifylist = [
+            ('pool', self._po.id),
+            ('tags', ['foo']),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.pool_set.assert_called_once_with(
+            self._po.id,
+            json={"pool": {"tags": ["bar"]}})
+
+    def test_pool_unset_all_tag(self):
+        self.api_mock.pool_set.reset_mock()
+        self.api_mock.pool_show.return_value = {
+            'tags': ['foo', 'bar']
+        }
+
+        arglist = [self._po.id, '--all-tag']
+        verifylist = [
+            ('pool', self._po.id),
+            ('all_tag', True),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+
+        self.api_mock.pool_set.assert_called_once_with(
+            self._po.id,
+            json={"pool": {"tags": []}})

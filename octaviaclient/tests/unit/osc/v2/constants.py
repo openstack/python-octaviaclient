@@ -81,7 +81,8 @@ LISTENER_ATTRS = {
     "allowed_cidrs": ['192.0.2.0/24', '198.51.100.0/24'],
     'tls_ciphers': "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256",
     'tls_versions': ['TLSv1.1', 'TLSv1.2'],
-    'alpn_protocols': ['h2', 'http/1.1']
+    'alpn_protocols': ['h2', 'http/1.1'],
+    "tags": ["foo", "bar"]
 }
 
 LOADBALANCER_ATTRS = {
@@ -96,6 +97,7 @@ LOADBALANCER_ATTRS = {
     "operating_status": "ONLINE",
     "provider": "octavia",
     "flavor_id": uuidutils.generate_uuid(dashed=True),
+    "tags": ["foo", "bar"]
 }
 
 L7POLICY_ATTRS = {
@@ -159,7 +161,8 @@ POOL_ATTRS = {
     "crl_container_ref": uuidutils.generate_uuid(),
     "tls_enabled": True,
     "tls_ciphers": "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256",
-    "tls_versions": ['TLSv1.1', 'TLSv1.2']
+    "tls_versions": ['TLSv1.1', 'TLSv1.2'],
+    "tags": ["foo", "bar"],
 }
 
 QUOTA_ATTRS = {

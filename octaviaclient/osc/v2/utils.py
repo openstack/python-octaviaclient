@@ -124,6 +124,16 @@ def get_resource_id(resource, resource_name, name):
         raise osc_exc.CommandError(msg) from e
 
 
+def add_tags_attr_map(attr_map):
+    tags_attr_map = {
+        'tags': ('tags', list),
+        'any_tags': ('tags-any', list),
+        'not_tags': ('not-tags', list),
+        'not_any_tags': ('not-tags-any', list),
+    }
+    attr_map.update(tags_attr_map)
+
+
 def get_loadbalancer_attrs(client_manager, parsed_args):
     attr_map = {
         'name': ('name', str),
@@ -174,8 +184,8 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
             client_manager.load_balancer.flavor_list
         ),
         'availability_zone': ('availability_zone', str),
-
     }
+    add_tags_attr_map(attr_map)
 
     _attrs = vars(parsed_args)
     attrs = _map_attrs(_attrs, attr_map)
@@ -229,6 +239,7 @@ def get_listener_attrs(client_manager, parsed_args):
         'tls_versions': ('tls_versions', list),
         'alpn_protocols': ('alpn_protocols', list),
     }
+    add_tags_attr_map(attr_map)
 
     _attrs = vars(parsed_args)
     attrs = _map_attrs(_attrs, attr_map)
@@ -277,6 +288,7 @@ def get_pool_attrs(client_manager, parsed_args):
         'tls_ciphers': ('tls_ciphers', str),
         'tls_versions': ('tls_versions', list),
     }
+    add_tags_attr_map(attr_map)
 
     _attrs = vars(parsed_args)
     attrs = _map_attrs(_attrs, attr_map)
@@ -318,6 +330,7 @@ def get_member_attrs(client_manager, parsed_args):
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False),
     }
+    add_tags_attr_map(attr_map)
 
     _attrs = vars(parsed_args)
     attrs = _map_attrs(_attrs, attr_map)
@@ -357,6 +370,7 @@ def get_l7policy_attrs(client_manager, parsed_args):
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False)
     }
+    add_tags_attr_map(attr_map)
 
     _attrs = vars(parsed_args)
     attrs = _map_attrs(_attrs, attr_map)
@@ -391,6 +405,7 @@ def get_l7rule_attrs(client_manager, parsed_args):
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False)
     }
+    add_tags_attr_map(attr_map)
 
     _attrs = vars(parsed_args)
     attrs = _map_attrs(_attrs, attr_map)
@@ -429,6 +444,7 @@ def get_health_monitor_attrs(client_manager, parsed_args):
         'http_version': ('http_version', float),
         'domain_name': ('domain_name', str)
     }
+    add_tags_attr_map(attr_map)
 
     _attrs = vars(parsed_args)
     attrs = _map_attrs(_attrs, attr_map)
@@ -604,8 +620,13 @@ def _format_str_if_need_treat_unset(data):
 
 
 def get_unsets(parsed_args):
-    return {arg: None for arg, value in vars(parsed_args).items() if
-            value is True and arg != 'wait'}
+    unsets = {}
+    for arg, value in vars(parsed_args).items():
+        if value and arg == 'tags':
+            unsets[arg] = value
+        elif value is True and arg not in ('wait', 'all_tag'):
+            unsets[arg] = None
+    return unsets
 
 
 def wait_for_active(status_f, res_id):
@@ -642,3 +663,23 @@ def wait_for_delete(status_f, res_id,
     except exceptions.OctaviaClientException as e:
         if e.code != 404:
             raise
+
+
+def set_tags_for_set(resource_get, resource_id, attrs, clear_tags=False):
+    if attrs.get('tags'):
+        resource = resource_get(resource_id)
+        tags = set([] if clear_tags else resource['tags'])
+        tags |= set(attrs['tags'])
+        attrs['tags'] = list(tags)
+    elif clear_tags:
+        attrs['tags'] = []
+
+
+def set_tags_for_unset(resource_get, resource_id, attrs, clear_tags=False):
+    if clear_tags:
+        attrs['tags'] = []
+    elif attrs.get('tags'):
+        resource = resource_get(resource_id)
+        tags = set(resource['tags'])
+        tags -= set(attrs['tags'])
+        attrs['tags'] = list(tags)

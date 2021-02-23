@@ -82,6 +82,7 @@ class OctaviaAPI(api.BaseAPI):
         if not self.endpoint.endswith(self._endpoint_suffix):
             self.endpoint += self._endpoint_suffix
 
+    @correct_return_codes
     def load_balancer_list(self, **params):
         """List all load balancers
 
@@ -154,6 +155,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def load_balancer_stats_show(self, lb_id, **kwargs):
         """Shows the current statistics for a load balancer.
 
@@ -167,6 +169,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def load_balancer_status_show(self, lb_id, **kwargs):
         """Display load balancer status tree in json format.
 
@@ -194,6 +197,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def listener_list(self, **kwargs):
         """List all listeners
 
@@ -264,6 +268,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def listener_stats_show(self, listener_id, **kwargs):
         """Shows the current statistics for a listener
 
@@ -277,6 +282,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def pool_list(self, **kwargs):
         """List all pools
 
@@ -347,6 +353,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def member_list(self, pool_id, **kwargs):
         """Lists the member from a given pool id
 
@@ -432,6 +439,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def l7policy_list(self, **kwargs):
         """List all l7policies
 
@@ -502,6 +510,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def l7rule_list(self, l7policy_id, **kwargs):
         """List all l7rules for a l7policy
 
@@ -583,6 +592,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def health_monitor_list(self, **kwargs):
         """List all health monitors
 
@@ -656,6 +666,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def quota_list(self, **params):
         """List all quotas
 
@@ -712,6 +723,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def quota_defaults_show(self):
         """Show quota defaults
 
@@ -737,6 +749,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def amphora_list(self, **kwargs):
         """List all amphorae
 
@@ -792,6 +805,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def amphora_stats_show(self, amphora_id, **kwargs):
         """Show the current statistics for an amphora
 
@@ -805,6 +819,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def provider_list(self):
         """List all providers
 
@@ -816,6 +831,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def provider_flavor_capability_list(self, provider):
         """Show the flavor capabilities of the specified provider.
 
@@ -830,6 +846,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def provider_availability_zone_capability_list(self, provider):
         """Show the availability zone capabilities of the specified provider.
 
@@ -844,6 +861,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def flavor_list(self, **kwargs):
         """List all flavors
 
@@ -928,6 +946,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def flavorprofile_list(self, **kwargs):
         """List all flavor profiles
 
@@ -941,6 +960,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def flavorprofile_show(self, flavorprofile_id):
         """Show a flavor profile
 
@@ -984,6 +1004,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def availabilityzone_list(self, **kwargs):
         """List all availabilityzones
 
@@ -1072,6 +1093,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def availabilityzoneprofile_list(self, **kwargs):
         """List all availabilityzone profiles
 
@@ -1085,6 +1107,7 @@ class OctaviaAPI(api.BaseAPI):
 
         return response
 
+    @correct_return_codes
     def availabilityzoneprofile_show(self, availabilityzoneprofile_id):
         """Show a availabilityzone profile
 

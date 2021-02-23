@@ -127,6 +127,15 @@ LIST_AZPF_RESP = {
                                    {'name': 'azpf2'}]
 }
 
+POLICY_ERROR_STRING = (
+    "Policy does not allow this request to be performed.")
+
+LIST_POLICY_ERR_RESP = {
+    'faultcode': "Client",
+    'faultstring': POLICY_ERROR_STRING,
+    'debuginfo': None
+}
+
 SINGLE_LB_RESP = {'loadbalancer': {'id': FAKE_LB, 'name': 'lb1'}}
 SINGLE_LB_UPDATE = {"loadbalancer": {"admin_state_up": False}}
 SINGLE_LB_STATS_RESP = {'bytes_in': '0'}
@@ -204,6 +213,18 @@ class TestLoadBalancer(TestOctaviaClient):
         )
         ret = self.api.load_balancer_list()
         self.assertEqual(LIST_LB_RESP, ret)
+
+    def test_list_load_balancer_not_allowed(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'loadbalancers',
+            json=LIST_POLICY_ERR_RESP,
+            status_code=403,
+        )
+        ret = self.assertRaises(
+            octavia.OctaviaClientException,
+            self.api.load_balancer_list)
+        self.assertEqual(POLICY_ERROR_STRING, ret.message)
 
     def test_show_load_balancer(self):
         self.requests_mock.register_uri(
@@ -343,6 +364,18 @@ class TestLoadBalancer(TestOctaviaClient):
         ret = self.api.listener_list()
         self.assertEqual(LIST_LI_RESP, ret)
 
+    def test_list_listener_not_allowed(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'listeners',
+            json=LIST_POLICY_ERR_RESP,
+            status_code=403,
+        )
+        ret = self.assertRaises(
+            octavia.OctaviaClientException,
+            self.api.listener_list)
+        self.assertEqual(POLICY_ERROR_STRING, ret.message)
+
     def test_show_listener(self):
         self.requests_mock.register_uri(
             'GET',
@@ -438,6 +471,18 @@ class TestLoadBalancer(TestOctaviaClient):
         ret = self.api.pool_list()
         self.assertEqual(LIST_PO_RESP, ret)
 
+    def test_list_pool_not_allowed(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'pools',
+            json=LIST_POLICY_ERR_RESP,
+            status_code=403,
+        )
+        ret = self.assertRaises(
+            octavia.OctaviaClientException,
+            self.api.pool_list)
+        self.assertEqual(POLICY_ERROR_STRING, ret.message)
+
     def test_show_pool(self):
         self.requests_mock.register_uri(
             'GET',
@@ -522,6 +567,18 @@ class TestLoadBalancer(TestOctaviaClient):
         )
         ret = self.api.member_list(FAKE_PO)
         self.assertEqual(LIST_ME_RESP, ret)
+
+    def test_list_member_not_allowed(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'pools/' + FAKE_PO + '/members',
+            json=LIST_POLICY_ERR_RESP,
+            status_code=403,
+        )
+        ret = self.assertRaises(
+            octavia.OctaviaClientException,
+            self.api.member_list, FAKE_PO)
+        self.assertEqual(POLICY_ERROR_STRING, ret.message)
 
     def test_show_member(self):
         self.requests_mock.register_uri(
@@ -610,6 +667,18 @@ class TestLoadBalancer(TestOctaviaClient):
         ret = self.api.l7policy_list()
         self.assertEqual(LIST_L7PO_RESP, ret)
 
+    def test_list_l7policy_not_allowed(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'l7policies',
+            json=LIST_POLICY_ERR_RESP,
+            status_code=403,
+        )
+        ret = self.assertRaises(
+            octavia.OctaviaClientException,
+            self.api.l7policy_list)
+        self.assertEqual(POLICY_ERROR_STRING, ret.message)
+
     def test_show_l7policy(self):
         self.requests_mock.register_uri(
             'GET',
@@ -694,6 +763,18 @@ class TestLoadBalancer(TestOctaviaClient):
         )
         ret = self.api.l7rule_list(FAKE_L7PO)
         self.assertEqual(LIST_L7RU_RESP, ret)
+
+    def test_list_l7rule_not_allowed(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'l7policies/' + FAKE_L7PO + '/rules',
+            json=LIST_POLICY_ERR_RESP,
+            status_code=403,
+        )
+        ret = self.assertRaises(
+            octavia.OctaviaClientException,
+            self.api.l7rule_list, FAKE_L7PO)
+        self.assertEqual(POLICY_ERROR_STRING, ret.message)
 
     def test_show_l7rule(self):
         self.requests_mock.register_uri(
@@ -790,6 +871,18 @@ class TestLoadBalancer(TestOctaviaClient):
         ret = self.api.health_monitor_list()
         self.assertEqual(LIST_HM_RESP, ret)
 
+    def test_list_health_monitor_not_allowed(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'healthmonitors',
+            json=LIST_POLICY_ERR_RESP,
+            status_code=403,
+        )
+        ret = self.assertRaises(
+            octavia.OctaviaClientException,
+            self.api.health_monitor_list)
+        self.assertEqual(POLICY_ERROR_STRING, ret.message)
+
     def test_show_health_monitor(self):
         self.requests_mock.register_uri(
             'GET',
@@ -875,6 +968,18 @@ class TestLoadBalancer(TestOctaviaClient):
         ret = self.api.quota_list()
         self.assertEqual(LIST_QT_RESP, ret)
 
+    def test_list_quota_not_allowed(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_LBAAS_URL + 'quotas',
+            json=LIST_POLICY_ERR_RESP,
+            status_code=403,
+        )
+        ret = self.assertRaises(
+            octavia.OctaviaClientException,
+            self.api.quota_list)
+        self.assertEqual(POLICY_ERROR_STRING, ret.message)
+
     def test_show_quota(self):
         self.requests_mock.register_uri(
             'GET',
@@ -937,6 +1042,18 @@ class TestLoadBalancer(TestOctaviaClient):
         )
         ret = self.api.amphora_list()
         self.assertEqual(LIST_AMP_RESP, ret)
+
+    def test_list_amphora_not_allowed(self):
+        self.requests_mock.register_uri(
+            'GET',
+            FAKE_OCTAVIA_URL + 'amphorae',
+            json=LIST_POLICY_ERR_RESP,
+            status_code=403,
+        )
+        ret = self.assertRaises(
+            octavia.OctaviaClientException,
+            self.api.amphora_list)
+        self.assertEqual(POLICY_ERROR_STRING, ret.message)
 
     def test_show_amphora(self):
         self.requests_mock.register_uri(

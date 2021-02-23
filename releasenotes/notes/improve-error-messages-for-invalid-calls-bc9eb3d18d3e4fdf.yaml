@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    Improve CLI error messages when a user performs an unauthorized/invalid
+    request.

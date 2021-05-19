@@ -65,10 +65,11 @@ LIST_ME_RESP = {
          {'name': 'mem2'}]
 }
 
-LIST_L7PO_RESP = [
-    {'name': 'l71'},
-    {'name': 'l72'},
-]
+LIST_L7PO_RESP = {
+    'l7policies':
+        [{'name': 'l71'},
+         {'name': 'l72'}]
+}
 
 LIST_L7RU_RESP = {
     'rules':

@@ -1,0 +1,6 @@
+---
+fixes:
+  - |
+    Fixed some issues when the number of Octavia resources exceeded the
+    'pagination_max_limit' parameter in Octavia API. The list calls now support
+    pagination.

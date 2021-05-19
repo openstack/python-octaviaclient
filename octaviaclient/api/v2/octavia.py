@@ -12,6 +12,7 @@
 #
 """Octavia API Library"""
 import functools
+import urllib.parse as urlparse
 
 from osc_lib.api import api
 from osc_lib import exceptions as osc_exc
@@ -66,17 +67,39 @@ class OctaviaAPI(api.BaseAPI):
 
     _endpoint_suffix = '/v2.0'
 
+    # Make sure we are always requesting JSON responses
+    JSON_HEADER = {'Accept': 'application/json'}
+
     def __init__(self, endpoint=None, **kwargs):
         super().__init__(endpoint=endpoint, **kwargs)
         self.endpoint = self.endpoint.rstrip('/')
         self._build_url()
 
-        # Make sure we are always requesting JSON responses
-        JSON_HEADER = {'Accept': 'application/json'}
-        self._create = functools.partial(self.create, headers=JSON_HEADER)
-        self._delete = functools.partial(self.delete, headers=JSON_HEADER)
-        self._find = functools.partial(self.find, headers=JSON_HEADER)
-        self._list = functools.partial(self.list, headers=JSON_HEADER)
+        self._create = functools.partial(self.create, headers=self.JSON_HEADER)
+        self._delete = functools.partial(self.delete, headers=self.JSON_HEADER)
+        self._find = functools.partial(self.find, headers=self.JSON_HEADER)
+
+    def _list(self, path, **params):
+        get_all = params.pop('get_all', False)
+        if not get_all:
+            return self.list(path, **params, headers=self.JSON_HEADER)
+
+        # Enable pagination for 'resources'
+        resource_key = params.pop('resources')
+        res = []
+        while True:
+            response = self.list(path, **params, headers=self.JSON_HEADER)
+            res.extend(response[resource_key])
+
+            links = response.get("{}_links".format(resource_key), [])
+            for link in links:
+                if link.get('rel') == 'next':
+                    query_str = urlparse.urlparse(link['href']).query
+                    params = urlparse.parse_qs(query_str)
+                    break
+            else:
+                break
+        return {resource_key: res}
 
     def _build_url(self):
         if not self.endpoint.endswith(self._endpoint_suffix):
@@ -92,7 +115,9 @@ class OctaviaAPI(api.BaseAPI):
             List of load balancers
         """
         url = const.BASE_LOADBALANCER_URL
-        response = self._list(url, **params)
+        response = self._list(url, get_all=True,
+                              resources=const.LOADBALANCER_RESOURCES,
+                              **params)
 
         return response
 
@@ -207,7 +232,9 @@ class OctaviaAPI(api.BaseAPI):
             List of listeners
         """
         url = const.BASE_LISTENER_URL
-        response = self._list(url, **kwargs)
+        response = self._list(url, get_all=True,
+                              resources=const.LISTENER_RESOURCES,
+                              **kwargs)
 
         return response
 
@@ -292,7 +319,9 @@ class OctaviaAPI(api.BaseAPI):
             List of pools
         """
         url = const.BASE_POOL_URL
-        response = self._list(url, **kwargs)
+        response = self._list(url, get_all=True,
+                              resources=const.POOL_RESOURCES,
+                              **kwargs)
 
         return response
 
@@ -365,7 +394,9 @@ class OctaviaAPI(api.BaseAPI):
             Response list members
         """
         url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
-        response = self._list(url, **kwargs)
+        response = self._list(url, get_all=True,
+                              resources=const.MEMBER_RESOURCES,
+                              **kwargs)
 
         return response
 
@@ -449,7 +480,9 @@ class OctaviaAPI(api.BaseAPI):
             List of l7policies
         """
         url = const.BASE_L7POLICY_URL
-        response = self._list(url, **kwargs)
+        response = self._list(url, get_all=True,
+                              resources=const.L7POLICY_RESOURCES,
+                              **kwargs)
 
         return response
 
@@ -520,7 +553,9 @@ class OctaviaAPI(api.BaseAPI):
             List of l7rules
         """
         url = const.BASE_L7RULE_URL.format(policy_uuid=l7policy_id)
-        response = self._list(url, **kwargs)
+        response = self._list(url, get_all=True,
+                              resources=const.L7RULE_RESOURCES,
+                              **kwargs)
 
         return response
 
@@ -602,7 +637,9 @@ class OctaviaAPI(api.BaseAPI):
             A dict containing a list of health monitors
         """
         url = const.BASE_HEALTH_MONITOR_URL
-        response = self._list(url, **kwargs)
+        response = self._list(url, get_all=True,
+                              resources=const.HEALTH_MONITOR_RESOURCES,
+                              **kwargs)
 
         return response
 
@@ -676,7 +713,9 @@ class OctaviaAPI(api.BaseAPI):
             A ``dict`` representing a list of quotas for the project
         """
         url = const.BASE_QUOTA_URL
-        response = self._list(url, **params)
+        response = self._list(url, get_all=True,
+                              resources=const.QUOTA_RESOURCES,
+                              **params)
 
         return response
 
@@ -759,7 +798,9 @@ class OctaviaAPI(api.BaseAPI):
             A ``dict`` containing a list of amphorae
         """
         url = const.BASE_AMPHORA_URL
-        response = self._list(path=url, **kwargs)
+        response = self._list(path=url, get_all=True,
+                              resources=const.AMPHORA_RESOURCES,
+                              **kwargs)
 
         return response
 
@@ -827,7 +868,8 @@ class OctaviaAPI(api.BaseAPI):
             A ``dict`` containing a list of provider
         """
         url = const.BASE_PROVIDER_URL
-        response = self._list(path=url)
+        response = self._list(path=url, get_all=True,
+                              resources=const.PROVIDER_RESOURCES)
 
         return response
 
@@ -842,7 +884,9 @@ class OctaviaAPI(api.BaseAPI):
         """
         url = const.BASE_PROVIDER_FLAVOR_CAPABILITY_URL.format(
             provider=provider)
-        response = self._list(url)
+        resources = const.PROVIDER_FLAVOR_CAPABILITY_RESOURCES
+        response = self._list(url, get_all=True,
+                              resources=resources)
 
         return response
 
@@ -857,7 +901,9 @@ class OctaviaAPI(api.BaseAPI):
         """
         url = const.BASE_PROVIDER_AVAILABILITY_ZONE_CAPABILITY_URL.format(
             provider=provider)
-        response = self._list(url)
+        resources = const.PROVIDER_AVAILABILITY_ZONE_CAPABILITY_RESOURCES
+        response = self._list(url, get_all=True,
+                              resources=resources)
 
         return response
 
@@ -871,7 +917,8 @@ class OctaviaAPI(api.BaseAPI):
             A ``dict`` containing a list of flavor
         """
         url = const.BASE_FLAVOR_URL
-        response = self._list(path=url, **kwargs)
+        response = self._list(path=url, get_all=True,
+                              resources=const.FLAVOR_RESOURCES, **kwargs)
 
         return response
 
@@ -956,7 +1003,9 @@ class OctaviaAPI(api.BaseAPI):
             List of flavor profile
         """
         url = const.BASE_FLAVORPROFILE_URL
-        response = self._list(url, **kwargs)
+        response = self._list(url, get_all=True,
+                              resources=const.FLAVORPROFILE_RESOURCES,
+                              **kwargs)
 
         return response
 
@@ -1014,7 +1063,9 @@ class OctaviaAPI(api.BaseAPI):
             A ``dict`` containing a list of availabilityzone
         """
         url = const.BASE_AVAILABILITYZONE_URL
-        response = self._list(path=url, **kwargs)
+        response = self._list(path=url, get_all=True,
+                              resources=const.AVAILABILITYZONE_RESOURCES,
+                              **kwargs)
 
         return response
 
@@ -1103,7 +1154,10 @@ class OctaviaAPI(api.BaseAPI):
             List of availabilityzone profile
         """
         url = const.BASE_AVAILABILITYZONEPROFILE_URL
-        response = self._list(url, **kwargs)
+        resources = const.AVAILABILITYZONEPROFILE_RESOURCES
+        response = self._list(url, get_all=True,
+                              resources=resources,
+                              **kwargs)
 
         return response
 

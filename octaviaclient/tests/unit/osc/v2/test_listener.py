@@ -162,6 +162,7 @@ class TestListenerDelete(TestListener):
         verifylist = [
             ('listener', 'unknown_lb')
         ]
+        self.api_mock.listener_list.return_value = {'listeners': []}
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.assertRaises(exceptions.CommandError, self.cmd.take_action,
                           parsed_args)

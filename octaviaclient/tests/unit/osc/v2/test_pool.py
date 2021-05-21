@@ -155,6 +155,7 @@ class TestPoolDelete(TestPool):
         verifylist = [
             ('pool', 'unknown_pool')
         ]
+        self.api_mock.pool_list.return_value = {'pools': []}
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.assertRaises(exceptions.CommandError, self.cmd.take_action,
                           parsed_args)

@@ -94,6 +94,8 @@ class TestAvailabilityzoneDelete(TestAvailabilityzone):
         verifylist = [
             ('availabilityzone', 'unknown_availabilityzone')
         ]
+        self.api_mock.availabilityzone_list.return_value = {
+            'availability_zones': []}
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.assertRaises(exceptions.CommandError, self.cmd.take_action,
                           parsed_args)

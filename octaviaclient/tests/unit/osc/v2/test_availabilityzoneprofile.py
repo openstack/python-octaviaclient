@@ -99,6 +99,8 @@ class TestAvailabilityzoneProfileDelete(TestAvailabilityzoneProfile):
         verifylist = [
             ('availabilityzoneprofile', 'unknown_availabilityzoneprofile')
         ]
+        self.api_mock.availabilityzoneprofile_list.return_value = {
+            'availability_zone_profiles': []}
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.assertRaises(exceptions.CommandError, self.cmd.take_action,
                           parsed_args)

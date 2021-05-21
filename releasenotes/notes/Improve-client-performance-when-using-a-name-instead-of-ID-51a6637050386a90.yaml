@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    Improved the client performance when using a name instead of the
+    resource ID.

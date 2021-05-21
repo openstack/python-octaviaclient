@@ -173,6 +173,7 @@ class TestL7PolicyDelete(TestL7Policy):
         verifylist = [
             ('l7policy', 'unknown_policy')
         ]
+        self.api_mock.l7policy_list.return_value = {'l7policies': []}
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.assertRaises(exceptions.CommandError, self.cmd.take_action,
                           parsed_args)

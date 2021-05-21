@@ -157,6 +157,8 @@ class TestHealthMonitorDelete(TestHealthMonitor):
         verifylist = [
             ('health_monitor', 'unknown_hm')
         ]
+        self.api_mock.health_monitor_list.return_value = {
+            'healthmonitors': []}
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.assertRaises(exceptions.CommandError, self.cmd.take_action,
                           parsed_args)

@@ -15,6 +15,7 @@
 from osc_lib import exceptions
 
 from openstackclient.identity import common as identity_common
+from oslo_utils import uuidutils
 
 
 def _map_attrs(args, source_attr_map):
@@ -58,6 +59,62 @@ def _map_attrs(args, source_attr_map):
     return res
 
 
+def _find_resource(list_funct, resource_name, root_tag, name, parent=None):
+    """Search for a resource by name and ID.
+
+    This function will search for a resource by both the name and ID,
+    returning the resource once it finds a match. If no match is found,
+    an exception will be raised.
+
+    :param list_funct: The resource list method to call during searches.
+    :param resource_name: The name of the resource type we are searching for.
+    :param root_tag: The root tag of the resource returned from the API.
+    :param name: The value we are searching for, a resource name or ID.
+    :param parent: The parent resource ID, when required.
+    :return: The resource found for the name or ID.
+    :raises exceptions.CommandError: If more than one match or none are found.
+    """
+    if parent:
+        parent_args = [parent]
+    else:
+        parent_args = []
+    # Optimize the API call order if we got a UUID-like name or not
+    if uuidutils.is_uuid_like(name):
+        # Try by ID first
+        resource = list_funct(*parent_args, id=name)[root_tag]
+        if len(resource) == 1:
+            return resource[0]
+
+        # Try by name next
+        resource = list_funct(*parent_args, name=name)[root_tag]
+        if len(resource) == 1:
+            return resource[0]
+        if len(resource) > 1:
+            msg = ("{0} {1} found with name or ID of {2}. Please try "
+                   "again with UUID".format(len(resource), resource_name,
+                                            name))
+            raise exceptions.CommandError(msg)
+    else:
+        # Try by name first
+        resource = list_funct(*parent_args, name=name)[root_tag]
+        if len(resource) == 1:
+            return resource[0]
+        if len(resource) > 1:
+            msg = ("{0} {1} found with name or ID of {2}. Please try "
+                   "again with UUID".format(len(resource), resource_name,
+                                            name))
+            raise exceptions.CommandError(msg)
+
+        # Try by ID next
+        resource = list_funct(*parent_args, id=name)[root_tag]
+        if len(resource) == 1:
+            return resource[0]
+
+    # We didn't find what we were looking for, raise a consistent error.
+    msg = "Unable to locate {0} in {1}".format(name, resource_name)
+    raise exceptions.CommandError(msg)
+
+
 def get_resource_id(resource, resource_name, name):
     """Converts a resource name into a UUID for consumption for the API
 
@@ -84,35 +141,22 @@ def get_resource_id(resource, resource_name, name):
                     name
                 ).id
                 return project_id
-            else:
-                return 'non-uuid'
-        elif resource_name == 'members':
-            names = [re for re in resource(name['pool_id'])['members']
-                     if re.get('id') == name['member_id']
-                     or re.get('name') == name['member_id']]
-            name = name['member_id']
-            if len(names) > 1:
-                msg = ("{0} {1} found with name or ID of {2}. Please try "
-                       "again with UUID".format(len(names), resource_name,
-                                                name))
-                raise exceptions.CommandError(msg)
-            else:
-                return names[0].get('id')
-        elif resource_name == 'l7rules':
-            names = [re for re in resource(name['l7policy_id'])['rules']
-                     if re.get('id') == name['l7rule_id']]
-            name = name['l7rule_id']
-            return names[0].get('id')
-        else:
-            names = [re for re in resource()[resource_name]
-                     if re.get('name') == name or re.get('id') == name]
-            if len(names) > 1:
-                msg = ("{0} {1} found with name or ID of {2}. Please try "
-                       "again with UUID".format(len(names), resource_name,
-                                                name))
-                raise exceptions.CommandError(msg)
-            else:
-                return names[0].get('id')
+            return 'non-uuid'
+
+        if resource_name == 'members':
+            member = _find_resource(resource, resource_name, 'members',
+                                    name['member_id'], parent=name['pool_id'])
+            return member.get('id')
+
+        if resource_name == 'l7rules':
+            l7rule = _find_resource(resource, resource_name, 'rules',
+                                    name['l7rule_id'],
+                                    parent=name['l7policy_id'])
+            return l7rule.get('id')
+
+        resource = _find_resource(resource, resource_name, resource_name, name)
+        return resource.get('id')
+
     except IndexError:
         msg = "Unable to locate {0} in {1}".format(name, resource_name)
         raise exceptions.CommandError(msg)

@@ -95,6 +95,8 @@ class TestFlavorProfileDelete(TestFlavorProfile):
         verifylist = [
             ('flavorprofile', 'unknown_flavorprofile')
         ]
+        self.api_mock.flavorprofile_list.return_value = {
+            'flavorprofiles': []}
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.assertRaises(exceptions.CommandError, self.cmd.take_action,
                           parsed_args)

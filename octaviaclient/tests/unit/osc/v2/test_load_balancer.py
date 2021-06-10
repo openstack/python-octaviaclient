@@ -305,6 +305,8 @@ class TestLoadBalancerDelete(TestLoadBalancer):
         verifylist = [
             ('loadbalancer', 'unknown_lb')
         ]
+        self.api_mock.load_balancer_list.return_value = {
+            'loadbalancers': []}
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.assertRaises(exceptions.CommandError, self.cmd.take_action,
                           parsed_args)

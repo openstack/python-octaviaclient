@@ -90,7 +90,7 @@ class DeleteFlavor(command.Command):
         parser.add_argument(
             'flavor',
             metavar='<flavor>',
-            help="Flavor to delete (name or ID)"
+            help="Flavor to delete (name or ID)."
         )
 
         return parser

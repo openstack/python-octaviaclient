@@ -138,7 +138,7 @@ class CreateHealthMonitor(command.ShowOne):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_create(
@@ -191,7 +191,7 @@ class DeleteHealthMonitor(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         return parser
@@ -369,7 +369,7 @@ class SetHealthMonitor(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_set(parser, 'health monitor')
@@ -449,7 +449,7 @@ class UnsetHealthMonitor(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_unset(parser, 'health monitor')

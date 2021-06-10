@@ -130,7 +130,7 @@ class CreateLoadBalancer(command.ShowOne):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_create(
@@ -181,7 +181,7 @@ class DeleteLoadBalancer(command.Command):
         parser.add_argument(
             'loadbalancer',
             metavar='<load_balancer>',
-            help="Load balancers to delete (name or ID)"
+            help="Load balancers to delete (name or ID)."
         )
         parser.add_argument(
             '--cascade',
@@ -193,7 +193,7 @@ class DeleteLoadBalancer(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         return parser
@@ -228,7 +228,7 @@ class FailoverLoadBalancer(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         return parser
@@ -438,7 +438,7 @@ class SetLoadBalancer(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_set(parser, 'load balancer')
@@ -496,7 +496,7 @@ class UnsetLoadBalancer(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_unset(parser, 'load balancer')

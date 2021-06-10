@@ -195,7 +195,7 @@ class ResetQuota(command.Command):
         parser.add_argument(
             'project',
             metavar="<project>",
-            help="Project to reset quotas (name or ID)"
+            help="Project to reset quotas (name or ID)."
         )
 
         return parser

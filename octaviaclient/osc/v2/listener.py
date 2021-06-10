@@ -174,7 +174,7 @@ class CreateListener(command.ShowOne):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
         parser.add_argument(
             '--tls-ciphers',
@@ -251,12 +251,12 @@ class DeleteListener(command.Command):
         parser.add_argument(
             'listener',
             metavar="<listener>",
-            help="Listener to delete (name or ID)"
+            help="Listener to delete (name or ID)."
         )
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         return parser
@@ -338,7 +338,7 @@ class ShowListener(command.ShowOne):
         parser.add_argument(
             'listener',
             metavar='<listener>',
-            help='Name or UUID of the listener'
+            help='Name or UUID of the listener.'
         )
 
         return parser
@@ -410,7 +410,7 @@ class SetListener(command.Command):
             '--default-tls-container-ref',
             metavar='<container-ref>',
             help="The URI to the key manager service secrets container "
-                 "containing the certificate and key for TERMINATED_TLS"
+                 "containing the certificate and key for TERMINATED_TLS "
                  "listeners."
         )
         parser.add_argument(
@@ -501,7 +501,7 @@ class SetListener(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
         parser.add_argument(
             '--tls-ciphers',
@@ -702,7 +702,7 @@ class ShowListenerStats(command.ShowOne):
         parser.add_argument(
             'listener',
             metavar='<listener>',
-            help='Name or UUID of the listener'
+            help='Name or UUID of the listener.'
         )
 
         return parser

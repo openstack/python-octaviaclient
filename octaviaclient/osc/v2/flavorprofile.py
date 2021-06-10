@@ -74,7 +74,7 @@ class DeleteFlavorProfile(command.Command):
         parser.add_argument(
             'flavorprofile',
             metavar='<flavor_profile>',
-            help="Flavor profiles to delete (name or ID)"
+            help="Flavor profiles to delete (name or ID)."
         )
 
         return parser

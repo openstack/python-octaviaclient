@@ -137,7 +137,7 @@ class ConfigureAmphora(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         return parser
@@ -176,7 +176,7 @@ class FailoverAmphora(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         return parser
@@ -214,12 +214,12 @@ class ShowAmphoraStats(command.ShowOne):
         parser.add_argument(
             '--listener',
             metavar='<listener>',
-            help='Filter by listener (name or ID)',
+            help='Filter by listener (name or ID).',
         )
         parser.add_argument(
             'amphora_id',
             metavar='<amphora-id>',
-            help='UUID of the amphora'
+            help='UUID of the amphora.'
         )
 
         return parser
@@ -267,7 +267,7 @@ class DeleteAmphora(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         return parser

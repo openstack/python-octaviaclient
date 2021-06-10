@@ -126,13 +126,13 @@ class CreateMember(command.ShowOne):
             '--disable-backup',
             action='store_true',
             default=None,
-            help="Disable member backup (default)"
+            help="Disable member backup (default)."
         )
         backup.add_argument(
             '--enable-backup',
             action='store_true',
             default=None,
-            help="Enable member backup"
+            help="Enable member backup."
         )
         parser.add_argument(
             '--weight',
@@ -145,7 +145,7 @@ class CreateMember(command.ShowOne):
         parser.add_argument(
             '--address',
             metavar='<ip_address>',
-            help="The IP address of the backend member server",
+            help="The IP address of the backend member server.",
             required=True
         )
         parser.add_argument(
@@ -179,18 +179,18 @@ class CreateMember(command.ShowOne):
             '--enable',
             action='store_true',
             default=None,
-            help="Enable member (default)"
+            help="Enable member (default)."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Disable member"
+            help="Disable member."
         )
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_create(
@@ -246,38 +246,38 @@ class SetMember(command.Command):
         parser.add_argument(
             'member',
             metavar='<member>',
-            help="Name or ID of the member to update"
+            help="Name or ID of the member to update."
         )
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="Set the name of the member"
+            help="Set the name of the member."
         )
         backup = parser.add_mutually_exclusive_group()
         backup.add_argument(
             '--disable-backup',
             action='store_true',
             default=None,
-            help="Disable member backup (default)"
+            help="Disable member backup (default)."
         )
         backup.add_argument(
             '--enable-backup',
             action='store_true',
             default=None,
-            help="Enable member backup"
+            help="Enable member backup."
         )
         parser.add_argument(
             '--weight',
             metavar='<weight>',
             type=int,
-            help="Set the weight of member in the pool"
+            help="Set the weight of member in the pool."
         )
         parser.add_argument(
             '--monitor-port',
             metavar='<monitor_port>',
             type=int,
             help="An alternate protocol port used for health monitoring a "
-                 "backend member",
+                 "backend member.",
         )
         parser.add_argument(
             '--monitor-address',
@@ -290,17 +290,17 @@ class SetMember(command.Command):
             '--enable',
             action='store_true',
             default=None,
-            help="Set the admin_state_up to True"
+            help="Set the admin_state_up to True."
         )
         admin_group.add_argument(
             '--disable',
             action='store_true',
             default=None,
-            help="Set the admin_state_up to False")
+            help="Set the admin_state_up to False.")
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_set(parser, 'member')
@@ -357,7 +357,7 @@ class DeleteMember(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         return parser
@@ -427,7 +427,7 @@ class UnsetMember(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
         _tag.add_tag_option_to_parser_for_unset(parser, 'member')
 

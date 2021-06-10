@@ -75,7 +75,7 @@ class DeleteAvailabilityzoneProfile(command.Command):
         parser.add_argument(
             'availabilityzoneprofile',
             metavar='<availabilityzone_profile>',
-            help="Availability zone profile to delete (name or ID)"
+            help="Availability zone profile to delete (name or ID)."
         )
 
         return parser
@@ -98,7 +98,7 @@ class ListAvailabilityzoneProfile(lister.Lister):
         parser.add_argument(
             '--name',
             metavar='<name>',
-            help="List availabilityzone profiles by profile name."
+            help="List availability zone profiles by profile name."
         )
         parser.add_argument(
             '--provider',

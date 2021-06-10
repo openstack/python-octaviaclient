@@ -64,7 +64,7 @@ class CreatePool(command.ShowOne):
         parent_group.add_argument(
             '--loadbalancer',
             metavar='<load_balancer>',
-            help="Load balncer to add the pool to (name or ID)"
+            help="Load balancer to add the pool to (name or ID)."
         )
         parser.add_argument(
             '--session-persistence',
@@ -104,7 +104,7 @@ class CreatePool(command.ShowOne):
             metavar='<ca_tls_container_ref>',
             help="The reference to the key manager service secrets container "
                  "containing the CA certificate for ``tls_enabled`` pools "
-                 "to check the backend member servers certificates"
+                 "to check the backend member servers certificates."
         )
         parser.add_argument(
             '--crl-container-ref',
@@ -129,7 +129,7 @@ class CreatePool(command.ShowOne):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
         parser.add_argument(
             '--tls-ciphers',
@@ -206,7 +206,7 @@ class DeletePool(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         return parser
@@ -380,7 +380,7 @@ class SetPool(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
         parser.add_argument(
             '--tls-ciphers',
@@ -487,7 +487,7 @@ class UnsetPool(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
         parser.add_argument(
             '--alpn-protocols',

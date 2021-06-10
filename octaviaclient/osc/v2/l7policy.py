@@ -85,7 +85,7 @@ class CreateL7Policy(command.ShowOne):
             metavar='<redirect_http_code>',
             choices=REDIRECT_CODE_CHOICES,
             type=int,
-            help="Set the HTTP response code for REDIRECT_URL or"
+            help="Set the HTTP response code for REDIRECT_URL or "
                  "REDIRECT_PREFIX action."
         )
         parser.add_argument(
@@ -110,7 +110,7 @@ class CreateL7Policy(command.ShowOne):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_create(
@@ -163,7 +163,7 @@ class DeleteL7Policy(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         return parser
@@ -305,7 +305,7 @@ class SetL7Policy(command.Command):
             metavar='<redirect_http_code>',
             choices=REDIRECT_CODE_CHOICES,
             type=int,
-            help="Set the HTTP response code for REDIRECT_URL or"
+            help="Set the HTTP response code for REDIRECT_URL or "
                  "REDIRECT_PREFIX action."
         )
         parser.add_argument(
@@ -330,7 +330,7 @@ class SetL7Policy(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_set(parser, 'l7policy')
@@ -390,7 +390,7 @@ class UnsetL7Policy(command.Command):
         parser.add_argument(
             '--wait',
             action='store_true',
-            help='Wait for action to complete',
+            help='Wait for action to complete.',
         )
 
         _tag.add_tag_option_to_parser_for_unset(parser, 'l7policy')

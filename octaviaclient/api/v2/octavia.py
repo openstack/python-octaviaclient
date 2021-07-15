@@ -435,6 +435,22 @@ class OctaviaAPI(api.BaseAPI):
         return response
 
     @correct_return_codes
+    def members_set(self, pool_id, **kwargs):
+        """Updating batch members settings
+
+        :param pool_id:
+            ID of the pool
+        :param kwargs:
+            A dict of the values of member to be updated
+        :return:
+            Response code from the API
+        """
+
+        url = const.BASE_MEMBER_URL.format(pool_id=pool_id)
+        response = self._create(url, method='PUT', **kwargs)
+        return response
+
+    @correct_return_codes
     def member_delete(self, pool_id, member_id):
         """Removing a member from a pool and mark that member as deleted
 

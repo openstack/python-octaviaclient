@@ -1,0 +1,9 @@
+---
+fixes:
+  - |
+    The ``--availabilityzone-data`` parameter is renamed to
+    ``--availability-zone-data`` in the ``openstack loadbalancer
+    availabilityzoneprofile set`` command.
+    This change also fixes an issue with this CLI call, the availabilityzone data
+    parameter was dropped when calling the API, leaving the
+    availabilizyzoneprofile object untouched.

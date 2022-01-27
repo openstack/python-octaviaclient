@@ -11,6 +11,10 @@ Python Octavia Client
    The Python Octavia Client (python-octaviaclient) is a command-line client
    for the OpenStack Load Balancing service.
 
+.. note:: This project is only intended to be used for the OpenStack Client
+          CLI. The `openstacksdk <https://opendev.org/openstack/openstacksdk>`_
+          should be used for python bindings.
+
 Getting Started
 ---------------
 

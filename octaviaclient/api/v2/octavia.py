@@ -86,8 +86,8 @@ class OctaviaAPI(api.BaseAPI):
             links = response.get("{}_links".format(resource_key), [])
             for link in links:
                 if link.get('rel') == 'next':
-                    query_str = urllib.urlparse.urlparse(link['href']).query
-                    params = urllib.urlparse.parse_qs(query_str)
+                    query_str = urllib.parse.urlparse(link['href']).query
+                    params = urllib.parse.parse_qs(query_str)
                     break
             else:
                 break

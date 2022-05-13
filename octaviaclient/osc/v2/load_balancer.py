@@ -24,7 +24,7 @@ from oslo_utils import uuidutils
 from octaviaclient.osc.v2 import constants as const
 from octaviaclient.osc.v2 import utils as v2_utils
 
-PROVISIONING_STATUS = ['ACTIVE', 'DELETED', 'ERROR', 'PENDING_CREATE',
+PROVISIONING_STATUS = ['ACTIVE', 'ERROR', 'PENDING_CREATE',
                        'PENDING_UPDATE', 'PENDING_DELETE']
 
 OPERATING_STATUS = ['ONLINE', 'DRAINING', 'OFFLINE', 'DEGRADED', 'ERROR',

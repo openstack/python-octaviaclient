@@ -89,6 +89,13 @@ class CreateLoadBalancer(command.ShowOne):
             metavar='<vip_qos_policy_id>',
             help="Set QoS policy ID for VIP port. Unset with 'None'.",
         )
+        parser.add_argument(
+            '--additional-vip',
+            metavar='subnet-id=<name-or-uuid>[,ip-address=<ip>]',
+            action='append',
+            help="Expose an additional VIP on the load balancer. This "
+                 "parameter can be provided more than once."
+        )
 
         parser.add_argument(
             '--project',

@@ -1,0 +1,4 @@
+---
+fixes:
+  - |
+    Removed an unsupported protocol from the pool protocols.

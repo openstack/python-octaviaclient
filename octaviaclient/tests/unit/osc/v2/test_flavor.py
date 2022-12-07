@@ -157,10 +157,12 @@ class TestFlavorSet(TestFlavor):
         self.cmd = flavor.SetFlavor(self.app, None)
 
     def test_flavor_set(self):
-        arglist = [self._flavor.id, '--name', 'new_name']
+        arglist = [self._flavor.id, '--name', 'new_name',
+                   '--description', 'new_desc']
         verifylist = [
             ('flavor', self._flavor.id),
             ('name', 'new_name'),
+            ('description', 'new_desc')
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -168,7 +170,8 @@ class TestFlavorSet(TestFlavor):
         self.api_mock.flavor_set.assert_called_with(
             self._flavor.id, json={
                 'flavor': {
-                    'name': 'new_name'
+                    'name': 'new_name',
+                    'description': 'new_desc'
                 }})
 
 

@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    Added a missing option to the "loadbalancer flavor set" command, admins can
+    now update the description of an Octavia flavor.

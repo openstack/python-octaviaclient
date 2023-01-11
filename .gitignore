@@ -60,3 +60,6 @@ releasenotes/build
 
 # PyCharm project directory
 .idea
+
+# Git
+*.orig

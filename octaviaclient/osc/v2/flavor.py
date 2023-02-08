@@ -201,6 +201,11 @@ class SetFlavor(command.Command):
             metavar='<name>',
             help="Set the name of the flavor."
         )
+        parser.add_argument(
+            '--description',
+            metavar='<description>',
+            help="Set flavor description."
+        )
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
             '--enable',

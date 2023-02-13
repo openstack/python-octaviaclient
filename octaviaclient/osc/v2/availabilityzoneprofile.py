@@ -171,8 +171,8 @@ class SetAvailabilityzoneProfile(command.Command):
             help="Set the provider of the availability zone profile."
         )
         parser.add_argument(
-            '--availabilityzone-data',
-            metavar='<availabilityzone_data>',
+            '--availability-zone-data',
+            metavar='<availability_zone_data>',
             help="Set the availability zone data of the profile."
         )
 

@@ -184,3 +184,18 @@ class TestAvailabilityzoneProfileSet(TestAvailabilityzoneProfile):
                 'availability_zone_profile': {
                     'name': 'new_name'
                 }})
+
+        arglist = [self._availabilityzoneprofile.id,
+                   '--availability-zone-data', '{"key1": "value1"}']
+        verifylist = [
+            ('availabilityzoneprofile', self._availabilityzoneprofile.id),
+            ('availability_zone_data', '{"key1": "value1"}'),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.availabilityzoneprofile_set.assert_called_with(
+            self._availabilityzoneprofile.id, json={
+                'availability_zone_profile': {
+                    'availability_zone_data': '{"key1": "value1"}'
+                }})

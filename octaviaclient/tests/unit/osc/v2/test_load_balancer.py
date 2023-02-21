@@ -9,12 +9,12 @@
 #   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #   License for the specific language governing permissions and limitations
 #   under the License.
-#
+
+import argparse
 import copy
 import itertools
 from unittest import mock
 
-import munch
 from osc_lib import exceptions
 from oslo_utils import uuidutils
 
@@ -496,9 +496,12 @@ class TestLoadBalancerCreate(TestLoadBalancer):
                 # subtract comb's keys from attrs_list
                 filtered_attrs = {k: v for k, v in attrs_list.items() if (
                     k not in comb)}
+
                 # Add the 'wait' attribute, which isn't part of an LB directly
                 filtered_attrs['wait'] = False
                 mock_client.return_value = filtered_attrs
+                parsed_args = argparse.Namespace(**filtered_attrs)
+
                 if not any(k in filtered_attrs for k in args) or all(
                     k in filtered_attrs for k in ("vip_network_id",
                                                   "vip_port_id")
@@ -506,10 +509,11 @@ class TestLoadBalancerCreate(TestLoadBalancer):
                     self.assertRaises(
                         exceptions.CommandError,
                         self.cmd.take_action,
-                        filtered_attrs)
+                        parsed_args
+                    )
                 else:
                     try:
-                        self.cmd.take_action(munch.Munch(filtered_attrs))
+                        self.cmd.take_action(parsed_args)
                     except exceptions.CommandError as e:
                         self.fail("%s raised unexpectedly" % e)
 

@@ -10,9 +10,7 @@
 #   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #   License for the specific language governing permissions and limitations
 #   under the License.
-#
 
-import munch
 from openstackclient.identity import common as identity_common
 from osc_lib import exceptions as osc_exc
 from osc_lib import utils
@@ -677,9 +675,13 @@ def get_unsets(parsed_args):
     return unsets
 
 
+class _Munch(dict):
+    __getattr__ = dict.get
+
+
 def wait_for_active(status_f, res_id):
     success = utils.wait_for_status(
-        status_f=lambda x: munch.Munch(status_f(x)),
+        status_f=lambda x: _Munch(status_f(x)),
         res_id=res_id,
         status_field=constants.PROVISIONING_STATUS,
         sleep_time=3
@@ -695,7 +697,7 @@ def wait_for_delete(status_f, res_id,
     class Getter(object):
         @staticmethod
         def get(id):
-            return munch.Munch(status_f(id))
+            return _Munch(status_f(id))
 
     try:
         success = utils.wait_for_delete(

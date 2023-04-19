@@ -255,7 +255,12 @@ class TestListenerCreate(TestListener):
                    '--alpn-protocol',
                    self._listener.alpn_protocols[0],
                    '--alpn-protocol',
-                   self._listener.alpn_protocols[1]]
+                   self._listener.alpn_protocols[1],
+                   '--hsts-max-age',
+                   '12000000',
+                   '--hsts-include-subdomains',
+                   '--hsts-preload',
+                   ]
 
         verifylist = [
             ('loadbalancer', 'mock_lb_id'),
@@ -276,6 +281,9 @@ class TestListenerCreate(TestListener):
              self._listener.tls_versions),
             ('alpn_protocols',
              self._listener.alpn_protocols),
+            ('hsts_max_age', 12_000_000),
+            ('hsts_include_subdomains', True),
+            ('hsts_preload', True),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -386,7 +394,12 @@ class TestListenerSet(TestListener):
                    '--alpn-protocol',
                    self._listener.alpn_protocols[0],
                    '--alpn-protocol',
-                   self._listener.alpn_protocols[1]]
+                   self._listener.alpn_protocols[1],
+                   '--hsts-max-age',
+                   '15000000',
+                   '--hsts-include-subdomains',
+                   '--hsts-preload',
+                   ]
         verifylist = [
             ('listener', self._listener.id),
             ('name', 'new_name'),
@@ -402,7 +415,10 @@ class TestListenerSet(TestListener):
             ('allowed_cidrs', self._listener.allowed_cidrs),
             ('tls_ciphers', self._listener.tls_ciphers),
             ('tls_versions', self._listener.tls_versions),
-            ('alpn_protocols', self._listener.alpn_protocols)
+            ('alpn_protocols', self._listener.alpn_protocols),
+            ('hsts_max_age', 15_000_000),
+            ('hsts_include_subdomains', True),
+            ('hsts_preload', True),
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -424,7 +440,30 @@ class TestListenerSet(TestListener):
                     'tls_ciphers': self._listener.tls_ciphers,
                     'tls_versions': self._listener.tls_versions,
                     'alpn_protocols': self._listener.alpn_protocols,
-                }})
+                    'hsts_max_age': 15_000_000,
+                    'hsts_include_subdomains': True,
+                    'hsts_preload': True,
+                }
+            }
+        )
+
+    def test_listener_set_suppressed(self):
+        arglist = [self._listener.id, '--name', 'foo']
+        verifylist = [('name', 'foo')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        # Suppressed arguments should not be included
+        self.assertNotIn('hsts_preload', parsed_args)
+        self.assertNotIn('hsts_include_subdomain', parsed_args)
+        self.assertNotIn('hsts_max_age', parsed_args)
+        self.api_mock.listener_set.assert_called_with(
+            self._listener.id, json={
+                'listener': {
+                    'name': 'foo',
+                }
+            }
+        )
 
     @mock.patch('osc_lib.utils.wait_for_status')
     def test_listener_set_wait(self, mock_wait):
@@ -438,7 +477,10 @@ class TestListenerSet(TestListener):
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_set.assert_called_with(
-            self._listener.id, json={'listener': {'name': 'new_name'}})
+            self._listener.id, json={
+                'listener': {'name': 'new_name'}
+            }
+        )
         mock_wait.assert_called_once_with(
             status_f=mock.ANY,
             res_id=self._listener.id,
@@ -573,6 +615,15 @@ class TestListenerUnset(TestListener):
 
     def test_listener_unset_tls_ciphers(self):
         self._test_listener_unset_param('tls_ciphers')
+
+    def test_listener_unset_hsts_max_age(self):
+        self._test_listener_unset_param('hsts_max_age')
+
+    def test_listener_unset_hsts_include_subdomains(self):
+        self._test_listener_unset_param('hsts_include_subdomains')
+
+    def test_listener_unset_hsts_preload(self):
+        self._test_listener_unset_param('hsts_preload')
 
     def _test_listener_unset_param(self, param):
         self.api_mock.listener_set.reset_mock()

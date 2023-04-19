@@ -82,7 +82,11 @@ LISTENER_ROWS = (
     'tls_ciphers',
     'tls_versions',
     'alpn_protocols',
-    'tags')
+    'tags',
+    'hsts_max_age',
+    'hsts_include_subdomains',
+    'hsts_preload',
+)
 
 LISTENER_COLUMNS = (
     'id',

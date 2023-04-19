@@ -322,6 +322,9 @@ def get_listener_attrs(client_manager, parsed_args):
         'tls_ciphers': ('tls_ciphers', str),
         'tls_versions': ('tls_versions', list),
         'alpn_protocols': ('alpn_protocols', list),
+        'hsts_max_age': ('hsts_max_age', int),
+        'hsts_include_subdomains': ('hsts_include_subdomains', bool),
+        'hsts_preload': ('hsts_preload', bool),
     }
     add_tags_attr_map(attr_map)
 

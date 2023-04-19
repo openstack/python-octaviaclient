@@ -82,7 +82,10 @@ LISTENER_ATTRS = {
     'tls_ciphers': "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256",
     'tls_versions': ['TLSv1.1', 'TLSv1.2'],
     'alpn_protocols': ['h2', 'http/1.1'],
-    "tags": ["foo", "bar"]
+    "tags": ["foo", "bar"],
+    'hsts_max_age': 15_000_000,
+    'hsts_include_subdomains': True,
+    'hsts_preload': True,
 }
 
 LOADBALANCER_ATTRS = {

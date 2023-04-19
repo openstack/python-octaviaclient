@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    Added support for HTTP Strict Transport Security (HSTS). This new feature
+    can be enabled and configured during listener creation and update
+    using the new ``--hsts-max-age`` option and the optional
+    ``--hsts-include-subdomains`` and ``--hsts-prefetch`` options.

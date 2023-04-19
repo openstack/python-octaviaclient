@@ -13,7 +13,7 @@
 #
 
 """Listener action implementation"""
-
+import argparse
 
 from cliff import lister
 from osc_lib.command import command
@@ -200,6 +200,32 @@ class CreateListener(command.ShowOne):
             action='append',
             help="Set the ALPN protocol to be used "
                  "by the listener (can be set multiple times)."
+        )
+        parser.add_argument(
+            '--hsts-max-age',
+            dest='hsts_max_age',
+            metavar='<hsts_max_age>',
+            type=int,
+            help="The value of the max_age directive for the "
+                 "Strict-Transport-Security HTTP response header. "
+                 "Setting this enables HTTP Strict Transport "
+                 "Security (HSTS) for the TLS-terminated listener."
+        )
+        parser.add_argument(
+            '--hsts-include-subdomains',
+            action='store_true',
+            dest='hsts_include_subdomains',
+            help="Define whether the includeSubDomains directive should be "
+                 "added to the Strict-Transport-Security HTTP response "
+                 "header."
+        )
+        parser.add_argument(
+            '--hsts-preload',
+            action='store_true',
+            dest='hsts_preload',
+            help="Define whether the preload directive should be "
+                 "added to the Strict-Transport-Security HTTP response "
+                 "header."
         )
 
         _tag.add_tag_option_to_parser_for_create(
@@ -528,6 +554,35 @@ class SetListener(command.Command):
             help="Set the ALPN protocol to be used "
                  "by the listener (can be set multiple times)."
         )
+        parser.add_argument(
+            '--hsts-max-age',
+            dest='hsts_max_age',
+            metavar='<hsts_max_age>',
+            type=int,
+            default=argparse.SUPPRESS,
+            help="The value of the max_age directive for the "
+                 "Strict-Transport-Security HTTP response header. "
+                 "Setting this enables HTTP Strict Transport "
+                 "Security (HSTS) for the TLS-terminated listener."
+        )
+        parser.add_argument(
+            '--hsts-include-subdomains',
+            action='store_true',
+            default=argparse.SUPPRESS,
+            dest='hsts_include_subdomains',
+            help="Defines whether the includeSubDomains directive should be "
+                 "added to the Strict-Transport-Security HTTP response "
+                 "header."
+        )
+        parser.add_argument(
+            '--hsts-preload',
+            action='store_true',
+            default=argparse.SUPPRESS,
+            dest='hsts_preload',
+            help="Defines whether the preload directive should be "
+                 "added to the Strict-Transport-Security HTTP response "
+                 "header."
+        )
 
         _tag.add_tag_option_to_parser_for_set(parser, 'listener')
 
@@ -664,7 +719,27 @@ class UnsetListener(command.Command):
             action='store_true',
             help="Clear all ALPN protocols from the listener."
         )
-
+        parser.add_argument(
+            '--hsts-max-age',
+            dest='hsts_max_age',
+            action='store_true',
+            help="Disables HTTP Strict Transport "
+                 "Security (HSTS) for the TLS-terminated listener."
+        )
+        parser.add_argument(
+            '--hsts-include-subdomains',
+            action='store_true',
+            dest='hsts_include_subdomains',
+            help="Removes the includeSubDomains directive from the "
+                 "Strict-Transport-Security HTTP response header."
+        )
+        parser.add_argument(
+            '--hsts-preload',
+            action='store_true',
+            dest='hsts_preload',
+            help="Removes the preload directive from the "
+                 "Strict-Transport-Security HTTP response header."
+        )
         _tag.add_tag_option_to_parser_for_unset(parser, 'listener')
 
         return parser

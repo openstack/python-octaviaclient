@@ -105,6 +105,11 @@ class TestValidations(utils.TestCommand):
         self.assertRaises(exceptions.InvalidValue,
                           validate.check_listener_attrs, attrs_dict)
 
+        for key in ('hsts_preload', 'hsts_include_subdomains'):
+            attrs_dict = {key: True}
+            self.assertRaises(exceptions.InvalidValue,
+                              validate.check_listener_attrs, attrs_dict)
+
     def test_check_member_attrs(self):
         # Positive tests, should not raise
         attrs_dict = {'protocol_port': constants.MIN_PORT_NUMBER,

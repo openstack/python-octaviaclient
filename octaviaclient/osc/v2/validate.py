@@ -64,7 +64,7 @@ def check_listener_attrs(attrs):
         key in attrs for key in ('hsts_preload', 'hsts_include_subdomains'))
     if extra_hsts_opts_set and 'hsts_max_age' not in attrs:
         raise exceptions.InvalidValue(
-            "Argument hsts-max-age is required when using hsts_preload or "
+            "Argument hsts_max_age is required when using hsts_preload or "
             "hsts_include_subdomains arguments.")
 
 

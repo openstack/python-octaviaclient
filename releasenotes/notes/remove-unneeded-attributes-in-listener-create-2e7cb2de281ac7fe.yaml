@@ -1,0 +1,8 @@
+---
+fixes:
+  - |
+    Removed unneeded attributes that could have been passed to the API when
+    calling "listener create", hsts_include_subdomains and hsts_preload were
+    passed even when not used.
+    It fixes an issue when using a recent python-octaviaclient release with
+    older Octavia releases (without this HSTS feature).

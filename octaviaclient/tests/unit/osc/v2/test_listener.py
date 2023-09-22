@@ -195,6 +195,9 @@ class TestListenerCreate(TestListener):
         ]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.assertIsNone(parsed_args.hsts_include_subdomains)
+        self.assertIsNone(parsed_args.hsts_preload)
+        self.assertIsNone(parsed_args.hsts_max_age)
         self.cmd.take_action(parsed_args)
         self.api_mock.listener_create.assert_called_with(
             json={'listener': self.listener_info})

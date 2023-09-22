@@ -215,6 +215,7 @@ class CreateListener(command.ShowOne):
             '--hsts-include-subdomains',
             action='store_true',
             dest='hsts_include_subdomains',
+            default=None,
             help="Define whether the includeSubDomains directive should be "
                  "added to the Strict-Transport-Security HTTP response "
                  "header."
@@ -223,6 +224,7 @@ class CreateListener(command.ShowOne):
             '--hsts-preload',
             action='store_true',
             dest='hsts_preload',
+            default=None,
             help="Define whether the preload directive should be "
                  "added to the Strict-Transport-Security HTTP response "
                  "header."

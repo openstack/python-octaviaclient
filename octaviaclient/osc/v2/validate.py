@@ -78,8 +78,8 @@ def check_member_attrs(attrs):
         _validate_TCP_UDP_SCTP_port_range(attrs['member_port'], 'member-port')
 
     if 'weight' in attrs:
-        if(attrs['weight'] < constants.MIN_WEIGHT or
-           attrs['weight'] > constants.MAX_WEIGHT):
+        if (attrs['weight'] < constants.MIN_WEIGHT or
+                attrs['weight'] > constants.MAX_WEIGHT):
             msg = ("Invalid input for field/attribute 'weight', Value: "
                    "'{weight}'. Value must be between {wmin} and "
                    "{wmax}.".format(weight=attrs['weight'],

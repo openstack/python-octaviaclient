@@ -167,6 +167,10 @@ class CreateLoadBalancer(command.ShowOne):
                         data['loadbalancer']['id']))
             }
 
+        # Handle older API versions that did not have the vip_vnic_type
+        if not data['loadbalancer'].get('vip_vnic_type', False):
+            data['loadbalancer']['vip_vnic_type'] = 'normal'
+
         formatters = {
             'listeners': v2_utils.format_list,
             'pools': v2_utils.format_list,
@@ -390,6 +394,10 @@ class ShowLoadBalancer(command.ShowOne):
 
             data = self.app.client_manager.load_balancer.load_balancer_show(
                 lb_id=lb_id)
+
+        # Handle older API versions that did not have the vip_vnic_type
+        if not data.get('vip_vnic_type', False):
+            data['vip_vnic_type'] = 'normal'
 
         formatters = {
             'listeners': v2_utils.format_list,

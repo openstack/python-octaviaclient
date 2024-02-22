@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Added support for the vip_vnic_type field on load balancers. A
+    vip_vnic_type of 'direct' indicates the VIP is using SR-IOV.

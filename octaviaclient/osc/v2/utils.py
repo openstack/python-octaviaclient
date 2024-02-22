@@ -251,6 +251,7 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
             'policies',
             client_manager.neutronclient.list_qos_policies,
         ),
+        'vip_vnic_type': ('vip_vnic_type', str),
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False),
         'cascade': ('cascade', lambda x: True),

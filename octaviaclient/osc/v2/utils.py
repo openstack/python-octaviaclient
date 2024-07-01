@@ -578,6 +578,7 @@ def get_amphora_attrs(client_manager, parsed_args):
         'compute_id': ('compute_id', str),
         'role': ('role', str),
         'status': ('status', str),
+        'image_id': ('image_id', str),
     }
 
     return _map_attrs(vars(parsed_args), attr_map)

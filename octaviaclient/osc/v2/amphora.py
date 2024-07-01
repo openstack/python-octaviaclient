@@ -63,6 +63,12 @@ class ListAmphora(lister.Lister):
         )
 
         parser.add_argument(
+            '--image-id',
+            metavar='<image-id>',
+            help="Filter by image ID.",
+        )
+
+        parser.add_argument(
             '--long',
             action='store_true',
             help='Show additional fields.',

@@ -1,0 +1,4 @@
+---
+features:
+  - |
+    Added ``--image-id`` filter to ``loadbalancer amphora list`` command.

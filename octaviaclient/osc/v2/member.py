@@ -99,6 +99,10 @@ class ShowMember(command.ShowOne):
             data = self.app.client_manager.load_balancer.member_show(
                 pool_id=pool_id, member_id=member_id)
 
+        # Handle older API versions that did not have the vnic_type
+        if not data.get('vnic_type', False):
+            data['vnic_type'] = 'normal'
+
         formatters = {'tags': v2_utils.format_list_flat}
 
         return (rows, (utils.get_dict_properties(
@@ -192,6 +196,12 @@ class CreateMember(command.ShowOne):
             action='store_true',
             help='Wait for action to complete.',
         )
+        parser.add_argument(
+            '--request-sriov',
+            action='store_true',
+            default=None,
+            help='Request that the member port be created using an SR-IOV VF.',
+        )
 
         _tag.add_tag_option_to_parser_for_create(
             parser, 'member')
@@ -224,6 +234,10 @@ class CreateMember(command.ShowOne):
                     self.app.client_manager.load_balancer.member_show(
                         pool_id, data['member']['id']))
             }
+
+        # Handle older API versions that did not have the vnic_type
+        if not data['member'].get('vnic_type', False):
+            data['member']['vnic_type'] = 'normal'
 
         formatters = {'tags': v2_utils.format_list_flat}
 

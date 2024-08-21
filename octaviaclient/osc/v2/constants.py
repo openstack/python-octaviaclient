@@ -149,7 +149,8 @@ MEMBER_ROWS = (
     'monitor_port',
     'monitor_address',
     'backup',
-    'tags')
+    'tags',
+    'vnic_type')
 
 MEMBER_COLUMNS = (
     'id',

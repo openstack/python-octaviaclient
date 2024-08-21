@@ -418,6 +418,8 @@ def get_member_attrs(client_manager, parsed_args):
         'monitor_address': ('monitor_address', str),
         'enable': ('admin_state_up', lambda x: True),
         'disable': ('admin_state_up', lambda x: False),
+        'request_sriov': ('request_sriov', lambda x: True),
+        'vnic_type': ('vnic_type', str),
     }
     add_tags_attr_map(attr_map)
 

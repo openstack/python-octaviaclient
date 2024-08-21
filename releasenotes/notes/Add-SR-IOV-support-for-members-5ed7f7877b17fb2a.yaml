@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Added SR-IOV support for members to the client. This adds a "vnic_type"
+    field to the member output and a new option "--request-sriov" for the
+    member create command.

@@ -111,9 +111,11 @@ def _find_resource(list_funct, resource_name, root_tag, name, parent=None):
             raise osc_exc.CommandError(msg)
 
         # Try by ID next
-        resource = list_funct(*parent_args, id=name)[root_tag]
-        if len(resource) == 1:
-            return resource[0]
+        # Availability Zones don't support the id parameter
+        if resource_name != "availability_zones":
+            resource = list_funct(*parent_args, id=name)[root_tag]
+            if len(resource) == 1:
+                return resource[0]
 
     # We didn't find what we were looking for, raise a consistent error.
     msg = "Unable to locate {0} in {1}".format(name, resource_name)

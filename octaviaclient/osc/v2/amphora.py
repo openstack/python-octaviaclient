@@ -51,7 +51,7 @@ class ListAmphora(lister.Lister):
 
         status_choices = {
             'ALLOCATED', 'BOOTING', 'DELETED', 'ERROR',
-            'PENDING_CREATE', 'PENDING_DELETE', 'READY',
+            'PENDING_CREATE', 'PENDING_DELETE', 'READY', 'FAILOVER_STOPPED',
         }
         parser.add_argument(
             '--status', '--provisioning-status',

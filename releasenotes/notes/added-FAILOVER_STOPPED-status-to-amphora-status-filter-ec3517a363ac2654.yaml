@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    Updated the list of valid amphora status in the `loadbalancer amphora list`
+    command and added FAILOVER_STOPPED.

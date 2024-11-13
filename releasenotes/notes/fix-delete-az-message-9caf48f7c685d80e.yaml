@@ -1,0 +1,7 @@
+---
+fixes:
+  - |
+    Fixed the incorrect error message returned when deleting a non-existing
+    availability zone, it now explicitly mentions that the availability zone
+    does not exist.
+

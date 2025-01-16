@@ -457,6 +457,35 @@ class TestLoadBalancerCreate(TestLoadBalancer):
             json={'loadbalancer': lb_info})
 
     @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_create_with_vip_sg_ids(self, mock_client):
+        vip_sg_ids = [
+            uuidutils.generate_uuid(),
+            uuidutils.generate_uuid()
+        ]
+        lb_info = copy.deepcopy(self.lb_info)
+        lb_info.update({'vip_sg_ids': vip_sg_ids})
+        mock_client.return_value = lb_info
+
+        arglist = [
+            '--name', self._lb.name,
+            '--vip-network-id', self._lb.vip_network_id,
+            '--project', self._lb.project_id,
+            '--vip-sg-id', vip_sg_ids[0],
+            '--vip-sg-id', vip_sg_ids[1],
+        ]
+        verifylist = [
+            ('name', self._lb.name),
+            ('vip_network_id', self._lb.vip_network_id),
+            ('project', self._lb.project_id),
+            ('vip_sg_id', vip_sg_ids),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.api_mock.load_balancer_create.assert_called_with(
+            json={'loadbalancer': lb_info})
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
     def test_load_balancer_create_with_tags(self, mock_client):
         lb_info = copy.deepcopy(self.lb_info)
         lb_info.update({'tags': self._lb.tags})
@@ -679,6 +708,24 @@ class TestLoadBalancerSet(TestLoadBalancer):
         except Exception as e:
             self.fail("%s raised unexpectedly" % e)
 
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_set_vip_sg_id(self, mock_attrs):
+        mock_attrs.return_value = {
+            'loadbalancer_id': self._lb.id,
+        }
+        sg_id = uuidutils.generate_uuid()
+        arglist = [self._lb.id, '--vip-sg-id', sg_id]
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('vip_sg_id', [sg_id]),
+        ]
+
+        try:
+            parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+            self.cmd.take_action(parsed_args)
+        except Exception as e:
+            self.fail("%s raised unexpectedly" % e)
+
 
 class TestLoadBalancerStats(TestLoadBalancer):
 
@@ -887,3 +934,26 @@ class TestLoadBalancerUnset(TestLoadBalancer):
         self.api_mock.load_balancer_set.assert_called_once_with(
             self._lb.id,
             json={'loadbalancer': {'tags': []}})
+
+    @mock.patch('octaviaclient.osc.v2.utils.get_loadbalancer_attrs')
+    def test_load_balancer_unset_vip_sg_id(self, mock_attrs):
+        sg_id = uuidutils.generate_uuid()
+        mock_attrs.return_value = {
+            'loadbalancer_id': self._lb.id,
+            'vip_sg_ids': [sg_id]
+        }
+        arglist = [self._lb.id, '--vip-sg-id']
+        verifylist = [
+            ('loadbalancer', self._lb.id),
+            ('vip_sg_ids', True),
+        ]
+
+        try:
+            parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+            self.cmd.take_action(parsed_args)
+        except Exception as e:
+            self.fail("%s raised unexpectedly" % e)
+
+        self.api_mock.load_balancer_set.assert_called_once_with(
+            self._lb.id,
+            json={'loadbalancer': {'vip_sg_ids': None}})

@@ -33,6 +33,7 @@ LOAD_BALANCER_ROWS = (
     'vip_qos_policy_id',
     'vip_subnet_id',
     'vip_vnic_type',
+    'vip_sg_ids',
     'tags',
     'additional_vips',
 )

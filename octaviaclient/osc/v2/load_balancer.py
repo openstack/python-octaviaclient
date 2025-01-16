@@ -96,6 +96,13 @@ class CreateLoadBalancer(command.ShowOne):
             help="Expose an additional VIP on the load balancer. This "
                  "parameter can be provided more than once."
         )
+        parser.add_argument(
+            '--vip-sg-id',
+            metavar='<vip_sg_id>',
+            action='append',
+            help="Set a Custom Security Group for VIP port. This "
+                 "parameter can be provided more than once."
+        )
 
         parser.add_argument(
             '--project',
@@ -436,6 +443,13 @@ class SetLoadBalancer(command.Command):
             metavar='<vip_qos_policy_id>',
             help="Set QoS policy ID for VIP port. Unset with 'None'.",
         )
+        parser.add_argument(
+            '--vip-sg-id',
+            metavar='<vip_sg_id>',
+            action='append',
+            help="Set a Custom Security Group for VIP port. This "
+                 "parameter can be provided more than once."
+        )
 
         admin_group = parser.add_mutually_exclusive_group()
         admin_group.add_argument(
@@ -507,6 +521,12 @@ class UnsetLoadBalancer(command.Command):
             '--vip-qos-policy-id',
             action='store_true',
             help="Clear the load balancer QoS policy.",
+        )
+        parser.add_argument(
+            '--vip-sg-id',
+            dest='vip_sg_ids',
+            action='store_true',
+            help="Clear the Custom Security Groups.",
         )
         parser.add_argument(
             '--wait',

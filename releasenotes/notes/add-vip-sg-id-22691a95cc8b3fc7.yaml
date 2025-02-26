@@ -1,0 +1,8 @@
+---
+features:
+  - |
+    Add support for setting Security Groups on VIP ports. ``--vip-sg-id
+    <sg_id>`` can be passed (it can be provided more than once) to
+    ``loadbalancer create`` and ``loadbalancer set``. A user can clear the
+    Security Groups of a VIP port by passing ``--vip-sg-id`` to ``loadbalancer
+    unset``.

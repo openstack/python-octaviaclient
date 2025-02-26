@@ -107,6 +107,10 @@ LOADBALANCER_ATTRS = {
         "subnet_id": uuidutils.generate_uuid(dashed=True),
         "ip_address": "192.0.2.179"
     }],
+    "vip_sg_ids": [
+        uuidutils.generate_uuid(dashed=True),
+        uuidutils.generate_uuid(dashed=True),
+    ],
     "tags": ["foo", "bar"]
 }
 

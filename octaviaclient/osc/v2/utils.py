@@ -215,6 +215,16 @@ def handle_additional_vips(vips, client_manager):
     return additional_vips
 
 
+def handle_vip_sg_ids(vip_sgs, client_manager):
+    vip_sg_ids = []
+    for sg in vip_sgs:
+        sg_id = get_resource_id(
+            client_manager.neutronclient.list_security_groups,
+            'security_groups', sg)
+        vip_sg_ids.append(sg_id)
+    return vip_sg_ids
+
+
 def get_loadbalancer_attrs(client_manager, parsed_args):
     attr_map = {
         'name': ('name', str),
@@ -271,6 +281,11 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
             functools.partial(
                 handle_additional_vips, client_manager=client_manager)
         ),
+        'vip_sg_id': (
+            'vip_sg_ids',
+            functools.partial(
+                handle_vip_sg_ids, client_manager=client_manager),
+        )
     }
     add_tags_attr_map(attr_map)
 

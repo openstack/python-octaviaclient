@@ -258,12 +258,12 @@ class CreateListener(command.ShowOne):
                         data['listener']['id']))
             }
 
-        formatters = {'loadbalancers': v2_utils.format_list,
-                      'pools': v2_utils.format_list,
-                      'l7policies': v2_utils.format_list,
-                      'insert_headers': v2_utils.format_hash,
-                      'allowed_cidrs': v2_utils.format_list_flat,
-                      'tags': v2_utils.format_list_flat}
+        formatters = {'loadbalancers': v2_utils.ListColumn,
+                      'pools': v2_utils.ListColumn,
+                      'l7policies': v2_utils.ListColumn,
+                      'insert_headers': v2_utils.HashColumn,
+                      'allowed_cidrs': v2_utils.FlatListColumn,
+                      'tags': v2_utils.FlatListColumn}
 
         return (rows,
                 (utils.get_dict_properties(data['listener'],
@@ -352,7 +352,7 @@ class ListListener(lister.Lister):
         attrs = v2_utils.get_listener_attrs(self.app.client_manager,
                                             parsed_args)
         data = self.app.client_manager.load_balancer.listener_list(**attrs)
-        formatters = {'loadbalancers': v2_utils.format_list}
+        formatters = {'loadbalancers': v2_utils.ListColumn}
         return (columns,
                 (utils.get_dict_properties(s, columns, formatters=formatters)
                  for s in data['listeners']))
@@ -390,12 +390,12 @@ class ShowListener(command.ShowOne):
             data = self.app.client_manager.load_balancer.listener_show(
                 listener_id=listener_id,
             )
-        formatters = {'loadbalancers': v2_utils.format_list,
-                      'pools': v2_utils.format_list,
-                      'l7policies': v2_utils.format_list,
-                      'insert_headers': v2_utils.format_hash,
-                      'allowed_cidrs': v2_utils.format_list_flat,
-                      'tags': v2_utils.format_list_flat}
+        formatters = {'loadbalancers': v2_utils.ListColumn,
+                      'pools': v2_utils.ListColumn,
+                      'l7policies': v2_utils.ListColumn,
+                      'insert_headers': v2_utils.HashColumn,
+                      'allowed_cidrs': v2_utils.FlatListColumn,
+                      'tags': v2_utils.FlatListColumn}
 
         return rows, utils.get_dict_properties(data, rows,
                                                formatters=formatters)

@@ -142,8 +142,8 @@ class CreateL7Policy(command.ShowOne):
                         data['l7policy']['id']))
             }
 
-        formatters = {'rules': v2_utils.format_list,
-                      'tags': v2_utils.format_list_flat}
+        formatters = {'rules': v2_utils.ListColumn,
+                      'tags': v2_utils.FlatListColumn}
 
         return (rows, (utils.get_dict_properties(
             data['l7policy'], rows, formatters=formatters)))
@@ -208,7 +208,7 @@ class ListL7Policy(lister.Lister):
                                             parsed_args)
 
         data = self.app.client_manager.load_balancer.l7policy_list(**attrs)
-        formatters = {'rules': v2_utils.format_list}
+        formatters = {'rules': v2_utils.ListColumn}
 
         return (columns,
                 (utils.get_dict_properties(
@@ -248,8 +248,8 @@ class ShowL7Policy(command.ShowOne):
             data = self.app.client_manager.load_balancer.l7policy_show(
                 l7policy_id=l7policy_id,
             )
-        formatters = {'rules': v2_utils.format_list,
-                      'tags': v2_utils.format_list_flat}
+        formatters = {'rules': v2_utils.ListColumn,
+                      'tags': v2_utils.FlatListColumn}
 
         return (rows, (utils.get_dict_properties(
             data, rows, formatters=formatters)))

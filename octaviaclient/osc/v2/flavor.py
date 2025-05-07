@@ -74,7 +74,7 @@ class CreateFlavor(command.ShowOne):
         data = self.app.client_manager.load_balancer.flavor_create(
             json=body)
 
-        formatters = {'flavorprofiles': v2_utils.format_list}
+        formatters = {'flavorprofiles': v2_utils.ListColumn}
 
         return (rows,
                 (utils.get_dict_properties(
@@ -142,7 +142,7 @@ class ListFlavor(lister.Lister):
                                           parsed_args)
         data = self.app.client_manager.load_balancer.flavor_list(
             **attrs)
-        formatters = {'flavorprofiles': v2_utils.format_list}
+        formatters = {'flavorprofiles': v2_utils.ListColumn}
         return (columns,
                 (utils.get_dict_properties(s, columns, formatters=formatters)
                  for s in data['flavors']))
@@ -179,7 +179,7 @@ class ShowFlavor(command.ShowOne):
             data = self.app.client_manager.load_balancer.flavor_show(
                 flavor_id=flavor_id
             )
-        formatters = {'flavorprofiles': v2_utils.format_list}
+        formatters = {'flavorprofiles': v2_utils.ListColumn}
 
         return (rows, (utils.get_dict_properties(
             data, rows, formatters=formatters)))

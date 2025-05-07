@@ -179,10 +179,10 @@ class CreateLoadBalancer(command.ShowOne):
             data['loadbalancer']['vip_vnic_type'] = 'normal'
 
         formatters = {
-            'listeners': v2_utils.format_list,
-            'pools': v2_utils.format_list,
-            'l7policies': v2_utils.format_list,
-            'tags': v2_utils.format_list_flat
+            'listeners': v2_utils.ListColumn,
+            'pools': v2_utils.ListColumn,
+            'l7policies': v2_utils.ListColumn,
+            'tags': v2_utils.FlatListColumn
         }
 
         return (rows,
@@ -407,10 +407,10 @@ class ShowLoadBalancer(command.ShowOne):
             data['vip_vnic_type'] = 'normal'
 
         formatters = {
-            'listeners': v2_utils.format_list,
-            'pools': v2_utils.format_list,
-            'l7policies': v2_utils.format_list,
-            'tags': v2_utils.format_list_flat
+            'listeners': v2_utils.ListColumn,
+            'pools': v2_utils.ListColumn,
+            'l7policies': v2_utils.ListColumn,
+            'tags': v2_utils.FlatListColumn
         }
 
         return (rows, (utils.get_dict_properties(

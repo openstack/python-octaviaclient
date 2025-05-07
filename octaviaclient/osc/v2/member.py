@@ -99,7 +99,7 @@ class ShowMember(command.ShowOne):
             data = self.app.client_manager.load_balancer.member_show(
                 pool_id=pool_id, member_id=member_id)
 
-        formatters = {'tags': v2_utils.format_list_flat}
+        formatters = {'tags': v2_utils.FlatListColumn}
 
         return (rows, (utils.get_dict_properties(
             data, rows, formatters=formatters)))
@@ -225,7 +225,7 @@ class CreateMember(command.ShowOne):
                         pool_id, data['member']['id']))
             }
 
-        formatters = {'tags': v2_utils.format_list_flat}
+        formatters = {'tags': v2_utils.FlatListColumn}
 
         return (rows,
                 (utils.get_dict_properties(

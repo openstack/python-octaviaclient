@@ -181,11 +181,11 @@ class CreatePool(command.ShowOne):
                         data['pool']['id']))
             }
 
-        formatters = {'loadbalancers': v2_utils.format_list,
-                      'members': v2_utils.format_list,
-                      'listeners': v2_utils.format_list,
-                      'session_persistence': v2_utils.format_hash,
-                      'tags': v2_utils.format_list_flat}
+        formatters = {'loadbalancers': v2_utils.ListColumn,
+                      'members': v2_utils.ListColumn,
+                      'listeners': v2_utils.ListColumn,
+                      'session_persistence': v2_utils.HashColumn,
+                      'tags': v2_utils.FlatListColumn}
 
         return (rows, (utils.get_dict_properties(
             data['pool'], rows, formatters=formatters,
@@ -244,9 +244,9 @@ class ListPool(lister.Lister):
         columns = const.POOL_COLUMNS
         attrs = v2_utils.get_pool_attrs(self.app.client_manager, parsed_args)
         data = self.app.client_manager.load_balancer.pool_list(**attrs)
-        formatters = {'loadbalancers': v2_utils.format_list,
-                      'members': v2_utils.format_list,
-                      'listeners': v2_utils.format_list}
+        formatters = {'loadbalancers': v2_utils.ListColumn,
+                      'members': v2_utils.ListColumn,
+                      'listeners': v2_utils.ListColumn}
 
         return (columns,
                 (utils.get_dict_properties(
@@ -284,11 +284,11 @@ class ShowPool(command.ShowOne):
             data = self.app.client_manager.load_balancer.pool_show(
                 pool_id=pool_id,
             )
-        formatters = {'loadbalancers': v2_utils.format_list,
-                      'members': v2_utils.format_list,
-                      'listeners': v2_utils.format_list,
-                      'session_persistence': v2_utils.format_hash,
-                      'tags': v2_utils.format_list_flat}
+        formatters = {'loadbalancers': v2_utils.ListColumn,
+                      'members': v2_utils.ListColumn,
+                      'listeners': v2_utils.ListColumn,
+                      'session_persistence': v2_utils.HashColumn,
+                      'tags': v2_utils.FlatListColumn}
 
         return (rows, (utils.get_dict_properties(
             data, rows, formatters=formatters,

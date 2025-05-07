@@ -130,7 +130,7 @@ class CreateL7Rule(command.ShowOne):
                         l7policy_id, data['rule']['id']))
             }
 
-        formatters = {'tags': v2_utils.format_list_flat}
+        formatters = {'tags': v2_utils.FlatListColumn}
 
         return (rows, (utils.get_dict_properties(
             data['rule'], rows, formatters=formatters)))
@@ -245,7 +245,7 @@ class ShowL7Rule(command.ShowOne):
                 l7rule_id=attrs['l7rule_id'],
                 l7policy_id=attrs['l7policy_id']
             )
-        formatters = {'tags': v2_utils.format_list_flat}
+        formatters = {'tags': v2_utils.FlatListColumn}
 
         return (rows, (utils.get_dict_properties(
             data, rows, formatters=formatters)))

@@ -103,7 +103,7 @@ class ShowMember(command.ShowOne):
         if not data.get('vnic_type', False):
             data['vnic_type'] = 'normal'
 
-        formatters = {'tags': v2_utils.format_list_flat}
+        formatters = {'tags': v2_utils.FlatListColumn}
 
         return (rows, (utils.get_dict_properties(
             data, rows, formatters=formatters)))
@@ -239,7 +239,7 @@ class CreateMember(command.ShowOne):
         if not data['member'].get('vnic_type', False):
             data['member']['vnic_type'] = 'normal'
 
-        formatters = {'tags': v2_utils.format_list_flat}
+        formatters = {'tags': v2_utils.FlatListColumn}
 
         return (rows,
                 (utils.get_dict_properties(

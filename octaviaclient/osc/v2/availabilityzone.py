@@ -72,7 +72,7 @@ class CreateAvailabilityzone(command.ShowOne):
         data = self.app.client_manager.load_balancer.availabilityzone_create(
             json=body)
 
-        formatters = {'availability_zone_profiles': v2_utils.format_list}
+        formatters = {'availability_zone_profiles': v2_utils.ListColumn}
 
         return (rows,
                 (utils.get_dict_properties(
@@ -140,7 +140,7 @@ class ListAvailabilityzone(lister.Lister):
                                                     parsed_args)
         data = self.app.client_manager.load_balancer.availabilityzone_list(
             **attrs)
-        formatters = {'availabilityzoneprofiles': v2_utils.format_list}
+        formatters = {'availabilityzoneprofiles': v2_utils.ListColumn}
         return (columns,
                 (utils.get_dict_properties(s, columns, formatters=formatters)
                  for s in data['availability_zones']))
@@ -169,7 +169,7 @@ class ShowAvailabilityzone(command.ShowOne):
         data = self.app.client_manager.load_balancer.availabilityzone_show(
             availabilityzone_name=availabilityzone_name
         )
-        formatters = {'availabilityzoneprofiles': v2_utils.format_list}
+        formatters = {'availabilityzoneprofiles': v2_utils.ListColumn}
 
         return (rows, (utils.get_dict_properties(
             data, rows, formatters=formatters)))

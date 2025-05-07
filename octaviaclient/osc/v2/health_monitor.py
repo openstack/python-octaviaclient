@@ -168,8 +168,8 @@ class CreateHealthMonitor(command.ShowOne):
                         data['healthmonitor']['id']))
             }
 
-        formatters = {'pools': v2_utils.format_list,
-                      'tags': v2_utils.format_list_flat}
+        formatters = {'pools': v2_utils.ListColumn,
+                      'tags': v2_utils.FlatListColumn}
 
         return (rows,
                 (utils.get_dict_properties(data['healthmonitor'],
@@ -230,7 +230,7 @@ class ListHealthMonitor(lister.Lister):
         data = self.app.client_manager.load_balancer.health_monitor_list(
             **attrs)
 
-        formatters = {'pools': v2_utils.format_list}
+        formatters = {'pools': v2_utils.ListColumn}
         return (columns,
                 (utils.get_dict_properties(s, columns, formatters=formatters)
                  for s in data['healthmonitors']))
@@ -269,8 +269,8 @@ class ShowHealthMonitor(command.ShowOne):
             data = self.app.client_manager.load_balancer.health_monitor_show(
                 health_monitor_id=health_monitor_id,
             )
-        formatters = {'pools': v2_utils.format_list,
-                      'tags': v2_utils.format_list_flat}
+        formatters = {'pools': v2_utils.ListColumn,
+                      'tags': v2_utils.FlatListColumn}
 
         return (rows,
                 (utils.get_dict_properties(data, rows, formatters=formatters)))

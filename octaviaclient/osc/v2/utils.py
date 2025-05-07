@@ -14,6 +14,7 @@
 import functools
 import ipaddress
 
+from cliff import columns
 from openstackclient.identity import common as identity_common
 from osc_lib import exceptions as osc_exc
 from osc_lib import utils
@@ -685,14 +686,29 @@ def format_list(data):
     return '\n'.join(i['id'] for i in data)
 
 
+class ListColumn(columns.FormattableColumn):
+    def human_readable(self):
+        return format_list(self._value)
+
+
 def format_list_flat(data):
     return '\n'.join(i for i in data)
+
+
+class FlatListColumn(columns.FormattableColumn):
+    def human_readable(self):
+        return format_list_flat(self._value)
 
 
 def format_hash(data):
     if data:
         return '\n'.join('{}={}'.format(k, v) for k, v in data.items())
     return None
+
+
+class HashColumn(columns.FormattableColumn):
+    def human_readable(self):
+        return format_hash(self._value)
 
 
 def _format_kv(data):

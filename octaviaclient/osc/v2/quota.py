@@ -45,7 +45,7 @@ class ListQuota(lister.Lister):
         attrs = v2_utils.get_listener_attrs(self.app.client_manager,
                                             parsed_args)
         data = self.app.client_manager.load_balancer.quota_list(**attrs)
-        formatters = {'quotas': v2_utils.format_list}
+        formatters = {'quotas': v2_utils.ListColumn}
         return (columns,
                 (utils.get_dict_properties(s, columns, formatters=formatters)
                  for s in data['quotas']))

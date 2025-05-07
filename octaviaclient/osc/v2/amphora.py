@@ -87,7 +87,7 @@ class ListAmphora(lister.Lister):
         data = self.app.client_manager.load_balancer.amphora_list(**attrs)
 
         formatters = {
-            'amphorae': v2_utils.format_list,
+            'amphorae': v2_utils.ListColumn,
         }
 
         return (
@@ -121,8 +121,8 @@ class ShowAmphora(command.ShowOne):
 
         rows = const.AMPHORA_ROWS
         formatters = {
-            'loadbalancers': v2_utils.format_list,
-            'amphorae': v2_utils.format_list,
+            'loadbalancers': v2_utils.ListColumn,
+            'amphorae': v2_utils.ListColumn,
         }
 
         return (rows, utils.get_dict_properties(data, rows,

@@ -683,7 +683,9 @@ def get_availabilityzoneprofile_attrs(client_manager, parsed_args):
 
 
 def format_list(data):
-    return '\n'.join(i['id'] for i in data)
+    if data:
+        return '\n'.join(i['id'] for i in data)
+    return None
 
 
 class ListColumn(columns.FormattableColumn):
@@ -692,7 +694,9 @@ class ListColumn(columns.FormattableColumn):
 
 
 def format_list_flat(data):
-    return '\n'.join(i for i in data)
+    if data:
+        return '\n'.join(i for i in data)
+    return None
 
 
 class FlatListColumn(columns.FormattableColumn):

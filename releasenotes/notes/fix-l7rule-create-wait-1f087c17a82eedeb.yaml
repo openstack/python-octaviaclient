@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    Fixed a bug when using the ``--wait`` flag with the ``l7rule create``
+    command, it displayed an error message even when the command succeeded.

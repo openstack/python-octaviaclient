@@ -267,6 +267,8 @@ class TestL7RuleCreate(TestL7Rule):
             sleep_time=mock.ANY,
             status_field='provisioning_status')
 
+        self.api_mock.l7rule_show.assert_called_with(mock.ANY, self._l7po.id)
+
     @mock.patch('octaviaclient.osc.v2.utils.get_l7rule_attrs')
     def test_l7rule_create_with_tag(self, mock_attrs):
         mock_attrs.return_value = {

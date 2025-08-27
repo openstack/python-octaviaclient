@@ -127,7 +127,7 @@ class CreateL7Rule(command.ShowOne):
             data = {
                 'rule': (
                     self.app.client_manager.load_balancer.l7rule_show(
-                        l7policy_id, data['rule']['id']))
+                        data['rule']['id'], l7policy_id))
             }
 
         formatters = {'tags': v2_utils.FlatListColumn}

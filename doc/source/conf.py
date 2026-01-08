@@ -54,7 +54,8 @@ pygments_style = 'native'
 # openstackdocstheme options
 openstackdocs_repo_name = 'openstack/python-octaviaclient'
 openstackdocs_pdf_link = True
-openstackdocs_use_storyboard = True
+openstackdocs_bug_project = 'octavia'
+openstackdocs_bug_tag = 'docs'
 
 autoprogram_cliff_application = 'openstack'
 

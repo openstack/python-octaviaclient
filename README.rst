@@ -24,7 +24,7 @@ https://docs.openstack.org/python-openstackclient/latest/
 * Documentation: https://docs.openstack.org/python-octaviaclient/latest/
 * Source: https://opendev.org/openstack/python-octaviaclient
 * Release notes: https://docs.openstack.org/releasenotes/python-octaviaclient/
-* Bugs: https://storyboard.openstack.org/#!/project/911
+* Bugs: https://bugs.launchpad.net/octavia
 
 Getting Started
 ===============

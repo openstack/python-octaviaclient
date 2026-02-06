@@ -1,0 +1,6 @@
+---
+fixes:
+  - |
+    Removed references to the deprecated Neutron client
+    Replace with calls to Openstack SDK through the osc_lib client
+

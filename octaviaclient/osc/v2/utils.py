@@ -84,43 +84,65 @@ def _find_resource(list_funct, resource_name, root_tag, name, parent=None):
         parent_args = [parent]
     else:
         parent_args = []
+
+    resource = None
     # Optimize the API call order if we got a UUID-like name or not
     if uuidutils.is_uuid_like(name):
         # Try by ID first
-        resource = list_funct(*parent_args, id=name)[root_tag]
-        if len(resource) == 1:
-            return resource[0]
+        resource = get_resource_by_id(list_funct, name, resource_name,
+                                      root_tag, *parent_args)
 
-        # Try by name next
-        resource = list_funct(*parent_args, name=name)[root_tag]
-        if len(resource) == 1:
-            return resource[0]
-        if len(resource) > 1:
-            msg = ("{0} {1} found with name or ID of {2}. Please try "
-                   "again with UUID".format(len(resource), resource_name,
-                                            name))
-            raise osc_exc.CommandError(msg)
-    else:
-        # Try by name first
-        resource = list_funct(*parent_args, name=name)[root_tag]
-        if len(resource) == 1:
-            return resource[0]
-        if len(resource) > 1:
-            msg = ("{0} {1} found with name or ID of {2}. Please try "
-                   "again with UUID".format(len(resource), resource_name,
-                                            name))
-            raise osc_exc.CommandError(msg)
-
-        # Try by ID next
-        # Availability Zones don't support the id parameter
-        if resource_name != "availability_zones":
-            resource = list_funct(*parent_args, id=name)[root_tag]
-            if len(resource) == 1:
-                return resource[0]
+    # If the find by UUID didn't work then try by name
+    if not resource:
+        resource = get_resource_by_name(list_funct, name, resource_name,
+                                        root_tag, *parent_args)
 
     # We didn't find what we were looking for, raise a consistent error.
-    msg = "Unable to locate {0} in {1}".format(name, resource_name)
-    raise osc_exc.CommandError(msg)
+    if not resource:
+        msg = f"Unable to locate {name} in {resource_name}"
+        raise osc_exc.CommandError(msg)
+
+    return resource
+
+
+def get_resource_by_id(list_func, id, resource_name, root_tag, *args):
+    # Availability Zones don't support the id parameter
+    if resource_name == "availability_zones":
+        return None
+    return get_resource_from_list_func(list_func, resource_name, root_tag,
+                                       *args, id=id)
+
+
+def get_resource_by_name(list_func, name, resource_name, root_tag, *args):
+    return get_resource_from_list_func(list_func, resource_name, root_tag,
+                                       *args, name=name)
+
+
+def get_resource_from_list_func(list_func, resource_name, root_tag, *args,
+                                **kwargs):
+    # For some network resources we need to use the SDK which doesn't
+    # return a dict (and doesn't require the root_tag)
+    if resource_name in ['subnets', 'ports',
+                         'networks', 'policies',
+                         'security_groups']:
+        resource = list(list_func(*args, **kwargs))
+    else:
+        resource = list_func(*args, **kwargs).get(root_tag)
+
+    # Get the identifier for the resource
+    resource_identifier = kwargs.get('id')
+    if not resource_identifier:
+        resource_identifier = kwargs.get('name')
+
+    if len(resource) > 1:
+        msg = (f"{len(resource)} {resource_name} found with name or ID "
+               f"of {resource_identifier}. Please try again with UUID")
+        raise osc_exc.CommandError(msg)
+
+    if len(resource) == 1:
+        return resource[0]
+
+    return None
 
 
 def get_resource_id(resource, resource_name, name):
@@ -171,7 +193,7 @@ def get_resource_id(resource, resource_name, name):
         return resource.get(primary_key)
 
     except IndexError as e:
-        msg = "Unable to locate {0} in {1}".format(name, resource_name)
+        msg = f"Unable to locate {name} in {resource_name}"
         raise osc_exc.CommandError(msg) from e
 
 
@@ -192,8 +214,9 @@ def validate_vip_dict(vip_dict, client_manager):
     if 'subnet_id' not in vip_dict:
         raise osc_exc.CommandError(
             'Additional VIPs must include a subnet-id.')
-    subnet_id = get_resource_id(client_manager.neutronclient.list_subnets,
-                                'subnets', vip_dict['subnet_id'])
+    subnet_id = get_resource_id(
+        client_manager.sdk_connection.network.subnets,
+        'subnets', vip_dict['subnet_id'])
     vip_dict['subnet_id'] = subnet_id
     if 'ip_address' in vip_dict:
         try:
@@ -220,7 +243,7 @@ def handle_vip_sg_ids(vip_sgs, client_manager):
     vip_sg_ids = []
     for sg in vip_sgs:
         sg_id = get_resource_id(
-            client_manager.neutronclient.list_security_groups,
+            client_manager.sdk_connection.network.security_groups,
             'security_groups', sg)
         vip_sg_ids.append(sg_id)
     return vip_sg_ids
@@ -247,22 +270,22 @@ def get_loadbalancer_attrs(client_manager, parsed_args):
         'vip_port_id': (
             'vip_port_id',
             'ports',
-            client_manager.neutronclient.list_ports
+            client_manager.sdk_connection.network.ports
         ),
         'vip_subnet_id': (
             'vip_subnet_id',
             'subnets',
-            client_manager.neutronclient.list_subnets
+            client_manager.sdk_connection.network.subnets
         ),
         'vip_network_id': (
             'vip_network_id',
             'networks',
-            client_manager.neutronclient.list_networks
+            client_manager.sdk_connection.network.networks
         ),
         'vip_qos_policy_id': (
             'vip_qos_policy_id',
             'policies',
-            client_manager.neutronclient.list_qos_policies,
+            client_manager.sdk_connection.network.qos_policies
         ),
         'vip_vnic_type': ('vip_vnic_type', str),
         'enable': ('admin_state_up', lambda x: True),
@@ -430,7 +453,7 @@ def get_member_attrs(client_manager, parsed_args):
         'subnet_id': (
             'subnet_id',
             'subnets',
-            client_manager.neutronclient.list_subnets
+            client_manager.sdk_connection.network.subnets
         ),
         'monitor_port': ('monitor_port', int),
         'monitor_address': ('monitor_address', str),

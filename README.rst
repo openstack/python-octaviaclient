@@ -1,13 +1,8 @@
-Team and repository tags
-========================
-
-.. image:: https://governance.openstack.org/tc/badges/python-octaviaclient.svg
-    :target: https://governance.openstack.org/tc/reference/tags/index.html
-
-.. Change things from this point on
-
+====================
 python-octaviaclient
 ====================
+
+.. image:: https://governance.openstack.org/tc/badges/python-octaviaclient.svg
 
 Octavia client for OpenStack Load Balancing
 

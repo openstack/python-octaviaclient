@@ -13,7 +13,7 @@
 import copy
 from unittest import mock
 
-from osc_lib.tests import utils
+import osc_lib.test.base as osc_test_base
 
 from octaviaclient.tests import fakes
 from octaviaclient.tests.unit.osc.v2 import constants
@@ -27,7 +27,7 @@ class FakeOctaviaClient(object):
         self.management_url = kwargs['endpoint']
 
 
-class TestOctaviaClient(utils.TestCommand):
+class TestOctaviaClient(osc_test_base.TestCommand):
 
     def setUp(self):
         super().setUp()

@@ -15,7 +15,7 @@ import re
 import shlex
 import subprocess
 
-from osc_lib.tests import utils
+import osc_lib.test.base as osc_test_base
 from tempest.lib.cli import output_parser
 from tempest.lib import exceptions
 
@@ -42,7 +42,7 @@ def execute(cmd, fail_ok=False, merge_stderr=False):
     return result
 
 
-class TestCase(utils.TestCase):
+class TestCase(osc_test_base.TestCase):
 
     delimiter_line = re.compile(r'^\+\-[\+\-]+\-\+$')
 

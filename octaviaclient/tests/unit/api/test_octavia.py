@@ -17,7 +17,7 @@ from keystoneauth1 import session
 from oslo_utils import uuidutils
 from requests_mock.contrib import fixture
 
-from osc_lib.tests import utils
+import osc_lib.test.base as osc_test_base
 
 from octaviaclient.api import exceptions
 from octaviaclient.api.v2 import octavia
@@ -186,13 +186,13 @@ SINGLE_AZPF_UPDATE = {'availability_zone_profile': {
     'provider_name': 'fake_provider'}}
 
 
-class TestAPI(utils.TestCase):
+class TestAPI(osc_test_base.TestCase):
     def test_client_exception(self):
         self.assertIs(octavia.OctaviaClientException,
                       exceptions.OctaviaClientException)
 
 
-class TestOctaviaClient(utils.TestCase):
+class TestOctaviaClient(osc_test_base.TestCase):
 
     def setUp(self):
         super().setUp()

@@ -12,13 +12,13 @@
 #
 
 from osc_lib import exceptions
-from osc_lib.tests import utils
+import osc_lib.test.base as osc_test_base
 
 from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import validate
 
 
-class TestValidations(utils.TestCommand):
+class TestValidations(osc_test_base.TestCommand):
     def setUp(self):
         super().setUp()
 

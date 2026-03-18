@@ -13,7 +13,7 @@
 import copy
 from unittest import mock
 
-import osc_lib.tests.utils as osc_test_utils
+import osc_lib.test.base as osc_test_base
 from oslo_utils import uuidutils
 
 from octaviaclient.osc.v2 import amphora
@@ -112,7 +112,7 @@ class TestAmphoraShow(TestAmphora):
 
     def test_amphora_show_no_args(self):
         self.assertRaises(
-            osc_test_utils.ParserException,
+            osc_test_base.ParserException,
             self.check_parser, self.cmd, [], [],
         )
 

@@ -13,7 +13,7 @@
 import copy
 from unittest import mock
 
-import osc_lib.tests.utils as osc_test_utils
+import osc_lib.test.base as osc_test_base
 
 from octaviaclient.osc.v2 import constants
 from octaviaclient.osc.v2 import member
@@ -57,7 +57,7 @@ class TestListMember(TestMember):
         arglist = []
         verifylist = []
 
-        self.assertRaises(osc_test_utils.ParserException,
+        self.assertRaises(osc_test_base.ParserException,
                           self.check_parser, self.cmd, arglist, verifylist)
 
     @mock.patch('octaviaclient.osc.v2.utils.get_member_attrs')

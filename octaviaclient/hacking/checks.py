@@ -46,8 +46,6 @@ assert_equal_with_true_re = re.compile(
 assert_equal_with_false_re = re.compile(
     r"assertEqual\(False,")
 mutable_default_args = re.compile(r"^\s*def .+\((.+=\{\}|.+=\[\])")
-assert_no_xrange_re = re.compile(
-    r"\s*xrange\s*\(")
 
 
 def _translation_checks_not_enforced(filename):
@@ -83,16 +81,6 @@ def no_log_warn(logical_line):
     """
     if logical_line.startswith('LOG.warn('):
         yield (0, "O339:Use LOG.warning() rather than LOG.warn()")
-
-
-@core.flake8ext
-def no_xrange(logical_line):
-    """Disallow 'xrange()'
-
-    O340
-    """
-    if assert_no_xrange_re.match(logical_line):
-        yield (0, "O340: Do not use xrange().")
 
 
 @core.flake8ext
@@ -142,21 +130,6 @@ def check_raised_localized_exceptions(logical_line, filename):
         if exception_msg.startswith("\"") or exception_msg.startswith("\'"):
             msg = "O342: Untranslated exception message."
             yield (logical_line.index(exception_msg), msg)
-
-
-@core.flake8ext
-def check_no_basestring(logical_line):
-    """O343 - basestring is not Python3-compatible.
-
-    :param logical_line: The logical line to check.
-    :returns: None if the logical line passes the check, otherwise a tuple
-    is yielded that contains the offending index in logical line and a
-    message describe the check validation failure.
-    """
-    if re.search(r"\bbasestring\b", logical_line):
-        msg = ("O343: basestring is not Python3-compatible, use "
-               "six.string_types instead.")
-        yield (0, msg)
 
 
 @core.flake8ext

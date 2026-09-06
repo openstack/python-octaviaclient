@@ -151,7 +151,7 @@ def get_resource_id(resource, resource_name, name):
     :param callable resource:
         A client_manager callable
     :param resource_name:
-        The resource key name for the dictonary returned
+        The resource key name for the dictionary returned
     :param name:
         The name of the resource to convert to UUID
     :return:
